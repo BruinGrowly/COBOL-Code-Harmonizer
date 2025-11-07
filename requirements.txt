@@ -1,0 +1,22 @@
+# COBOL Code Harmonizer - Dependencies
+
+# Core parsing
+pyparsing>=3.0.0
+
+# Math/Scientific
+numpy>=1.21.0
+
+# CLI framework
+click>=8.0.0
+
+# Beautiful terminal output
+rich>=10.0.0
+
+# Testing
+pytest>=7.0.0
+pytest-cov>=3.0.0
+
+# Code quality
+black>=22.0.0
+flake8>=4.0.0
+mypy>=0.950
