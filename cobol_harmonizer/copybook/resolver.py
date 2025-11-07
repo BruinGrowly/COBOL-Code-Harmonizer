@@ -51,8 +51,9 @@ class CopybookResolver:
     )
 
     # Pattern for REPLACING clause with pseudo-text (==text==)
+    # Handles both: ==PREFIX== BY ==CUSTOMER== and ==PREFIX== BY CUSTOMER-
     REPLACING_PSEUDO_PATTERN = re.compile(
-        r'==(.+?)==\s+BY\s+==(.+?)==',
+        r'==(.+?)==\s+BY\s+(?:==(.+?)==|([A-Z0-9\-]+))',
         re.IGNORECASE
     )
 
@@ -249,7 +250,9 @@ class CopybookResolver:
         if not clauses:
             for match in self.REPLACING_PSEUDO_PATTERN.finditer(replacing_text):
                 original = match.group(1).strip()
-                replacement = match.group(2).strip()
+                # Group 2: replacement with delimiters (==TEXT==)
+                # Group 3: replacement without delimiters (TEXT-)
+                replacement = (match.group(2) or match.group(3)).strip()
 
                 clauses.append(ReplacingClause(
                     original=original,
@@ -388,13 +391,22 @@ class CopybookResolver:
 
             else:
                 # Standard replacement: Replace all occurrences
-                # Use regex with word boundaries for better accuracy
-                pattern = r'\b' + re.escape(clause.original) + r'\b'
-                try:
-                    content = re.sub(pattern, clause.replacement, content)
-                except:
-                    # Fallback to simple replace if regex fails
-                    content = content.replace(clause.original, clause.replacement)
+                # In COBOL REPLACING, we need to match the pseudo-text with delimiters
+                # ==PREFIX== in copybook matches ==PREFIX== in REPLACING clause
+
+                # Try with pseudo-text delimiters first (==TEXT==)
+                pseudo_pattern = r'==' + re.escape(clause.original) + r'=='
+                if re.search(pseudo_pattern, content):
+                    # Replace ==PREFIX== with REPLACEMENT (no delimiters in replacement)
+                    content = re.sub(pseudo_pattern, clause.replacement, content)
+                else:
+                    # Fallback: try without delimiters (word boundary)
+                    pattern = r'\b' + re.escape(clause.original) + r'\b'
+                    try:
+                        content = re.sub(pattern, clause.replacement, content)
+                    except:
+                        # Final fallback: simple replace
+                        content = content.replace(clause.original, clause.replacement)
 
         return content
 

@@ -176,7 +176,8 @@ class TestCallExtractor:
         procedures = extractor._extract_procedures(source)
 
         # Should extract both sections and paragraphs
-        proc_names = set(procedures.values())
+        # procedures.values() returns (name, is_section) tuples
+        proc_names = set(name for name, is_section in procedures.values())
         assert 'MAIN-SECTION' in proc_names
         assert 'MAIN-PARA' in proc_names
         assert 'SUB-PARA' in proc_names

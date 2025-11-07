@@ -48,13 +48,14 @@ class CallExtractor:
     )
 
     # Pattern to identify procedure division sections and paragraphs
+    # Allow leading whitespace for COBOL's fixed-format columns 1-6
     PARAGRAPH_PATTERN = re.compile(
-        r'^([A-Z0-9\-]+)\s*\.',           # Paragraph name at start of line
+        r'^\s*([A-Z0-9\-]+)\s*\.',        # Paragraph name with optional leading spaces
         re.IGNORECASE | re.MULTILINE
     )
 
     SECTION_PATTERN = re.compile(
-        r'^([A-Z0-9\-]+)\s+SECTION\s*\.',  # Section name
+        r'^\s*([A-Z0-9\-]+)\s+SECTION\s*\.',  # Section name with optional leading spaces
         re.IGNORECASE | re.MULTILINE
     )
 
