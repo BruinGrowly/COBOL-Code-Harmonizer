@@ -1,4 +1,4 @@
-# COBOL Code Harmonizer 💛⚓
+# COBOL Code Harmonizer
 
 **Semantic analysis for COBOL using the LJPW framework**
 
