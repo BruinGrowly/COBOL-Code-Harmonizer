@@ -44,12 +44,17 @@ class ReplacingClause:
 
     Example:
         COPY CUSTOMER-RECORD REPLACING ==:TAG:== BY ==CUST==.
+        COPY TEMPLATE REPLACING LEADING ==PRE==  BY ==CUST==.
+        COPY TEMPLATE REPLACING TRAILING ==SUF== BY ==ACCT==.
     """
     original: str  # What to replace (e.g., ":TAG:")
     replacement: str  # What to replace with (e.g., "CUST")
+    is_leading: bool = False  # LEADING replacement (match at start)
+    is_trailing: bool = False  # TRAILING replacement (match at end)
 
     def __str__(self) -> str:
-        return f"REPLACING {self.original} BY {self.replacement}"
+        prefix = "LEADING " if self.is_leading else "TRAILING " if self.is_trailing else ""
+        return f"REPLACING {prefix}{self.original} BY {self.replacement}"
 
 
 @dataclass

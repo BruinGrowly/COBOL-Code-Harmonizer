@@ -111,11 +111,18 @@ class CallExtractor:
 
     def _extract_procedures(self, source: str) -> dict:
         """
-        Extract all procedure names (paragraphs and sections) from source
+        Extract all procedure names (paragraphs and sections) from source - Enhanced
 
-        Returns dict mapping line numbers to procedure names
+        Improvements:
+        - Only extracts procedures after PROCEDURE DIVISION
+        - Better filtering of false positives
+        - Distinguishes sections from paragraphs
+        - Tracks procedure types
+
+        Returns dict mapping line numbers to (procedure_name, is_section) tuples
         """
-        procedures = {}  # line_number -> procedure_name
+        procedures = {}  # line_number -> (procedure_name, is_section)
+        in_procedure_division = False
 
         lines = source.split('\n')
         for line_num, line in enumerate(lines, 1):
@@ -123,19 +130,47 @@ class CallExtractor:
             if not line.strip() or line.strip().startswith('*'):
                 continue
 
-            # Check for section
-            section_match = self.SECTION_PATTERN.match(line)
-            if section_match:
-                procedures[line_num] = section_match.group(1)
+            stripped = line.strip()
+
+            # Check if we've entered PROCEDURE DIVISION
+            if 'PROCEDURE' in stripped.upper() and 'DIVISION' in stripped.upper():
+                in_procedure_division = True
                 continue
 
-            # Check for paragraph (after PROCEDURE DIVISION)
+            # Only extract procedures after PROCEDURE DIVISION
+            if not in_procedure_division:
+                continue
+
+            # Check for section first (more specific pattern)
+            section_match = self.SECTION_PATTERN.match(line)
+            if section_match:
+                section_name = section_match.group(1)
+                # Filter out DIVISION keywords and other false positives
+                if not any(keyword in section_name.upper() for keyword in [
+                    'DIVISION', 'IDENTIFICATION', 'ENVIRONMENT', 'DATA', 'WORKING-STORAGE',
+                    'FILE', 'LINKAGE', 'LOCAL-STORAGE'
+                ]):
+                    procedures[line_num] = (section_name, True)  # is_section=True
+                continue
+
+            # Check for paragraph
             para_match = self.PARAGRAPH_PATTERN.match(line)
             if para_match:
                 para_name = para_match.group(1)
-                # Filter out DIVISION keywords
-                if not para_name.endswith('DIVISION'):
-                    procedures[line_num] = para_name
+
+                # Filter out false positives:
+                # - DIVISION keywords
+                # - Level numbers (01, 05, etc.)
+                # - COBOL reserved words at start of line
+                if (not para_name.endswith('DIVISION') and
+                    not para_name.isdigit() and
+                    not any(keyword == para_name.upper() for keyword in [
+                        'IF', 'ELSE', 'THEN', 'END-IF', 'PERFORM', 'CALL', 'EVALUATE',
+                        'END-EVALUATE', 'WHEN', 'SEARCH', 'END-SEARCH', 'READ', 'WRITE',
+                        'OPEN', 'CLOSE', 'MOVE', 'ADD', 'SUBTRACT', 'MULTIPLY', 'DIVIDE',
+                        'COMPUTE', 'DISPLAY', 'ACCEPT', 'STOP', 'GOBACK', 'EXIT'
+                    ])):
+                    procedures[line_num] = (para_name, False)  # is_section=False
 
         return procedures
 
@@ -145,15 +180,17 @@ class CallExtractor:
 
         Args:
             line_number: Line number to check
-            procedures: Dict of line_number -> procedure_name
+            procedures: Dict of line_number -> (procedure_name, is_section)
 
         Returns:
             Name of containing procedure or "MAIN"
         """
         # Find the latest procedure before this line
         containing_proc = "MAIN"
-        for proc_line, proc_name in sorted(procedures.items()):
+        for proc_line, proc_info in sorted(procedures.items()):
             if proc_line <= line_number:
+                # Extract procedure name from tuple
+                proc_name = proc_info[0] if isinstance(proc_info, tuple) else proc_info
                 containing_proc = proc_name
             else:
                 break
@@ -219,7 +256,17 @@ class CallExtractor:
         lines = source.split('\n')
 
         # Build set of known procedures for validation
-        known_procedures = set(procedures.values())
+        # Extract procedure names from tuples (procedure_name, is_section)
+        known_procedures = set()
+        procedure_types = {}  # procedure_name -> is_section
+        for proc_info in procedures.values():
+            if isinstance(proc_info, tuple):
+                proc_name, is_section = proc_info
+                known_procedures.add(proc_name)
+                procedure_types[proc_name] = is_section
+            else:
+                known_procedures.add(proc_info)
+                procedure_types[proc_info] = False
 
         for line_num, line in enumerate(lines, 1):
             # Skip comments
@@ -240,17 +287,8 @@ class CallExtractor:
                 # Find containing procedure
                 caller = self._find_containing_procedure(line_num, procedures)
 
-                # Determine if it's a section or paragraph
-                call_type = CallType.PROCEDURE_PERFORM
-                if target_para in known_procedures:
-                    # Check if it's a section by looking at the definition
-                    for proc_line, proc_name in procedures.items():
-                        if proc_name == target_para:
-                            # Check if this line has SECTION keyword
-                            check_line = lines[proc_line - 1] if proc_line > 0 else ""
-                            if 'SECTION' in check_line.upper():
-                                call_type = CallType.SECTION_PERFORM
-                            break
+                # Determine if it's a section or paragraph (already tracked in procedure_types)
+                call_type = CallType.SECTION_PERFORM if procedure_types.get(target_para, False) else CallType.PROCEDURE_PERFORM
 
                 call_sites.append(CallSite(
                     caller=f"{program_name}.{caller}",

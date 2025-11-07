@@ -50,10 +50,15 @@ class CopybookResolver:
         re.IGNORECASE | re.MULTILINE
     )
 
-    # Pattern for REPLACING clause components
-    # Matches: ==:TAG:== BY ==CUST==
-    REPLACING_PATTERN = re.compile(
+    # Pattern for REPLACING clause with pseudo-text (==text==)
+    REPLACING_PSEUDO_PATTERN = re.compile(
         r'==(.+?)==\s+BY\s+==(.+?)==',
+        re.IGNORECASE
+    )
+
+    # Pattern for LEADING/TRAILING REPLACING
+    REPLACING_LEADING_TRAILING_PATTERN = re.compile(
+        r'(LEADING|TRAILING)\s+(==|"")(.+?)\2\s+BY\s+(==|"")(.+?)\4',
         re.IGNORECASE
     )
 
@@ -211,7 +216,13 @@ class CopybookResolver:
 
     def _parse_replacing_clause(self, replacing_text: str) -> List[ReplacingClause]:
         """
-        Parse REPLACING clause
+        Parse REPLACING clause - Enhanced version
+
+        Supports:
+        - Standard pseudo-text: ==OLD== BY ==NEW==
+        - LEADING: LEADING ==OLD== BY ==NEW==
+        - TRAILING: TRAILING ==OLD== BY ==NEW==
+        - Multiple clauses
 
         Args:
             replacing_text: Text of REPLACING clause
@@ -221,14 +232,29 @@ class CopybookResolver:
         """
         clauses = []
 
-        for match in self.REPLACING_PATTERN.finditer(replacing_text):
-            original = match.group(1).strip()
-            replacement = match.group(2).strip()
+        # Try LEADING/TRAILING pattern first
+        for match in self.REPLACING_LEADING_TRAILING_PATTERN.finditer(replacing_text):
+            mode = match.group(1).upper()  # LEADING or TRAILING
+            original = match.group(3).strip()
+            replacement = match.group(5).strip()
 
             clauses.append(ReplacingClause(
                 original=original,
                 replacement=replacement,
+                is_leading=(mode == 'LEADING'),
+                is_trailing=(mode == 'TRAILING'),
             ))
+
+        # If no LEADING/TRAILING found, try standard pseudo-text
+        if not clauses:
+            for match in self.REPLACING_PSEUDO_PATTERN.finditer(replacing_text):
+                original = match.group(1).strip()
+                replacement = match.group(2).strip()
+
+                clauses.append(ReplacingClause(
+                    original=original,
+                    replacement=replacement,
+                ))
 
         return clauses
 
@@ -330,7 +356,13 @@ class CopybookResolver:
                         content: str,
                         replacing_clauses: List[ReplacingClause]) -> str:
         """
-        Apply REPLACING clauses to copybook content
+        Apply REPLACING clauses to copybook content - Enhanced version
+
+        Handles:
+        - Standard replacement (anywhere in text)
+        - LEADING replacement (only at start of words/lines)
+        - TRAILING replacement (only at end of words/lines)
+        - Preserves COBOL formatting and structure
 
         Args:
             content: Copybook content
@@ -340,9 +372,29 @@ class CopybookResolver:
             Content with replacements applied
         """
         for clause in replacing_clauses:
-            # Simple string replacement
-            # Note: This is simplified. Real COBOL REPLACING is more complex
-            content = content.replace(clause.original, clause.replacement)
+            if clause.is_leading:
+                # LEADING: Replace at start of words
+                # Match original at word boundary (start of line or after whitespace/punctuation)
+                pattern = r'(^|\s|[^A-Z0-9\-_])(' + re.escape(clause.original) + r')'
+                replacement = r'\1' + clause.replacement
+                content = re.sub(pattern, replacement, content, flags=re.MULTILINE)
+
+            elif clause.is_trailing:
+                # TRAILING: Replace at end of words
+                # Match original at word boundary (end of line or before whitespace/punctuation)
+                pattern = r'(' + re.escape(clause.original) + r')($|\s|[^A-Z0-9\-_])'
+                replacement = clause.replacement + r'\2'
+                content = re.sub(pattern, replacement, content, flags=re.MULTILINE)
+
+            else:
+                # Standard replacement: Replace all occurrences
+                # Use regex with word boundaries for better accuracy
+                pattern = r'\b' + re.escape(clause.original) + r'\b'
+                try:
+                    content = re.sub(pattern, clause.replacement, content)
+                except:
+                    # Fallback to simple replace if regex fails
+                    content = content.replace(clause.original, clause.replacement)
 
         return content
 
