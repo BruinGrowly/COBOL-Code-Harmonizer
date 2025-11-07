@@ -1,0 +1,430 @@
+{
+  "nodes": [
+    {
+      "id": "ACCT-PROCESSOR.FILE-MANAGER",
+      "name": "FILE-MANAGER",
+      "type": "paragraph",
+      "fan_in": 1,
+      "fan_out": 0,
+      "depth": 1,
+      "complexity": 0,
+      "file": null,
+      "line": 0
+    },
+    {
+      "id": "ACCT-PROCESSOR.CLOSE-FILES",
+      "name": "CLOSE-FILES",
+      "type": "paragraph",
+      "fan_in": 1,
+      "fan_out": 0,
+      "depth": 1,
+      "complexity": 0,
+      "file": null,
+      "line": 0
+    },
+    {
+      "id": "ACCT-PROCESSOR.OVERDRAFT-PROCESSOR",
+      "name": "OVERDRAFT-PROCESSOR",
+      "type": "paragraph",
+      "fan_in": 1,
+      "fan_out": 0,
+      "depth": 1,
+      "complexity": 0,
+      "file": null,
+      "line": 0
+    },
+    {
+      "id": "ACCT-PROCESSOR.DB-MANAGER",
+      "name": "DB-MANAGER",
+      "type": "paragraph",
+      "fan_in": 1,
+      "fan_out": 0,
+      "depth": 1,
+      "complexity": 0,
+      "file": null,
+      "line": 0
+    },
+    {
+      "id": "ACCT-PROCESSOR.READ-ACCOUNT",
+      "name": "READ-ACCOUNT",
+      "type": "paragraph",
+      "fan_in": 1,
+      "fan_out": 0,
+      "depth": 1,
+      "complexity": 0,
+      "file": null,
+      "line": 0
+    },
+    {
+      "id": "ACCT-PROCESSOR.CUST-VERIFY",
+      "name": "CUST-VERIFY",
+      "type": "paragraph",
+      "fan_in": 1,
+      "fan_out": 0,
+      "depth": 1,
+      "complexity": 0,
+      "file": null,
+      "line": 0
+    },
+    {
+      "id": "ACCT-PROCESSOR.VALIDATE-ACCOUNT",
+      "name": "VALIDATE-ACCOUNT",
+      "type": "paragraph",
+      "fan_in": 1,
+      "fan_out": 0,
+      "depth": 1,
+      "complexity": 0,
+      "file": null,
+      "line": 0
+    },
+    {
+      "id": "ACCT-PROCESSOR.CHECK-ACCOUNT-TYPE",
+      "name": "CHECK-ACCOUNT-TYPE",
+      "type": "paragraph",
+      "fan_in": 1,
+      "fan_out": 0,
+      "depth": 1,
+      "complexity": 0,
+      "file": null,
+      "line": 0
+    },
+    {
+      "id": "ACCT-PROCESSOR..MAIN",
+      "name": "",
+      "type": "paragraph",
+      "fan_in": 0,
+      "fan_out": 20,
+      "depth": 0,
+      "complexity": 0,
+      "file": "demo_acct_processor.cbl",
+      "line": 56
+    },
+    {
+      "id": "ACCT-PROCESSOR.UPDATE-ACCOUNT",
+      "name": "UPDATE-ACCOUNT",
+      "type": "paragraph",
+      "fan_in": 1,
+      "fan_out": 0,
+      "depth": 1,
+      "complexity": 0,
+      "file": null,
+      "line": 0
+    },
+    {
+      "id": "ACCT-PROCESSOR.CHECK-BALANCE",
+      "name": "CHECK-BALANCE",
+      "type": "paragraph",
+      "fan_in": 1,
+      "fan_out": 0,
+      "depth": 1,
+      "complexity": 0,
+      "file": null,
+      "line": 0
+    },
+    {
+      "id": "ACCT-PROCESSOR.VERIFY-CUSTOMER",
+      "name": "VERIFY-CUSTOMER",
+      "type": "paragraph",
+      "fan_in": 1,
+      "fan_out": 0,
+      "depth": 1,
+      "complexity": 0,
+      "file": null,
+      "line": 0
+    },
+    {
+      "id": "ACCT-PROCESSOR.CALC-ENGINE",
+      "name": "CALC-ENGINE",
+      "type": "paragraph",
+      "fan_in": 1,
+      "fan_out": 0,
+      "depth": 1,
+      "complexity": 0,
+      "file": null,
+      "line": 0
+    },
+    {
+      "id": "ACCT-PROCESSOR.LOGGER",
+      "name": "LOGGER",
+      "type": "paragraph",
+      "fan_in": 1,
+      "fan_out": 0,
+      "depth": 1,
+      "complexity": 0,
+      "file": null,
+      "line": 0
+    },
+    {
+      "id": "ACCT-PROCESSOR.CLEANUP-SYSTEM",
+      "name": "CLEANUP-SYSTEM",
+      "type": "paragraph",
+      "fan_in": 1,
+      "fan_out": 0,
+      "depth": 1,
+      "complexity": 0,
+      "file": null,
+      "line": 0
+    },
+    {
+      "id": "ACCT-PROCESSOR.WRITE-AUDIT",
+      "name": "WRITE-AUDIT",
+      "type": "paragraph",
+      "fan_in": 1,
+      "fan_out": 0,
+      "depth": 1,
+      "complexity": 0,
+      "file": null,
+      "line": 0
+    },
+    {
+      "id": "ACCT-PROCESSOR.INITIALIZE-SYSTEM",
+      "name": "INITIALIZE-SYSTEM",
+      "type": "paragraph",
+      "fan_in": 1,
+      "fan_out": 0,
+      "depth": 1,
+      "complexity": 0,
+      "file": null,
+      "line": 0
+    },
+    {
+      "id": "ACCT-PROCESSOR.HANDLE-OVERDRAFT",
+      "name": "HANDLE-OVERDRAFT",
+      "type": "paragraph",
+      "fan_in": 1,
+      "fan_out": 0,
+      "depth": 1,
+      "complexity": 0,
+      "file": null,
+      "line": 0
+    },
+    {
+      "id": "ACCT-PROCESSOR.CONFIG-UTIL",
+      "name": "CONFIG-UTIL",
+      "type": "paragraph",
+      "fan_in": 1,
+      "fan_out": 0,
+      "depth": 1,
+      "complexity": 0,
+      "file": null,
+      "line": 0
+    },
+    {
+      "id": "ACCT-PROCESSOR.LOAD-CONFIG",
+      "name": "LOAD-CONFIG",
+      "type": "paragraph",
+      "fan_in": 1,
+      "fan_out": 0,
+      "depth": 1,
+      "complexity": 0,
+      "file": null,
+      "line": 0
+    },
+    {
+      "id": "ACCT-PROCESSOR.OPEN-FILES",
+      "name": "OPEN-FILES",
+      "type": "paragraph",
+      "fan_in": 1,
+      "fan_out": 0,
+      "depth": 1,
+      "complexity": 0,
+      "file": null,
+      "line": 0
+    }
+  ],
+  "links": [
+    {
+      "source": "ACCT-PROCESSOR..MAIN",
+      "target": "ACCT-PROCESSOR.LOGGER",
+      "type": "CALL",
+      "count": 3,
+      "lines": [
+        56,
+        113,
+        118
+      ]
+    },
+    {
+      "source": "ACCT-PROCESSOR..MAIN",
+      "target": "ACCT-PROCESSOR.CONFIG-UTIL",
+      "type": "CALL",
+      "count": 1,
+      "lines": [
+        62
+      ]
+    },
+    {
+      "source": "ACCT-PROCESSOR..MAIN",
+      "target": "ACCT-PROCESSOR.FILE-MANAGER",
+      "type": "CALL",
+      "count": 3,
+      "lines": [
+        66,
+        77,
+        122
+      ]
+    },
+    {
+      "source": "ACCT-PROCESSOR..MAIN",
+      "target": "ACCT-PROCESSOR.CALC-ENGINE",
+      "type": "CALL",
+      "count": 1,
+      "lines": [
+        95
+      ]
+    },
+    {
+      "source": "ACCT-PROCESSOR..MAIN",
+      "target": "ACCT-PROCESSOR.OVERDRAFT-PROCESSOR",
+      "type": "CALL",
+      "count": 1,
+      "lines": [
+        101
+      ]
+    },
+    {
+      "source": "ACCT-PROCESSOR..MAIN",
+      "target": "ACCT-PROCESSOR.CUST-VERIFY",
+      "type": "CALL",
+      "count": 1,
+      "lines": [
+        105
+      ]
+    },
+    {
+      "source": "ACCT-PROCESSOR..MAIN",
+      "target": "ACCT-PROCESSOR.DB-MANAGER",
+      "type": "CALL",
+      "count": 1,
+      "lines": [
+        109
+      ]
+    },
+    {
+      "source": "ACCT-PROCESSOR..MAIN",
+      "target": "ACCT-PROCESSOR.INITIALIZE-SYSTEM",
+      "type": "PERFORM",
+      "count": 1,
+      "lines": [
+        49
+      ]
+    },
+    {
+      "source": "ACCT-PROCESSOR..MAIN",
+      "target": "ACCT-PROCESSOR.CLEANUP-SYSTEM",
+      "type": "PERFORM",
+      "count": 1,
+      "lines": [
+        51
+      ]
+    },
+    {
+      "source": "ACCT-PROCESSOR..MAIN",
+      "target": "ACCT-PROCESSOR.LOAD-CONFIG",
+      "type": "PERFORM",
+      "count": 1,
+      "lines": [
+        57
+      ]
+    },
+    {
+      "source": "ACCT-PROCESSOR..MAIN",
+      "target": "ACCT-PROCESSOR.OPEN-FILES",
+      "type": "PERFORM",
+      "count": 1,
+      "lines": [
+        58
+      ]
+    },
+    {
+      "source": "ACCT-PROCESSOR..MAIN",
+      "target": "ACCT-PROCESSOR.READ-ACCOUNT",
+      "type": "PERFORM",
+      "count": 1,
+      "lines": [
+        70
+      ]
+    },
+    {
+      "source": "ACCT-PROCESSOR..MAIN",
+      "target": "ACCT-PROCESSOR.VALIDATE-ACCOUNT",
+      "type": "PERFORM",
+      "count": 1,
+      "lines": [
+        71
+      ]
+    },
+    {
+      "source": "ACCT-PROCESSOR..MAIN",
+      "target": "ACCT-PROCESSOR.UPDATE-ACCOUNT",
+      "type": "PERFORM",
+      "count": 1,
+      "lines": [
+        72
+      ]
+    },
+    {
+      "source": "ACCT-PROCESSOR..MAIN",
+      "target": "ACCT-PROCESSOR.WRITE-AUDIT",
+      "type": "PERFORM",
+      "count": 1,
+      "lines": [
+        73
+      ]
+    },
+    {
+      "source": "ACCT-PROCESSOR..MAIN",
+      "target": "ACCT-PROCESSOR.CHECK-ACCOUNT-TYPE",
+      "type": "PERFORM",
+      "count": 1,
+      "lines": [
+        82
+      ]
+    },
+    {
+      "source": "ACCT-PROCESSOR..MAIN",
+      "target": "ACCT-PROCESSOR.CHECK-BALANCE",
+      "type": "PERFORM",
+      "count": 1,
+      "lines": [
+        83
+      ]
+    },
+    {
+      "source": "ACCT-PROCESSOR..MAIN",
+      "target": "ACCT-PROCESSOR.VERIFY-CUSTOMER",
+      "type": "PERFORM",
+      "count": 1,
+      "lines": [
+        84
+      ]
+    },
+    {
+      "source": "ACCT-PROCESSOR..MAIN",
+      "target": "ACCT-PROCESSOR.HANDLE-OVERDRAFT",
+      "type": "PERFORM",
+      "count": 1,
+      "lines": [
+        97
+      ]
+    },
+    {
+      "source": "ACCT-PROCESSOR..MAIN",
+      "target": "ACCT-PROCESSOR.CLOSE-FILES",
+      "type": "PERFORM",
+      "count": 1,
+      "lines": [
+        117
+      ]
+    }
+  ],
+  "entry_points": [
+    "ACCT-PROCESSOR..MAIN"
+  ],
+  "orphaned_nodes": [],
+  "stats": {
+    "total_nodes": 21,
+    "total_edges": 20,
+    "max_depth": 1
+  }
+}

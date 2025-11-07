@@ -1,0 +1,153 @@
+digraph CallGraph {
+  rankdir=TB;
+  node [shape=box, style=rounded];
+  edge [fontsize=10];
+
+  "ACCT-PROCESSOR.FILE-MANAGER" [
+    label="FILE-MANAGER\nin:1 out:0 d:1",
+    shape=ellipse,
+    fillcolor="lightyellow",
+    style="filled,rounded"
+  ];
+  "ACCT-PROCESSOR.CLOSE-FILES" [
+    label="CLOSE-FILES\nin:1 out:0 d:1",
+    shape=ellipse,
+    fillcolor="lightyellow",
+    style="filled,rounded"
+  ];
+  "ACCT-PROCESSOR.OVERDRAFT-PROCESSOR" [
+    label="OVERDRAFT-PROCESSOR\nin:1 out:0 d:1",
+    shape=ellipse,
+    fillcolor="lightyellow",
+    style="filled,rounded"
+  ];
+  "ACCT-PROCESSOR.DB-MANAGER" [
+    label="DB-MANAGER\nin:1 out:0 d:1",
+    shape=ellipse,
+    fillcolor="lightyellow",
+    style="filled,rounded"
+  ];
+  "ACCT-PROCESSOR.READ-ACCOUNT" [
+    label="READ-ACCOUNT\nin:1 out:0 d:1",
+    shape=ellipse,
+    fillcolor="lightyellow",
+    style="filled,rounded"
+  ];
+  "ACCT-PROCESSOR.CUST-VERIFY" [
+    label="CUST-VERIFY\nin:1 out:0 d:1",
+    shape=ellipse,
+    fillcolor="lightyellow",
+    style="filled,rounded"
+  ];
+  "ACCT-PROCESSOR.VALIDATE-ACCOUNT" [
+    label="VALIDATE-ACCOUNT\nin:1 out:0 d:1",
+    shape=ellipse,
+    fillcolor="lightyellow",
+    style="filled,rounded"
+  ];
+  "ACCT-PROCESSOR.CHECK-ACCOUNT-TYPE" [
+    label="CHECK-ACCOUNT-TYPE\nin:1 out:0 d:1",
+    shape=ellipse,
+    fillcolor="lightyellow",
+    style="filled,rounded"
+  ];
+  "ACCT-PROCESSOR..MAIN" [
+    label="\nin:0 out:20",
+    shape=ellipse,
+    fillcolor="lightyellow",
+    style="filled,rounded"
+  ];
+  "ACCT-PROCESSOR.UPDATE-ACCOUNT" [
+    label="UPDATE-ACCOUNT\nin:1 out:0 d:1",
+    shape=ellipse,
+    fillcolor="lightyellow",
+    style="filled,rounded"
+  ];
+  "ACCT-PROCESSOR.CHECK-BALANCE" [
+    label="CHECK-BALANCE\nin:1 out:0 d:1",
+    shape=ellipse,
+    fillcolor="lightyellow",
+    style="filled,rounded"
+  ];
+  "ACCT-PROCESSOR.VERIFY-CUSTOMER" [
+    label="VERIFY-CUSTOMER\nin:1 out:0 d:1",
+    shape=ellipse,
+    fillcolor="lightyellow",
+    style="filled,rounded"
+  ];
+  "ACCT-PROCESSOR.CALC-ENGINE" [
+    label="CALC-ENGINE\nin:1 out:0 d:1",
+    shape=ellipse,
+    fillcolor="lightyellow",
+    style="filled,rounded"
+  ];
+  "ACCT-PROCESSOR.LOGGER" [
+    label="LOGGER\nin:1 out:0 d:1",
+    shape=ellipse,
+    fillcolor="lightyellow",
+    style="filled,rounded"
+  ];
+  "ACCT-PROCESSOR.CLEANUP-SYSTEM" [
+    label="CLEANUP-SYSTEM\nin:1 out:0 d:1",
+    shape=ellipse,
+    fillcolor="lightyellow",
+    style="filled,rounded"
+  ];
+  "ACCT-PROCESSOR.WRITE-AUDIT" [
+    label="WRITE-AUDIT\nin:1 out:0 d:1",
+    shape=ellipse,
+    fillcolor="lightyellow",
+    style="filled,rounded"
+  ];
+  "ACCT-PROCESSOR.INITIALIZE-SYSTEM" [
+    label="INITIALIZE-SYSTEM\nin:1 out:0 d:1",
+    shape=ellipse,
+    fillcolor="lightyellow",
+    style="filled,rounded"
+  ];
+  "ACCT-PROCESSOR.HANDLE-OVERDRAFT" [
+    label="HANDLE-OVERDRAFT\nin:1 out:0 d:1",
+    shape=ellipse,
+    fillcolor="lightyellow",
+    style="filled,rounded"
+  ];
+  "ACCT-PROCESSOR.CONFIG-UTIL" [
+    label="CONFIG-UTIL\nin:1 out:0 d:1",
+    shape=ellipse,
+    fillcolor="lightyellow",
+    style="filled,rounded"
+  ];
+  "ACCT-PROCESSOR.LOAD-CONFIG" [
+    label="LOAD-CONFIG\nin:1 out:0 d:1",
+    shape=ellipse,
+    fillcolor="lightyellow",
+    style="filled,rounded"
+  ];
+  "ACCT-PROCESSOR.OPEN-FILES" [
+    label="OPEN-FILES\nin:1 out:0 d:1",
+    shape=ellipse,
+    fillcolor="lightyellow",
+    style="filled,rounded"
+  ];
+
+  "ACCT-PROCESSOR..MAIN" -> "ACCT-PROCESSOR.LOGGER" [label="3x", style="bold"];
+  "ACCT-PROCESSOR..MAIN" -> "ACCT-PROCESSOR.CONFIG-UTIL" [style="bold"];
+  "ACCT-PROCESSOR..MAIN" -> "ACCT-PROCESSOR.FILE-MANAGER" [label="3x", style="bold"];
+  "ACCT-PROCESSOR..MAIN" -> "ACCT-PROCESSOR.CALC-ENGINE" [style="bold"];
+  "ACCT-PROCESSOR..MAIN" -> "ACCT-PROCESSOR.OVERDRAFT-PROCESSOR" [style="bold"];
+  "ACCT-PROCESSOR..MAIN" -> "ACCT-PROCESSOR.CUST-VERIFY" [style="bold"];
+  "ACCT-PROCESSOR..MAIN" -> "ACCT-PROCESSOR.DB-MANAGER" [style="bold"];
+  "ACCT-PROCESSOR..MAIN" -> "ACCT-PROCESSOR.INITIALIZE-SYSTEM";
+  "ACCT-PROCESSOR..MAIN" -> "ACCT-PROCESSOR.CLEANUP-SYSTEM";
+  "ACCT-PROCESSOR..MAIN" -> "ACCT-PROCESSOR.LOAD-CONFIG";
+  "ACCT-PROCESSOR..MAIN" -> "ACCT-PROCESSOR.OPEN-FILES";
+  "ACCT-PROCESSOR..MAIN" -> "ACCT-PROCESSOR.READ-ACCOUNT";
+  "ACCT-PROCESSOR..MAIN" -> "ACCT-PROCESSOR.VALIDATE-ACCOUNT";
+  "ACCT-PROCESSOR..MAIN" -> "ACCT-PROCESSOR.UPDATE-ACCOUNT";
+  "ACCT-PROCESSOR..MAIN" -> "ACCT-PROCESSOR.WRITE-AUDIT";
+  "ACCT-PROCESSOR..MAIN" -> "ACCT-PROCESSOR.CHECK-ACCOUNT-TYPE";
+  "ACCT-PROCESSOR..MAIN" -> "ACCT-PROCESSOR.CHECK-BALANCE";
+  "ACCT-PROCESSOR..MAIN" -> "ACCT-PROCESSOR.VERIFY-CUSTOMER";
+  "ACCT-PROCESSOR..MAIN" -> "ACCT-PROCESSOR.HANDLE-OVERDRAFT";
+  "ACCT-PROCESSOR..MAIN" -> "ACCT-PROCESSOR.CLOSE-FILES";
+}

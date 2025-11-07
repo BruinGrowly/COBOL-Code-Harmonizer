@@ -1,0 +1,327 @@
+{
+  "nodes": [
+    {
+      "id": "CUSTOMER-PROCESSOR.FILEIO",
+      "name": "FILEIO",
+      "type": "paragraph",
+      "fan_in": 1,
+      "fan_out": 0,
+      "depth": 1,
+      "complexity": 0,
+      "file": null,
+      "line": 0
+    },
+    {
+      "id": "CUSTOMER-PROCESSOR.CHECK-STATUS",
+      "name": "CHECK-STATUS",
+      "type": "paragraph",
+      "fan_in": 1,
+      "fan_out": 0,
+      "depth": 1,
+      "complexity": 0,
+      "file": null,
+      "line": 0
+    },
+    {
+      "id": "CUSTOMER-PROCESSOR.DBUTIL",
+      "name": "DBUTIL",
+      "type": "paragraph",
+      "fan_in": 1,
+      "fan_out": 0,
+      "depth": 1,
+      "complexity": 0,
+      "file": null,
+      "line": 0
+    },
+    {
+      "id": "CUSTOMER-PROCESSOR.CALCULATOR",
+      "name": "CALCULATOR",
+      "type": "paragraph",
+      "fan_in": 1,
+      "fan_out": 0,
+      "depth": 1,
+      "complexity": 0,
+      "file": null,
+      "line": 0
+    },
+    {
+      "id": "CUSTOMER-PROCESSOR.INITIALIZE-DATA",
+      "name": "INITIALIZE-DATA",
+      "type": "paragraph",
+      "fan_in": 1,
+      "fan_out": 0,
+      "depth": 1,
+      "complexity": 0,
+      "file": null,
+      "line": 0
+    },
+    {
+      "id": "CUSTOMER-PROCESSOR.AUDIT-LOG",
+      "name": "AUDIT-LOG",
+      "type": "paragraph",
+      "fan_in": 1,
+      "fan_out": 0,
+      "depth": 1,
+      "complexity": 0,
+      "file": null,
+      "line": 0
+    },
+    {
+      "id": "CUSTOMER-PROCESSOR.GENERATE-REPORT",
+      "name": "GENERATE-REPORT",
+      "type": "paragraph",
+      "fan_in": 1,
+      "fan_out": 0,
+      "depth": 1,
+      "complexity": 0,
+      "file": null,
+      "line": 0
+    },
+    {
+      "id": "CUSTOMER-PROCESSOR.READ-CUSTOMER-FILE",
+      "name": "READ-CUSTOMER-FILE",
+      "type": "paragraph",
+      "fan_in": 1,
+      "fan_out": 0,
+      "depth": 1,
+      "complexity": 0,
+      "file": null,
+      "line": 0
+    },
+    {
+      "id": "CUSTOMER-PROCESSOR.CHECK-BALANCE",
+      "name": "CHECK-BALANCE",
+      "type": "paragraph",
+      "fan_in": 1,
+      "fan_out": 0,
+      "depth": 1,
+      "complexity": 0,
+      "file": null,
+      "line": 0
+    },
+    {
+      "id": "CUSTOMER-PROCESSOR.PROCESS-CUSTOMERS",
+      "name": "PROCESS-CUSTOMERS",
+      "type": "paragraph",
+      "fan_in": 1,
+      "fan_out": 0,
+      "depth": 1,
+      "complexity": 0,
+      "file": null,
+      "line": 0
+    },
+    {
+      "id": "CUSTOMER-PROCESSOR.UPDATE-DATABASE",
+      "name": "UPDATE-DATABASE",
+      "type": "paragraph",
+      "fan_in": 1,
+      "fan_out": 0,
+      "depth": 1,
+      "complexity": 0,
+      "file": null,
+      "line": 0
+    },
+    {
+      "id": "CUSTOMER-PROCESSOR.PRINTER",
+      "name": "PRINTER",
+      "type": "paragraph",
+      "fan_in": 1,
+      "fan_out": 0,
+      "depth": 1,
+      "complexity": 0,
+      "file": null,
+      "line": 0
+    },
+    {
+      "id": "CUSTOMER-PROCESSOR.FORMAT-OUTPUT",
+      "name": "FORMAT-OUTPUT",
+      "type": "paragraph",
+      "fan_in": 1,
+      "fan_out": 0,
+      "depth": 1,
+      "complexity": 0,
+      "file": null,
+      "line": 0
+    },
+    {
+      "id": "CUSTOMER-PROCESSOR.VALIDATE-CUSTOMER",
+      "name": "VALIDATE-CUSTOMER",
+      "type": "paragraph",
+      "fan_in": 1,
+      "fan_out": 0,
+      "depth": 1,
+      "complexity": 0,
+      "file": null,
+      "line": 0
+    },
+    {
+      "id": "CUSTOMER-PROCESSOR.LOGGER",
+      "name": "LOGGER",
+      "type": "paragraph",
+      "fan_in": 1,
+      "fan_out": 0,
+      "depth": 1,
+      "complexity": 0,
+      "file": null,
+      "line": 0
+    },
+    {
+      "id": "CUSTOMER-PROCESSOR..MAIN",
+      "name": "",
+      "type": "paragraph",
+      "fan_in": 0,
+      "fan_out": 15,
+      "depth": 0,
+      "complexity": 0,
+      "file": "demo_customer_processor.cbl",
+      "line": 22
+    }
+  ],
+  "links": [
+    {
+      "source": "CUSTOMER-PROCESSOR..MAIN",
+      "target": "CUSTOMER-PROCESSOR.LOGGER",
+      "type": "CALL",
+      "count": 2,
+      "lines": [
+        22,
+        54
+      ]
+    },
+    {
+      "source": "CUSTOMER-PROCESSOR..MAIN",
+      "target": "CUSTOMER-PROCESSOR.FILEIO",
+      "type": "CALL",
+      "count": 1,
+      "lines": [
+        33
+      ]
+    },
+    {
+      "source": "CUSTOMER-PROCESSOR..MAIN",
+      "target": "CUSTOMER-PROCESSOR.CALCULATOR",
+      "type": "CALL",
+      "count": 1,
+      "lines": [
+        42
+      ]
+    },
+    {
+      "source": "CUSTOMER-PROCESSOR..MAIN",
+      "target": "CUSTOMER-PROCESSOR.DBUTIL",
+      "type": "CALL",
+      "count": 1,
+      "lines": [
+        49
+      ]
+    },
+    {
+      "source": "CUSTOMER-PROCESSOR..MAIN",
+      "target": "CUSTOMER-PROCESSOR.PRINTER",
+      "type": "CALL",
+      "count": 1,
+      "lines": [
+        59
+      ]
+    },
+    {
+      "source": "CUSTOMER-PROCESSOR..MAIN",
+      "target": "CUSTOMER-PROCESSOR.INITIALIZE-DATA",
+      "type": "PERFORM",
+      "count": 1,
+      "lines": [
+        13
+      ]
+    },
+    {
+      "source": "CUSTOMER-PROCESSOR..MAIN",
+      "target": "CUSTOMER-PROCESSOR.PROCESS-CUSTOMERS",
+      "type": "PERFORM",
+      "count": 1,
+      "lines": [
+        14
+      ]
+    },
+    {
+      "source": "CUSTOMER-PROCESSOR..MAIN",
+      "target": "CUSTOMER-PROCESSOR.GENERATE-REPORT",
+      "type": "PERFORM",
+      "count": 1,
+      "lines": [
+        15
+      ]
+    },
+    {
+      "source": "CUSTOMER-PROCESSOR..MAIN",
+      "target": "CUSTOMER-PROCESSOR.READ-CUSTOMER-FILE",
+      "type": "PERFORM",
+      "count": 1,
+      "lines": [
+        26
+      ]
+    },
+    {
+      "source": "CUSTOMER-PROCESSOR..MAIN",
+      "target": "CUSTOMER-PROCESSOR.VALIDATE-CUSTOMER",
+      "type": "PERFORM",
+      "count": 1,
+      "lines": [
+        27
+      ]
+    },
+    {
+      "source": "CUSTOMER-PROCESSOR..MAIN",
+      "target": "CUSTOMER-PROCESSOR.UPDATE-DATABASE",
+      "type": "PERFORM",
+      "count": 1,
+      "lines": [
+        28
+      ]
+    },
+    {
+      "source": "CUSTOMER-PROCESSOR..MAIN",
+      "target": "CUSTOMER-PROCESSOR.CHECK-BALANCE",
+      "type": "PERFORM",
+      "count": 1,
+      "lines": [
+        37
+      ]
+    },
+    {
+      "source": "CUSTOMER-PROCESSOR..MAIN",
+      "target": "CUSTOMER-PROCESSOR.CHECK-STATUS",
+      "type": "PERFORM",
+      "count": 1,
+      "lines": [
+        38
+      ]
+    },
+    {
+      "source": "CUSTOMER-PROCESSOR..MAIN",
+      "target": "CUSTOMER-PROCESSOR.AUDIT-LOG",
+      "type": "PERFORM",
+      "count": 1,
+      "lines": [
+        50
+      ]
+    },
+    {
+      "source": "CUSTOMER-PROCESSOR..MAIN",
+      "target": "CUSTOMER-PROCESSOR.FORMAT-OUTPUT",
+      "type": "PERFORM",
+      "count": 1,
+      "lines": [
+        58
+      ]
+    }
+  ],
+  "entry_points": [
+    "CUSTOMER-PROCESSOR..MAIN"
+  ],
+  "orphaned_nodes": [],
+  "stats": {
+    "total_nodes": 16,
+    "total_edges": 15,
+    "max_depth": 1
+  }
+}
