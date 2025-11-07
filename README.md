@@ -71,6 +71,176 @@ python -m cobol_harmonizer.cli analyze examples/disharmonious_example.cbl
 
 ---
 
+## Advanced Features (v0.3.0)
+
+### Batch Analysis
+
+Analyze entire directories of COBOL files:
+
+```bash
+# Analyze all COBOL files in a directory
+python -m cobol_harmonizer.cli.commands batch-analyze /path/to/cobol/source
+
+# Recursive analysis with progress tracking
+python -m cobol_harmonizer.cli.commands batch-analyze ./mainframe --recursive
+
+# Filter by threshold (only show issues >= 0.8)
+python -m cobol_harmonizer.cli.commands batch-analyze ./src --threshold 0.8
+
+# Generate JSON report for entire codebase
+python -m cobol_harmonizer.cli.commands batch-analyze ./src --output report.json --format json
+```
+
+**Features:**
+- Multi-threaded parallel processing
+- Progress tracking for large codebases
+- Aggregated statistics across all files
+- Identification of worst offenders
+- File-level and procedure-level rankings
+
+### CI/CD Integration
+
+Export results in industry-standard formats:
+
+```bash
+# Generate SARIF report for GitHub Code Scanning
+python -m cobol_harmonizer.cli.commands analyze program.cbl \
+  --format sarif \
+  --output results.sarif
+
+# Upload to GitHub (via Actions)
+- uses: github/codeql-action/upload-sarif@v2
+  with:
+    sarif_file: results.sarif
+
+# JSON format for custom tooling
+python -m cobol_harmonizer.cli.commands analyze program.cbl \
+  --format json \
+  --output results.json
+```
+
+**SARIF Features:**
+- GitHub Code Scanning integration
+- GitLab Security Dashboard support
+- Azure DevOps compatibility
+- Automatic severity mapping
+- Fix suggestions included
+
+### Configuration Files
+
+Create a `.harmonizerrc.json` in your project:
+
+```json
+{
+  "analysis": {
+    "threshold": 0.5,
+    "show_harmonious": false
+  },
+  "batch": {
+    "max_workers": 8,
+    "recursive": true,
+    "file_patterns": ["*.cbl", "*.CBL", "*.cob"],
+    "exclude_patterns": [
+      "**/test/**",
+      "**/vendor/**"
+    ]
+  },
+  "reporting": {
+    "default_format": "json",
+    "include_suggestions": true,
+    "max_suggestions": 5
+  }
+}
+```
+
+**Configuration Features:**
+- JSON or YAML format support
+- Automatic discovery (searches parent directories)
+- Override via command-line arguments
+- Validation with helpful error messages
+
+### Baseline Comparison
+
+Track improvements and detect regressions:
+
+```bash
+# Save current state as baseline
+python -m cobol_harmonizer.cli.commands save-baseline ./src \
+  --name production \
+  --description "Production release v1.2.3"
+
+# Compare current state to baseline
+python -m cobol_harmonizer.cli.commands compare-baseline ./src \
+  --baseline production
+
+# Example output:
+# Baseline Comparison Summary
+# ══════════════════════════════════════════════════════
+# Regressions:  3 📈 (procedures got worse)
+# Improvements: 12 📉 (procedures got better)
+# Unchanged:    45
+#
+# Top Regressions:
+#   • VALIDATE-INPUT in validate.cbl: 0.3 → 0.9 (+0.6)
+#   • PROCESS-DATA in process.cbl: 0.5 → 0.8 (+0.3)
+```
+
+**Baseline Features:**
+- Save snapshots of codebase health
+- Compare current vs. baseline
+- Detect regressions (code got worse)
+- Identify improvements (code got better)
+- Track new/removed procedures
+- Generate regression reports
+
+### Codebase Health Mapping
+
+Get a comprehensive view of your legacy codebase:
+
+```bash
+# Generate codebase health report
+python -m cobol_harmonizer.cli.commands map-codebase ./mainframe
+
+# Example output:
+# ══════════════════════════════════════════════════════════════
+# COBOL CODEBASE ANALYSIS REPORT
+# ══════════════════════════════════════════════════════════════
+#
+# CODEBASE HEALTH
+# ──────────────────────────────────────────────────────────────
+# Health Score:      68/100 (Grade: D)
+# Harmony Rate:      45.2%
+# Action Required:   23.8%
+# Assessment:        Poor - High technical debt, refactoring recommended
+#
+# TOP 5 PROBLEM FILES
+# ──────────────────────────────────────────────────────────────
+# 1. customer-mgmt.cbl (avg: 1.23, critical: 5)
+# 2. billing.cbl (avg: 0.95, critical: 3)
+# 3. reports.cbl (avg: 0.87, critical: 2)
+#
+# RECOMMENDATIONS
+# ──────────────────────────────────────────────────────────────
+# [CRITICAL] Fix 8 Critical Semantic Bug(s)
+#   These procedures have names that severely contradict their
+#   implementations and likely represent bugs.
+#   → Review and either rename or refactor immediately
+#
+# [HIGH] Address 15 Significant Disharmony Issue(s)
+#   These should be refactored for better maintainability.
+#   → Plan refactoring sprint to address these procedures
+```
+
+**Codebase Mapper Features:**
+- Overall health score (0-100 with letter grade)
+- Hotspot identification (worst files/procedures)
+- Semantic pattern analysis (common drift patterns)
+- Refactoring recommendations with priorities
+- Dimension analysis (LJPW usage across codebase)
+- File and procedure rankings
+
+---
+
 ## How It Works
 
 ### The LJPW Framework
@@ -159,34 +329,46 @@ GET-TRANSACTION-HISTORY.
 
 ## Features
 
-### Current (v0.1.0)
+### Current (v0.3.0)
 
-- ✅ Fixed-format COBOL parsing
+#### Core Analysis ✅
+- ✅ Fixed-format COBOL parsing (COBOL-85 standard)
 - ✅ 120+ COBOL verbs mapped to LJPW coordinates
 - ✅ Intent extraction from procedure names
 - ✅ Execution analysis from procedure bodies
 - ✅ Disharmony calculation with severity classification
 - ✅ Example COBOL programs (harmonious & disharmonious)
 
+#### CLI & Reporting ✅
+- ✅ Command-line interface (`analyze`, `report`, `version`, `examples`)
+- ✅ Rich console output with color-coded severity levels
+- ✅ JSON export for programmatic consumption
+- ✅ SARIF export for CI/CD integration (GitHub, GitLab, Azure DevOps)
+- ✅ Suggestion engine for better procedure names
+
+#### Enterprise Features ✅
+- ✅ **Batch analysis** - Analyze entire directories of COBOL files
+- ✅ **Parallel processing** - Multi-threaded analysis for large codebases
+- ✅ **Configuration files** - `.harmonizerrc` support (JSON/YAML)
+- ✅ **Baseline comparison** - Track improvements and detect regressions
+- ✅ **Codebase mapper** - Visualize health metrics and identify hotspots
+- ✅ **Progress tracking** - Real-time feedback for long-running analyses
+
 ### Roadmap
 
-#### Phase 2 (v0.2.0)
-- [ ] Free-format COBOL support
-- [ ] COPY book resolution
-- [ ] CLI commands (`analyze`, `report`, `suggest`)
-- [ ] JSON/SARIF export for CI/CD
-
-#### Phase 3 (v0.3.0)
+#### Phase 4 (v0.4.0) - Advanced Analysis
 - [ ] PERFORM chain analysis
 - [ ] Call graph generation
-- [ ] Batch analysis for legacy codebases
-- [ ] Interactive fix suggestions
+- [ ] COPY book resolution
+- [ ] Data flow analysis
+- [ ] Free-format COBOL support
 
-#### Phase 4 (v1.0.0)
+#### Phase 5 (v1.0.0) - Production Ready
 - [ ] VS Code extension
 - [ ] Web dashboard
-- [ ] Git integration
-- [ ] Comprehensive documentation
+- [ ] Git integration with pre-commit hooks
+- [ ] Comprehensive API documentation
+- [ ] Performance optimizations for massive codebases
 
 ---
 
@@ -196,26 +378,45 @@ GET-TRANSACTION-HISTORY.
 cobol-harmonizer/
 ├── cobol_harmonizer/           # Main package
 │   ├── parser/                 # COBOL parsing
-│   │   └── cobol_parser.py
+│   │   └── cobol_parser.py     # Fixed-format COBOL parser
 │   ├── semantic/               # Semantic analysis
-│   │   ├── verb_mapper.py      # COBOL verb → LJPW mapping
-│   │   ├── intent_extractor.py # Extract intent from names
+│   │   ├── verb_mapper.py      # COBOL verb → LJPW mapping (120+ verbs)
+│   │   ├── intent_extractor.py # Extract intent from procedure names
 │   │   ├── execution_analyzer.py # Analyze procedure bodies
-│   │   └── disharmony.py       # Calculate semantic distance
+│   │   └── disharmony.py       # Calculate semantic distance & severity
 │   ├── reporter/               # Output generation
+│   │   ├── console_reporter.py # Rich terminal output
+│   │   ├── json_reporter.py    # JSON export
+│   │   └── sarif_reporter.py   # SARIF export for CI/CD
 │   ├── cli/                    # Command-line interface
+│   │   └── commands.py         # CLI commands (analyze, report, etc.)
+│   ├── batch_analyzer.py       # Batch analysis for directories
+│   ├── config.py               # Configuration file support
+│   ├── baseline.py             # Baseline comparison & regression tracking
+│   ├── codebase_mapper.py      # Legacy codebase health mapping
 │   └── utils/                  # Utilities
-├── tests/                      # Test suite
+├── tests/                      # Test suite (pytest)
+│   ├── test_verb_mapper.py
+│   ├── test_disharmony.py
+│   ├── test_json_reporter.py
+│   ├── test_batch_analyzer.py
+│   ├── test_config.py
+│   ├── test_baseline.py
+│   └── test_codebase_mapper.py
 ├── examples/                   # Example COBOL programs
-│   ├── harmonious_example.cbl  # Good examples
-│   └── disharmonious_example.cbl # Bug examples
-├── docs/                       # Documentation
-│   ├── ARCHITECTURE.md         # System design
-│   ├── COBOL_SEMANTICS.md      # COBOL-LJPW mapping
-│   ├── PHILOSOPHY.md           # LJPW framework theory
-│   └── ...                     # More docs
+│   ├── harmonious_example.cbl  # Well-aligned procedures
+│   └── disharmonious_example.cbl # Semantic bugs demonstration
+├── docs/                       # Comprehensive documentation
+│   ├── ARCHITECTURE.md         # System design & implementation
+│   ├── COBOL_SEMANTICS.md      # Complete COBOL-LJPW mapping
+│   ├── PHILOSOPHY.md           # LJPW framework philosophy
+│   ├── MATHEMATICAL_FOUNDATION.md # Mathematical proofs
+│   ├── PRACTICAL_GUIDE.md      # Real-world usage patterns
+│   └── ...                     # More documentation
 ├── requirements.txt            # Python dependencies
 ├── setup.py                    # Package setup
+├── demo.py                     # Interactive demonstration
+├── simple_test.py              # Quick smoke test
 └── README.md                   # This file
 ```
 
