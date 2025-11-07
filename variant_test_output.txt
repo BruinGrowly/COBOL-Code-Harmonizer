@@ -1,0 +1,282 @@
+================================================================================
+COBOL Code Harmonizer - Variant Detection Test
+================================================================================
+Testing 30 samples across all COBOL variants
+
+[ 1/30] Testing: payroll_legacy.cbl
+         Category: COBOL-74
+         Format: fixed (✓)
+         Standard: 85 (✗ expected 74)
+         Dialect: standard
+         Procedures: 9
+         Status: ✓ SUCCESS
+
+[ 2/30] Testing: bank_transaction.cbl
+         Category: COBOL-74
+         Format: fixed (✓)
+         Standard: 74 (✓)
+         Dialect: standard
+         Procedures: 11
+         Status: ✓ SUCCESS
+
+[ 3/30] Testing: inventory_control.cbl
+         Category: COBOL-74
+         Format: fixed (✓)
+         Standard: 74 (✓)
+         Dialect: standard
+         Procedures: 12
+         Status: ✓ SUCCESS
+
+[ 4/30] Testing: banking_system.cbl
+         Category: COBOL-85
+         Format: fixed (✓)
+         Standard: 85 (✓)
+         Dialect: standard
+         Procedures: 16
+         Status: ✓ SUCCESS
+
+[ 5/30] Testing: data_validation.cbl
+         Category: COBOL-85
+         Format: fixed (✓)
+         Standard: 85 (✓)
+         Dialect: standard
+         Procedures: 4
+         Status: ✓ SUCCESS
+
+[ 6/30] Testing: db2_client.cbl
+         Category: COBOL-85
+         Format: fixed (✓)
+         Standard: 74 (✗ expected 85)
+         Dialect: standard
+         Procedures: 2
+         Status: ✓ SUCCESS
+
+[ 7/30] Testing: json_parse.cbl
+         Category: COBOL-2014
+         Format: fixed (✓)
+         Standard: 2014 (✓)
+         Dialect: standard
+         Procedures: 3
+         Features: XML/JSON
+         Status: ✓ SUCCESS
+
+[ 8/30] Testing: customer_class.cbl
+         Category: COBOL-2002
+         Format: fixed (✓)
+         Standard: 2002 (✓)
+         Dialect: standard
+         Procedures: 12
+         Features: OOP
+         Status: ✓ SUCCESS
+
+[ 9/30] Testing: account_manager.cbl
+         Category: COBOL-2002
+         Format: fixed (✓)
+         Standard: 2002 (✓)
+         Dialect: standard
+         Procedures: 20
+         Features: OOP
+         Status: ✓ SUCCESS
+
+[10/30] Testing: order_processor.cbl
+         Category: COBOL-2002
+         Format: fixed (✓)
+         Standard: 2002 (✓)
+         Dialect: standard
+         Procedures: 13
+         Features: OOP
+         Status: ✓ SUCCESS
+
+[11/30] Testing: api_gateway.cbl
+         Category: COBOL-2014
+         Format: fixed (✓)
+         Standard: 2014 (✓)
+         Dialect: standard
+         Procedures: 50
+         Features: XML/JSON
+         Status: ✓ SUCCESS
+
+[12/30] Testing: financial_calculator.cbl
+         Category: COBOL-2014
+         Format: fixed (✓)
+         Standard: 74 (✗ expected 2014)
+         Dialect: standard
+         Procedures: 28
+         Status: ✓ SUCCESS
+
+[13/30] Testing: db2_customer_query.cbl
+         Category: IBM
+         Format: fixed (✓)
+         Standard: 85 (✓)
+         Dialect: ibm
+         Procedures: 39
+         Features: EXEC SQL
+         Status: ✓ SUCCESS
+
+[14/30] Testing: cics_transaction.cbl
+         Category: IBM
+         Format: fixed (✓)
+         Standard: 85 (✓)
+         Dialect: ibm
+         Procedures: 53
+         Features: EXEC CICS
+         Status: ✓ SUCCESS
+
+[15/30] Testing: mixed_sql_cics.cbl
+         Category: IBM
+         Format: fixed (✓)
+         Standard: 85 (✓)
+         Dialect: ibm
+         Procedures: 46
+         Features: EXEC SQL
+         Features: EXEC CICS
+         Status: ✓ SUCCESS
+
+[16/30] Testing: modern_inventory.cbl
+         Category: GnuCOBOL
+         Format: free (✓)
+         Standard: 85 (✗ expected 2002)
+         Dialect: gnu
+         Procedures: 11
+         Status: ✓ SUCCESS
+
+[17/30] Testing: web_service_handler.cbl
+         Category: GnuCOBOL
+         Format: free (✓)
+         Standard: 85 (✗ expected 2002)
+         Dialect: gnu
+         Procedures: 22
+         Status: ✓ SUCCESS
+
+[18/30] Testing: string_processor.cbl
+         Category: GnuCOBOL
+         Format: free (✓)
+         Standard: 85 (✗ expected 2002)
+         Dialect: gnu
+         Procedures: 8
+         Status: ✓ SUCCESS
+
+[19/30] Testing: dotnet_integration.cbl
+         Category: Micro Focus
+         Format: free (✓)
+         Standard: 2002 (✓)
+         Dialect: microfocus
+         Procedures: 26
+         Features: OOP
+         Status: ✓ SUCCESS
+
+[20/30] Testing: screen_handler.cbl
+         Category: Micro Focus
+         Format: fixed (✓)
+         Standard: 85 (✓)
+         Dialect: microfocus
+         Procedures: 31
+         Status: ✓ SUCCESS
+
+[21/30] Testing: mixed_format_demo.cbl
+         Category: Micro Focus
+         Format: fixed (✓)
+         Standard: 85 (✓)
+         Dialect: microfocus
+         Procedures: 28
+         Status: ✓ SUCCESS
+
+[22/30] Testing: portfolio_manager.cbl
+         Category: Financial
+         Format: fixed (✓)
+         Standard: 85 (✓)
+         Dialect: standard
+         Procedures: 21
+         Status: ✓ SUCCESS
+
+[23/30] Testing: credit_card_processor.cbl
+         Category: Financial
+         Format: fixed (✓)
+         Standard: 85 (✓)
+         Dialect: standard
+         Procedures: 38
+         Status: ✓ SUCCESS
+
+[24/30] Testing: atm_controller.cbl
+         Category: Financial
+         Format: fixed (✓)
+         Standard: 85 (✓)
+         Dialect: standard
+         Procedures: 46
+         Status: ✓ SUCCESS
+
+[25/30] Testing: claims_adjudication.cbl
+         Category: Insurance
+         Format: fixed (✓)
+         Standard: 85 (✓)
+         Dialect: standard
+         Procedures: 43
+         Status: ✓ SUCCESS
+
+[26/30] Testing: policy_administration.cbl
+         Category: Insurance
+         Format: fixed (✓)
+         Standard: 85 (✓)
+         Dialect: standard
+         Procedures: 38
+         Status: ✓ SUCCESS
+
+[27/30] Testing: premium_calculator.cbl
+         Category: Insurance
+         Format: fixed (✓)
+         Standard: 85 (✓)
+         Dialect: standard
+         Procedures: 36
+         Status: ✓ SUCCESS
+
+[28/30] Testing: tax_calculation.cbl
+         Category: Government
+         Format: fixed (✓)
+         Standard: 85 (✓)
+         Dialect: standard
+         Procedures: 32
+         Status: ✓ SUCCESS
+
+[29/30] Testing: social_security.cbl
+         Category: Government
+         Format: fixed (✓)
+         Standard: 85 (✓)
+         Dialect: standard
+         Procedures: 35
+         Status: ✓ SUCCESS
+
+[30/30] Testing: healthcare_enrollment.cbl
+         Category: Government
+         Format: fixed (✓)
+         Standard: 85 (✓)
+         Dialect: standard
+         Procedures: 45
+         Status: ✓ SUCCESS
+
+
+================================================================================
+TEST SUMMARY
+================================================================================
+
+Parsing Results:
+  Total Samples:      30
+  Successful Parses:  30 (100.0%)
+  Failed Parses:      0
+
+Detection Accuracy:
+  Format Detection:   30/30 (100.0%)
+  Standard Detection: 24/30 (80.0%)
+
+Results by Category:
+  COBOL-2002     : 3/3 samples
+  COBOL-2014     : 3/3 samples
+  COBOL-74       : 3/3 samples
+  COBOL-85       : 3/3 samples
+  Financial      : 3/3 samples
+  GnuCOBOL       : 3/3 samples
+  Government     : 3/3 samples
+  IBM            : 3/3 samples
+  Insurance      : 3/3 samples
+  Micro Focus    : 3/3 samples
+
+Detailed results saved to: variant_detection_results.json
