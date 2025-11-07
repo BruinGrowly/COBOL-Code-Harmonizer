@@ -15,6 +15,27 @@ class COBOLFormat(Enum):
     """COBOL source format types"""
     FIXED = "fixed"      # COBOL-85 standard (columns 7-72)
     FREE = "free"        # COBOL-2002+ free format
+    MIXED = "mixed"      # Mixed fixed and free (Micro Focus)
+
+
+class COBOLStandard(Enum):
+    """COBOL standard versions"""
+    COBOL_74 = "74"
+    COBOL_85 = "85"
+    COBOL_2002 = "2002"
+    COBOL_2014 = "2014"
+    COBOL_2023 = "2023"
+    UNKNOWN = "unknown"
+
+
+class COBOLDialect(Enum):
+    """COBOL implementation dialects"""
+    STANDARD = "standard"      # ISO/ANSI standard
+    IBM = "ibm"               # IBM Enterprise COBOL
+    MICRO_FOCUS = "microfocus" # Micro Focus COBOL
+    GNU = "gnu"               # GnuCOBOL
+    ACUCOBOL = "acucobol"     # ACUCOBOL-GT
+    FUJITSU = "fujitsu"       # Fujitsu NetCOBOL
 
 
 @dataclass
@@ -42,6 +63,12 @@ class COBOLProgram:
     program_id: str
     procedures: List[Procedure] = field(default_factory=list)
     source_format: COBOLFormat = COBOLFormat.FIXED
+    standard: COBOLStandard = COBOLStandard.UNKNOWN
+    dialect: COBOLDialect = COBOLDialect.STANDARD
+    has_oop_features: bool = False
+    has_exec_sql: bool = False
+    has_exec_cics: bool = False
+    has_xml_json: bool = False
 
 
 class COBOLParser:
@@ -76,6 +103,14 @@ class COBOLParser:
         """
         lines = source.split('\n')
 
+        # Check for explicit format directives
+        for line in lines[:20]:
+            line_upper = line.upper()
+            if '>>SOURCE' in line_upper and 'FREE' in line_upper:
+                return COBOLFormat.FREE
+            if '$SET' in line_upper and 'SOURCEFORMAT' in line_upper and 'FREE' in line_upper:
+                return COBOLFormat.FREE
+
         # Check for free-format indicators
         for line in lines[:50]:  # Check first 50 lines
             # Free format typically doesn't have sequence numbers in cols 1-6
@@ -87,6 +122,95 @@ class COBOLParser:
                         return COBOLFormat.FREE
 
         return COBOLFormat.FIXED
+
+    def detect_standard(self, source: str) -> COBOLStandard:
+        """
+        Detect COBOL standard version based on language features.
+
+        Args:
+            source: COBOL source code
+
+        Returns:
+            COBOLStandard enum value
+        """
+        source_upper = source.upper()
+
+        # COBOL-2023 indicators
+        if 'JSON GENERATE' in source_upper or 'JSON PARSE' in source_upper:
+            return COBOLStandard.COBOL_2014  # JSON added in 2014
+
+        # COBOL-2014 indicators
+        if 'METHOD-ID' in source_upper and 'OVERLOAD' in source_upper:
+            return COBOLStandard.COBOL_2014
+
+        # COBOL-2002 indicators
+        if any(kw in source_upper for kw in ['CLASS-ID', 'METHOD-ID', 'INVOKE', 'OBJECT REFERENCE']):
+            return COBOLStandard.COBOL_2002
+
+        if 'XML GENERATE' in source_upper or 'XML PARSE' in source_upper:
+            return COBOLStandard.COBOL_2002
+
+        # COBOL-85 indicators
+        if any(kw in source_upper for kw in ['END-IF', 'END-PERFORM', 'END-READ', 'EVALUATE']):
+            return COBOLStandard.COBOL_85
+
+        # COBOL-74 (no scope terminators, no EVALUATE)
+        if 'PROGRAM-ID' in source_upper:
+            return COBOLStandard.COBOL_74
+
+        return COBOLStandard.UNKNOWN
+
+    def detect_dialect(self, source: str) -> COBOLDialect:
+        """
+        Detect COBOL implementation dialect.
+
+        Args:
+            source: COBOL source code
+
+        Returns:
+            COBOLDialect enum value
+        """
+        source_upper = source.upper()
+
+        # IBM Enterprise COBOL indicators
+        if 'EXEC SQL' in source_upper or 'EXEC CICS' in source_upper:
+            return COBOLDialect.IBM
+
+        if 'EXEC DLI' in source_upper:
+            return COBOLDialect.IBM
+
+        # Micro Focus indicators
+        if '$SET' in source_upper or 'SOURCEFORMAT' in source_upper:
+            return COBOLDialect.MICRO_FOCUS
+
+        # GnuCOBOL indicators
+        if '>>' in source_upper and ('SOURCE' in source_upper or 'IF' in source_upper):
+            return COBOLDialect.GNU
+
+        # ACUCOBOL indicators
+        if 'C$' in source_upper:
+            return COBOLDialect.ACUCOBOL
+
+        return COBOLDialect.STANDARD
+
+    def detect_features(self, source: str) -> Dict[str, bool]:
+        """
+        Detect advanced COBOL features in source.
+
+        Args:
+            source: COBOL source code
+
+        Returns:
+            Dictionary of feature flags
+        """
+        source_upper = source.upper()
+
+        return {
+            'has_oop_features': any(kw in source_upper for kw in ['CLASS-ID', 'METHOD-ID', 'INVOKE']),
+            'has_exec_sql': 'EXEC SQL' in source_upper,
+            'has_exec_cics': 'EXEC CICS' in source_upper,
+            'has_xml_json': any(kw in source_upper for kw in ['XML GENERATE', 'XML PARSE', 'JSON GENERATE', 'JSON PARSE'])
+        }
 
     def normalize_fixed_format(self, line: str) -> str:
         """
@@ -315,8 +439,11 @@ class COBOLParser:
         Returns:
             Parsed COBOLProgram object
         """
-        # Detect format
+        # Detect format, standard, and dialect
         self.current_format = self.detect_format(source)
+        standard = self.detect_standard(source)
+        dialect = self.detect_dialect(source)
+        features = self.detect_features(source)
 
         # Preprocess
         lines = self.preprocess_source(source)
@@ -335,7 +462,10 @@ class COBOLParser:
             # No PROCEDURE DIVISION found
             return COBOLProgram(
                 program_id=program_id,
-                source_format=self.current_format
+                source_format=self.current_format,
+                standard=standard,
+                dialect=dialect,
+                **features
             )
 
         # Parse procedures
@@ -359,7 +489,10 @@ class COBOLParser:
         return COBOLProgram(
             program_id=program_id,
             procedures=procedures,
-            source_format=self.current_format
+            source_format=self.current_format,
+            standard=standard,
+            dialect=dialect,
+            **features
         )
 
     def extract_procedures(self, program: COBOLProgram) -> List[Procedure]:
