@@ -26,7 +26,7 @@ GET-CUSTOMER-RECORD.
 
 ### The Solution
 
-COBOL Code Harmonizer uses the **LJPW (Love, Justice, Power, Wisdom) framework** - a mathematically proven semantic model - to analyze your COBOL code and detect these contradictions.
+COBOL Code Harmonizer uses the **LJPW framework** - a mathematically proven semantic model - to analyze your COBOL code and detect these contradictions.
 
 ---
 
