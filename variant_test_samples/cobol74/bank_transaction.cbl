@@ -1,0 +1,119 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. BANKTRAN.
+       DATE-WRITTEN. 1979-03-15.
+      *COBOL-74 BANK TRANSACTION PROCESSOR
+      *LEGACY CODE FROM 1979
+
+       ENVIRONMENT DIVISION.
+       INPUT-OUTPUT SECTION.
+       FILE-CONTROL.
+           SELECT ACCOUNT-MASTER ASSIGN TO ACCTMAST
+               ORGANIZATION IS INDEXED
+               ACCESS IS RANDOM
+               RECORD KEY IS ACCT-NUMBER.
+           SELECT TRANSACTION-FILE ASSIGN TO TRANFILE
+               ORGANIZATION IS SEQUENTIAL.
+
+       DATA DIVISION.
+       FILE SECTION.
+       FD ACCOUNT-MASTER.
+       01 ACCOUNT-RECORD.
+           05 ACCT-NUMBER      PIC 9(10).
+           05 ACCT-NAME        PIC X(25).
+           05 ACCT-BALANCE     PIC S9(9)V99 COMP-3.
+           05 ACCT-TYPE        PIC X.
+           05 ACCT-STATUS      PIC X.
+
+       FD TRANSACTION-FILE.
+       01 TRANS-RECORD.
+           05 TRANS-ACCT       PIC 9(10).
+           05 TRANS-TYPE       PIC X.
+           05 TRANS-AMOUNT     PIC 9(7)V99.
+           05 TRANS-DATE       PIC 9(6).
+
+       WORKING-STORAGE SECTION.
+       01 WS-FLAGS.
+           05 WS-EOF           PIC X VALUE 'N'.
+           05 WS-FOUND         PIC X VALUE 'N'.
+       01 WS-COUNTERS.
+           05 WS-TRANS-COUNT   PIC 9(5) VALUE ZERO.
+           05 WS-ERROR-COUNT   PIC 9(5) VALUE ZERO.
+       01 WS-TEMP-AMOUNT       PIC S9(9)V99.
+
+       PROCEDURE DIVISION.
+       MAIN-PROCEDURE.
+           PERFORM OPEN-FILES.
+           PERFORM PROCESS-TRANSACTIONS
+               UNTIL WS-EOF = 'Y'.
+           PERFORM CLOSE-FILES.
+           PERFORM DISPLAY-SUMMARY.
+           STOP RUN.
+
+       OPEN-FILES.
+           OPEN I-O ACCOUNT-MASTER.
+           OPEN INPUT TRANSACTION-FILE.
+           PERFORM READ-TRANSACTION.
+
+       READ-TRANSACTION.
+           READ TRANSACTION-FILE
+               AT END MOVE 'Y' TO WS-EOF.
+
+       PROCESS-TRANSACTIONS.
+      *COBOL-74 STYLE - NO SCOPE TERMINATORS
+           IF WS-EOF = 'N'
+               ADD 1 TO WS-TRANS-COUNT
+               PERFORM GET-ACCOUNT
+               IF WS-FOUND = 'Y'
+                   IF TRANS-TYPE = 'D'
+                       PERFORM POST-DEPOSIT
+                   ELSE
+                       IF TRANS-TYPE = 'W'
+                           PERFORM POST-WITHDRAWAL
+                       ELSE
+                           PERFORM HANDLE-ERROR
+               ELSE
+                   PERFORM HANDLE-ERROR
+               PERFORM READ-TRANSACTION.
+
+       GET-ACCOUNT.
+           MOVE 'N' TO WS-FOUND.
+           MOVE TRANS-ACCT TO ACCT-NUMBER.
+           READ ACCOUNT-MASTER
+               INVALID KEY MOVE 'N' TO WS-FOUND
+               NOT INVALID KEY MOVE 'Y' TO WS-FOUND.
+
+       POST-DEPOSIT.
+           ADD TRANS-AMOUNT TO ACCT-BALANCE.
+           REWRITE ACCOUNT-RECORD.
+           DISPLAY 'DEPOSIT POSTED: ' TRANS-ACCT
+                   ' AMOUNT: ' TRANS-AMOUNT.
+
+       POST-WITHDRAWAL.
+           SUBTRACT TRANS-AMOUNT FROM ACCT-BALANCE
+               GIVING WS-TEMP-AMOUNT.
+           IF WS-TEMP-AMOUNT < ZERO
+               PERFORM INSUFFICIENT-FUNDS
+           ELSE
+               MOVE WS-TEMP-AMOUNT TO ACCT-BALANCE
+               REWRITE ACCOUNT-RECORD
+               DISPLAY 'WITHDRAWAL POSTED: ' TRANS-ACCT
+                       ' AMOUNT: ' TRANS-AMOUNT.
+
+       INSUFFICIENT-FUNDS.
+           ADD 1 TO WS-ERROR-COUNT.
+           DISPLAY 'INSUFFICIENT FUNDS: ' TRANS-ACCT
+                   ' BALANCE: ' ACCT-BALANCE
+                   ' REQUESTED: ' TRANS-AMOUNT.
+
+       HANDLE-ERROR.
+           ADD 1 TO WS-ERROR-COUNT.
+           DISPLAY 'ERROR PROCESSING TRANSACTION: ' TRANS-ACCT.
+
+       CLOSE-FILES.
+           CLOSE ACCOUNT-MASTER.
+           CLOSE TRANSACTION-FILE.
+
+       DISPLAY-SUMMARY.
+           DISPLAY 'TRANSACTION SUMMARY'.
+           DISPLAY 'TOTAL PROCESSED: ' WS-TRANS-COUNT.
+           DISPLAY 'ERRORS: ' WS-ERROR-COUNT.

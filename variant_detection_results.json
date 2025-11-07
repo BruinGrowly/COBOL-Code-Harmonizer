@@ -1,0 +1,579 @@
+{
+  "total_samples": 30,
+  "successful_parses": 30,
+  "failed_parses": 0,
+  "format_detection_correct": 30,
+  "standard_detection_correct": 24,
+  "detailed_results": [
+    {
+      "file": "variant_test_samples/cobol74/payroll_legacy.cbl",
+      "category": "COBOL-74",
+      "success": true,
+      "detected_format": "fixed",
+      "expected_format": "fixed",
+      "format_correct": true,
+      "detected_standard": "85",
+      "expected_standard": "74",
+      "standard_correct": false,
+      "dialect": "standard",
+      "procedures": 9,
+      "features": {
+        "oop": false,
+        "exec_sql": false,
+        "exec_cics": false,
+        "xml_json": false
+      }
+    },
+    {
+      "file": "variant_test_samples/cobol74/bank_transaction.cbl",
+      "category": "COBOL-74",
+      "success": true,
+      "detected_format": "fixed",
+      "expected_format": "fixed",
+      "format_correct": true,
+      "detected_standard": "74",
+      "expected_standard": "74",
+      "standard_correct": true,
+      "dialect": "standard",
+      "procedures": 11,
+      "features": {
+        "oop": false,
+        "exec_sql": false,
+        "exec_cics": false,
+        "xml_json": false
+      }
+    },
+    {
+      "file": "variant_test_samples/cobol74/inventory_control.cbl",
+      "category": "COBOL-74",
+      "success": true,
+      "detected_format": "fixed",
+      "expected_format": "fixed",
+      "format_correct": true,
+      "detected_standard": "74",
+      "expected_standard": "74",
+      "standard_correct": true,
+      "dialect": "standard",
+      "procedures": 12,
+      "features": {
+        "oop": false,
+        "exec_sql": false,
+        "exec_cics": false,
+        "xml_json": false
+      }
+    },
+    {
+      "file": "external_samples/banking_system.cbl",
+      "category": "COBOL-85",
+      "success": true,
+      "detected_format": "fixed",
+      "expected_format": "fixed",
+      "format_correct": true,
+      "detected_standard": "85",
+      "expected_standard": "85",
+      "standard_correct": true,
+      "dialect": "standard",
+      "procedures": 16,
+      "features": {
+        "oop": false,
+        "exec_sql": false,
+        "exec_cics": false,
+        "xml_json": false
+      }
+    },
+    {
+      "file": "external_samples/data_validation.cbl",
+      "category": "COBOL-85",
+      "success": true,
+      "detected_format": "fixed",
+      "expected_format": "fixed",
+      "format_correct": true,
+      "detected_standard": "85",
+      "expected_standard": "85",
+      "standard_correct": true,
+      "dialect": "standard",
+      "procedures": 4,
+      "features": {
+        "oop": false,
+        "exec_sql": false,
+        "exec_cics": false,
+        "xml_json": false
+      }
+    },
+    {
+      "file": "external_samples/db2_client.cbl",
+      "category": "COBOL-85",
+      "success": true,
+      "detected_format": "fixed",
+      "expected_format": "fixed",
+      "format_correct": true,
+      "detected_standard": "74",
+      "expected_standard": "85",
+      "standard_correct": false,
+      "dialect": "standard",
+      "procedures": 2,
+      "features": {
+        "oop": false,
+        "exec_sql": false,
+        "exec_cics": false,
+        "xml_json": false
+      }
+    },
+    {
+      "file": "external_samples/json_parse.cbl",
+      "category": "COBOL-2014",
+      "success": true,
+      "detected_format": "fixed",
+      "expected_format": "fixed",
+      "format_correct": true,
+      "detected_standard": "2014",
+      "expected_standard": "2014",
+      "standard_correct": true,
+      "dialect": "standard",
+      "procedures": 3,
+      "features": {
+        "oop": false,
+        "exec_sql": false,
+        "exec_cics": false,
+        "xml_json": true
+      }
+    },
+    {
+      "file": "variant_test_samples/cobol2002_oop/customer_class.cbl",
+      "category": "COBOL-2002",
+      "success": true,
+      "detected_format": "fixed",
+      "expected_format": "fixed",
+      "format_correct": true,
+      "detected_standard": "2002",
+      "expected_standard": "2002",
+      "standard_correct": true,
+      "dialect": "standard",
+      "procedures": 12,
+      "features": {
+        "oop": true,
+        "exec_sql": false,
+        "exec_cics": false,
+        "xml_json": false
+      }
+    },
+    {
+      "file": "variant_test_samples/cobol2002_oop/account_manager.cbl",
+      "category": "COBOL-2002",
+      "success": true,
+      "detected_format": "fixed",
+      "expected_format": "fixed",
+      "format_correct": true,
+      "detected_standard": "2002",
+      "expected_standard": "2002",
+      "standard_correct": true,
+      "dialect": "standard",
+      "procedures": 20,
+      "features": {
+        "oop": true,
+        "exec_sql": false,
+        "exec_cics": false,
+        "xml_json": false
+      }
+    },
+    {
+      "file": "variant_test_samples/cobol2002_oop/order_processor.cbl",
+      "category": "COBOL-2002",
+      "success": true,
+      "detected_format": "fixed",
+      "expected_format": "fixed",
+      "format_correct": true,
+      "detected_standard": "2002",
+      "expected_standard": "2002",
+      "standard_correct": true,
+      "dialect": "standard",
+      "procedures": 13,
+      "features": {
+        "oop": true,
+        "exec_sql": false,
+        "exec_cics": false,
+        "xml_json": false
+      }
+    },
+    {
+      "file": "variant_test_samples/cobol2014/api_gateway.cbl",
+      "category": "COBOL-2014",
+      "success": true,
+      "detected_format": "fixed",
+      "expected_format": "fixed",
+      "format_correct": true,
+      "detected_standard": "2014",
+      "expected_standard": "2014",
+      "standard_correct": true,
+      "dialect": "standard",
+      "procedures": 50,
+      "features": {
+        "oop": false,
+        "exec_sql": false,
+        "exec_cics": false,
+        "xml_json": true
+      }
+    },
+    {
+      "file": "variant_test_samples/cobol2014/financial_calculator.cbl",
+      "category": "COBOL-2014",
+      "success": true,
+      "detected_format": "fixed",
+      "expected_format": "fixed",
+      "format_correct": true,
+      "detected_standard": "74",
+      "expected_standard": "2014",
+      "standard_correct": false,
+      "dialect": "standard",
+      "procedures": 28,
+      "features": {
+        "oop": false,
+        "exec_sql": false,
+        "exec_cics": false,
+        "xml_json": false
+      }
+    },
+    {
+      "file": "variant_test_samples/ibm_mainframe/db2_customer_query.cbl",
+      "category": "IBM",
+      "success": true,
+      "detected_format": "fixed",
+      "expected_format": "fixed",
+      "format_correct": true,
+      "detected_standard": "85",
+      "expected_standard": "85",
+      "standard_correct": true,
+      "dialect": "ibm",
+      "procedures": 39,
+      "features": {
+        "oop": false,
+        "exec_sql": true,
+        "exec_cics": false,
+        "xml_json": false
+      }
+    },
+    {
+      "file": "variant_test_samples/ibm_mainframe/cics_transaction.cbl",
+      "category": "IBM",
+      "success": true,
+      "detected_format": "fixed",
+      "expected_format": "fixed",
+      "format_correct": true,
+      "detected_standard": "85",
+      "expected_standard": "85",
+      "standard_correct": true,
+      "dialect": "ibm",
+      "procedures": 53,
+      "features": {
+        "oop": false,
+        "exec_sql": false,
+        "exec_cics": true,
+        "xml_json": false
+      }
+    },
+    {
+      "file": "variant_test_samples/ibm_mainframe/mixed_sql_cics.cbl",
+      "category": "IBM",
+      "success": true,
+      "detected_format": "fixed",
+      "expected_format": "fixed",
+      "format_correct": true,
+      "detected_standard": "85",
+      "expected_standard": "85",
+      "standard_correct": true,
+      "dialect": "ibm",
+      "procedures": 46,
+      "features": {
+        "oop": false,
+        "exec_sql": true,
+        "exec_cics": true,
+        "xml_json": false
+      }
+    },
+    {
+      "file": "variant_test_samples/gnucobol/modern_inventory.cbl",
+      "category": "GnuCOBOL",
+      "success": true,
+      "detected_format": "free",
+      "expected_format": "free",
+      "format_correct": true,
+      "detected_standard": "85",
+      "expected_standard": "2002",
+      "standard_correct": false,
+      "dialect": "gnu",
+      "procedures": 11,
+      "features": {
+        "oop": false,
+        "exec_sql": false,
+        "exec_cics": false,
+        "xml_json": false
+      }
+    },
+    {
+      "file": "variant_test_samples/gnucobol/web_service_handler.cbl",
+      "category": "GnuCOBOL",
+      "success": true,
+      "detected_format": "free",
+      "expected_format": "free",
+      "format_correct": true,
+      "detected_standard": "85",
+      "expected_standard": "2002",
+      "standard_correct": false,
+      "dialect": "gnu",
+      "procedures": 22,
+      "features": {
+        "oop": false,
+        "exec_sql": false,
+        "exec_cics": false,
+        "xml_json": false
+      }
+    },
+    {
+      "file": "variant_test_samples/gnucobol/string_processor.cbl",
+      "category": "GnuCOBOL",
+      "success": true,
+      "detected_format": "free",
+      "expected_format": "free",
+      "format_correct": true,
+      "detected_standard": "85",
+      "expected_standard": "2002",
+      "standard_correct": false,
+      "dialect": "gnu",
+      "procedures": 8,
+      "features": {
+        "oop": false,
+        "exec_sql": false,
+        "exec_cics": false,
+        "xml_json": false
+      }
+    },
+    {
+      "file": "variant_test_samples/micro_focus/dotnet_integration.cbl",
+      "category": "Micro Focus",
+      "success": true,
+      "detected_format": "free",
+      "expected_format": "free",
+      "format_correct": true,
+      "detected_standard": "2002",
+      "expected_standard": "2002",
+      "standard_correct": true,
+      "dialect": "microfocus",
+      "procedures": 26,
+      "features": {
+        "oop": true,
+        "exec_sql": false,
+        "exec_cics": false,
+        "xml_json": false
+      }
+    },
+    {
+      "file": "variant_test_samples/micro_focus/screen_handler.cbl",
+      "category": "Micro Focus",
+      "success": true,
+      "detected_format": "fixed",
+      "expected_format": "fixed",
+      "format_correct": true,
+      "detected_standard": "85",
+      "expected_standard": "85",
+      "standard_correct": true,
+      "dialect": "microfocus",
+      "procedures": 31,
+      "features": {
+        "oop": false,
+        "exec_sql": false,
+        "exec_cics": false,
+        "xml_json": false
+      }
+    },
+    {
+      "file": "variant_test_samples/micro_focus/mixed_format_demo.cbl",
+      "category": "Micro Focus",
+      "success": true,
+      "detected_format": "fixed",
+      "expected_format": "fixed",
+      "format_correct": true,
+      "detected_standard": "85",
+      "expected_standard": "85",
+      "standard_correct": true,
+      "dialect": "microfocus",
+      "procedures": 28,
+      "features": {
+        "oop": false,
+        "exec_sql": false,
+        "exec_cics": false,
+        "xml_json": false
+      }
+    },
+    {
+      "file": "variant_test_samples/financial_services/portfolio_manager.cbl",
+      "category": "Financial",
+      "success": true,
+      "detected_format": "fixed",
+      "expected_format": "fixed",
+      "format_correct": true,
+      "detected_standard": "85",
+      "expected_standard": "85",
+      "standard_correct": true,
+      "dialect": "standard",
+      "procedures": 21,
+      "features": {
+        "oop": false,
+        "exec_sql": false,
+        "exec_cics": false,
+        "xml_json": false
+      }
+    },
+    {
+      "file": "variant_test_samples/financial_services/credit_card_processor.cbl",
+      "category": "Financial",
+      "success": true,
+      "detected_format": "fixed",
+      "expected_format": "fixed",
+      "format_correct": true,
+      "detected_standard": "85",
+      "expected_standard": "85",
+      "standard_correct": true,
+      "dialect": "standard",
+      "procedures": 38,
+      "features": {
+        "oop": false,
+        "exec_sql": false,
+        "exec_cics": false,
+        "xml_json": false
+      }
+    },
+    {
+      "file": "variant_test_samples/financial_services/atm_controller.cbl",
+      "category": "Financial",
+      "success": true,
+      "detected_format": "fixed",
+      "expected_format": "fixed",
+      "format_correct": true,
+      "detected_standard": "85",
+      "expected_standard": "85",
+      "standard_correct": true,
+      "dialect": "standard",
+      "procedures": 46,
+      "features": {
+        "oop": false,
+        "exec_sql": false,
+        "exec_cics": false,
+        "xml_json": false
+      }
+    },
+    {
+      "file": "variant_test_samples/insurance/claims_adjudication.cbl",
+      "category": "Insurance",
+      "success": true,
+      "detected_format": "fixed",
+      "expected_format": "fixed",
+      "format_correct": true,
+      "detected_standard": "85",
+      "expected_standard": "85",
+      "standard_correct": true,
+      "dialect": "standard",
+      "procedures": 43,
+      "features": {
+        "oop": false,
+        "exec_sql": false,
+        "exec_cics": false,
+        "xml_json": false
+      }
+    },
+    {
+      "file": "variant_test_samples/insurance/policy_administration.cbl",
+      "category": "Insurance",
+      "success": true,
+      "detected_format": "fixed",
+      "expected_format": "fixed",
+      "format_correct": true,
+      "detected_standard": "85",
+      "expected_standard": "85",
+      "standard_correct": true,
+      "dialect": "standard",
+      "procedures": 38,
+      "features": {
+        "oop": false,
+        "exec_sql": false,
+        "exec_cics": false,
+        "xml_json": false
+      }
+    },
+    {
+      "file": "variant_test_samples/insurance/premium_calculator.cbl",
+      "category": "Insurance",
+      "success": true,
+      "detected_format": "fixed",
+      "expected_format": "fixed",
+      "format_correct": true,
+      "detected_standard": "85",
+      "expected_standard": "85",
+      "standard_correct": true,
+      "dialect": "standard",
+      "procedures": 36,
+      "features": {
+        "oop": false,
+        "exec_sql": false,
+        "exec_cics": false,
+        "xml_json": false
+      }
+    },
+    {
+      "file": "variant_test_samples/government/tax_calculation.cbl",
+      "category": "Government",
+      "success": true,
+      "detected_format": "fixed",
+      "expected_format": "fixed",
+      "format_correct": true,
+      "detected_standard": "85",
+      "expected_standard": "85",
+      "standard_correct": true,
+      "dialect": "standard",
+      "procedures": 32,
+      "features": {
+        "oop": false,
+        "exec_sql": false,
+        "exec_cics": false,
+        "xml_json": false
+      }
+    },
+    {
+      "file": "variant_test_samples/government/social_security.cbl",
+      "category": "Government",
+      "success": true,
+      "detected_format": "fixed",
+      "expected_format": "fixed",
+      "format_correct": true,
+      "detected_standard": "85",
+      "expected_standard": "85",
+      "standard_correct": true,
+      "dialect": "standard",
+      "procedures": 35,
+      "features": {
+        "oop": false,
+        "exec_sql": false,
+        "exec_cics": false,
+        "xml_json": false
+      }
+    },
+    {
+      "file": "variant_test_samples/government/healthcare_enrollment.cbl",
+      "category": "Government",
+      "success": true,
+      "detected_format": "fixed",
+      "expected_format": "fixed",
+      "format_correct": true,
+      "detected_standard": "85",
+      "expected_standard": "85",
+      "standard_correct": true,
+      "dialect": "standard",
+      "procedures": 45,
+      "features": {
+        "oop": false,
+        "exec_sql": false,
+        "exec_cics": false,
+        "xml_json": false
+      }
+    }
+  ]
+}
