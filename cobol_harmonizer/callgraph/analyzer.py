@@ -56,22 +56,20 @@ class CallGraphAnalyzer:
         if not target_node:
             raise ValueError(f"Node not found: {target_node_id}")
 
-        analysis = ImpactAnalysis(
-            target_node=target_node_id,
-            target_name=target_node.name
-        )
+        analysis = ImpactAnalysis(target_node=target_node_id, target_name=target_node.name)
 
         # Find directly affected nodes (direct callers)
         analysis.directly_affected = self.graph.get_callers(target_node_id)
 
         # Find transitively affected nodes (indirect callers)
         analysis.transitively_affected = self._find_transitive_callers(
-            target_node_id,
-            exclude=set(analysis.directly_affected)
+            target_node_id, exclude=set(analysis.directly_affected)
         )
 
         # Calculate total impact
-        analysis.total_impact = len(analysis.directly_affected) + len(analysis.transitively_affected)
+        analysis.total_impact = len(analysis.directly_affected) + len(
+            analysis.transitively_affected
+        )
 
         # Calculate risk score
         analysis.risk_score = self._calculate_risk_score(target_node, analysis)
@@ -142,12 +140,12 @@ class CallGraphAnalyzer:
         fan_in = target_node.metrics.fan_in
         if fan_in > 0:
             # Logarithmic scale: 1 caller = 10, 10 callers = 30, 100+ callers = 40
-            score += min(40, 10 + (10 * (fan_in ** 0.5)))
+            score += min(40, 10 + (10 * (fan_in**0.5)))
 
         # Factor 2: Total impact (direct + transitive) - 30 points max
         if analysis.total_impact > 0:
             # Logarithmic scale for impact
-            score += min(30, 10 + (5 * (analysis.total_impact ** 0.5)))
+            score += min(30, 10 + (5 * (analysis.total_impact**0.5)))
 
         # Factor 3: Depth (how deep in call graph) - 10 points max
         # Deeper nodes are riskier (harder to test)
@@ -210,7 +208,9 @@ class CallGraphAnalyzer:
 
         return warnings
 
-    def _generate_recommendations(self, target_node: GraphNode, analysis: ImpactAnalysis) -> List[str]:
+    def _generate_recommendations(
+        self, target_node: GraphNode, analysis: ImpactAnalysis
+    ) -> List[str]:
         """Generate recommendations for safe changes"""
         recommendations = []
 
@@ -382,10 +382,10 @@ class CallGraphAnalyzer:
             Dictionary with 'callers' and 'callees' lists
         """
         return {
-            'callers': self.graph.get_callers(node_id),
-            'callees': self.graph.get_callees(node_id),
-            'transitive_callers': self._find_transitive_callers(node_id, set()),
-            'transitive_callees': self._find_transitive_callees(node_id),
+            "callers": self.graph.get_callers(node_id),
+            "callees": self.graph.get_callees(node_id),
+            "transitive_callers": self._find_transitive_callers(node_id, set()),
+            "transitive_callees": self._find_transitive_callees(node_id),
         }
 
     def _find_transitive_callees(self, node_id: str) -> List[str]:

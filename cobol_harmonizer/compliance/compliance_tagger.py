@@ -15,6 +15,7 @@ from .models import ComplianceFramework, ComplianceRule
 
 class ComplianceTag(Enum):
     """Compliance tags for procedures"""
+
     # Financial regulations
     SOX_FINANCIAL_REPORTING = "sox_financial_reporting"
     SOX_ACCESS_CONTROL = "sox_access_control"
@@ -54,6 +55,7 @@ class ComplianceTag(Enum):
 
 class ComplianceLevel(Enum):
     """Compliance criticality level"""
+
     CRITICAL = "critical"  # SOX, PCI, highly regulated
     HIGH = "high"  # Important compliance requirements
     MEDIUM = "medium"  # Standard compliance
@@ -85,7 +87,7 @@ class ComplianceTagger:
                 name="Financial Reporting Procedures",
                 description="Procedures that generate financial reports",
                 severity="critical",
-                applies_to=["*REPORT*", "*FINANCIAL*", "*BALANCE*", "*STATEMENT*", "*GL*"]
+                applies_to=["*REPORT*", "*FINANCIAL*", "*BALANCE*", "*STATEMENT*", "*GL*"],
             ),
             ComplianceRule(
                 rule_id="SOX-002",
@@ -93,9 +95,8 @@ class ComplianceTagger:
                 name="Access Control",
                 description="Procedures that control access to financial data",
                 severity="critical",
-                applies_to=["*AUTH*", "*LOGIN*", "*ACCESS*", "*PERMISSION*"]
+                applies_to=["*AUTH*", "*LOGIN*", "*ACCESS*", "*PERMISSION*"],
             ),
-
             # Payment processing (PCI-DSS)
             ComplianceRule(
                 rule_id="PCI-001",
@@ -103,7 +104,7 @@ class ComplianceTagger:
                 name="Cardholder Data Handling",
                 description="Procedures that process credit card data",
                 severity="critical",
-                applies_to=["*CARD*", "*PAYMENT*", "*PAN*", "*CVV*", "*CHARGE*"]
+                applies_to=["*CARD*", "*PAYMENT*", "*PAN*", "*CVV*", "*CHARGE*"],
             ),
             ComplianceRule(
                 rule_id="PCI-002",
@@ -111,9 +112,8 @@ class ComplianceTagger:
                 name="Encryption Requirements",
                 description="Procedures that encrypt sensitive data",
                 severity="high",
-                applies_to=["*ENCRYPT*", "*DECRYPT*", "*HASH*", "*SECURE*"]
+                applies_to=["*ENCRYPT*", "*DECRYPT*", "*HASH*", "*SECURE*"],
             ),
-
             # Data protection (GDPR)
             ComplianceRule(
                 rule_id="GDPR-001",
@@ -121,7 +121,7 @@ class ComplianceTagger:
                 name="Personal Data Processing",
                 description="Procedures that handle personal data",
                 severity="high",
-                applies_to=["*CUSTOMER*", "*PERSONAL*", "*PROFILE*", "*CONTACT*"]
+                applies_to=["*CUSTOMER*", "*PERSONAL*", "*PROFILE*", "*CONTACT*"],
             ),
             ComplianceRule(
                 rule_id="GDPR-002",
@@ -129,9 +129,8 @@ class ComplianceTagger:
                 name="Right to Erasure",
                 description="Procedures that delete personal data",
                 severity="high",
-                applies_to=["*DELETE-CUSTOMER*", "*REMOVE-PERSONAL*", "*PURGE*"]
+                applies_to=["*DELETE-CUSTOMER*", "*REMOVE-PERSONAL*", "*PURGE*"],
             ),
-
             # General security
             ComplianceRule(
                 rule_id="SEC-001",
@@ -139,7 +138,7 @@ class ComplianceTagger:
                 name="Authentication",
                 description="Procedures that authenticate users",
                 severity="critical",
-                applies_to=["*LOGIN*", "*AUTH*", "*VALIDATE-USER*", "*PASSWORD*"]
+                applies_to=["*LOGIN*", "*AUTH*", "*VALIDATE-USER*", "*PASSWORD*"],
             ),
             ComplianceRule(
                 rule_id="SEC-002",
@@ -147,7 +146,7 @@ class ComplianceTagger:
                 name="Data Modification",
                 description="Procedures that modify critical data",
                 severity="high",
-                applies_to=["*UPDATE*", "*MODIFY*", "*DELETE*", "*WRITE*"]
+                applies_to=["*UPDATE*", "*MODIFY*", "*DELETE*", "*WRITE*"],
             ),
         ]
 
@@ -155,7 +154,7 @@ class ComplianceTagger:
         self,
         procedure_name: str,
         verbs: Optional[List[str]] = None,
-        files_accessed: Optional[List[str]] = None
+        files_accessed: Optional[List[str]] = None,
     ) -> Set[ComplianceTag]:
         """
         Tag a procedure based on its characteristics.
@@ -197,47 +196,50 @@ class ComplianceTagger:
         name_upper = procedure_name.upper()
 
         # Financial patterns
-        if any(kw in name_upper for kw in ['REPORT', 'FINANCIAL', 'BALANCE', 'STATEMENT', 'GL', 'LEDGER']):
+        if any(
+            kw in name_upper
+            for kw in ["REPORT", "FINANCIAL", "BALANCE", "STATEMENT", "GL", "LEDGER"]
+        ):
             tags.add(ComplianceTag.SOX_FINANCIAL_REPORTING)
 
-        if any(kw in name_upper for kw in ['TRANSACTION', 'DEBIT', 'CREDIT', 'TRANSFER']):
+        if any(kw in name_upper for kw in ["TRANSACTION", "DEBIT", "CREDIT", "TRANSFER"]):
             tags.add(ComplianceTag.FINANCIAL_TRANSACTION)
 
         # Payment patterns
-        if any(kw in name_upper for kw in ['CARD', 'PAYMENT', 'PAN', 'CVV', 'CHARGE']):
+        if any(kw in name_upper for kw in ["CARD", "PAYMENT", "PAN", "CVV", "CHARGE"]):
             tags.add(ComplianceTag.PCI_CARDHOLDER_DATA)
             tags.add(ComplianceTag.PAYMENT_PROCESSING)
 
         # Security patterns
-        if any(kw in name_upper for kw in ['LOGIN', 'AUTH', 'PASSWORD', 'CREDENTIAL']):
+        if any(kw in name_upper for kw in ["LOGIN", "AUTH", "PASSWORD", "CREDENTIAL"]):
             tags.add(ComplianceTag.AUTHENTICATION)
             tags.add(ComplianceTag.SOX_ACCESS_CONTROL)
 
-        if any(kw in name_upper for kw in ['ENCRYPT', 'DECRYPT', 'HASH', 'SECURE']):
+        if any(kw in name_upper for kw in ["ENCRYPT", "DECRYPT", "HASH", "SECURE"]):
             tags.add(ComplianceTag.ENCRYPTION)
             tags.add(ComplianceTag.PCI_ENCRYPTION)
 
-        if any(kw in name_upper for kw in ['AUDIT', 'LOG']):
+        if any(kw in name_upper for kw in ["AUDIT", "LOG"]):
             tags.add(ComplianceTag.AUDIT_LOGGING)
             tags.add(ComplianceTag.SOX_AUDIT_TRAIL)
 
         # Data protection patterns
-        if any(kw in name_upper for kw in ['CUSTOMER', 'PERSONAL', 'PROFILE', 'CONTACT']):
+        if any(kw in name_upper for kw in ["CUSTOMER", "PERSONAL", "PROFILE", "CONTACT"]):
             tags.add(ComplianceTag.CUSTOMER_DATA)
             tags.add(ComplianceTag.GDPR_PERSONAL_DATA)
 
         # Data operations
-        if any(kw in name_upper for kw in ['DELETE', 'REMOVE', 'PURGE']):
+        if any(kw in name_upper for kw in ["DELETE", "REMOVE", "PURGE"]):
             tags.add(ComplianceTag.DATA_DELETION)
-            if 'CUSTOMER' in name_upper or 'PERSONAL' in name_upper:
+            if "CUSTOMER" in name_upper or "PERSONAL" in name_upper:
                 tags.add(ComplianceTag.GDPR_DATA_DELETION)
 
-        if any(kw in name_upper for kw in ['EXPORT', 'EXTRACT', 'DOWNLOAD']):
+        if any(kw in name_upper for kw in ["EXPORT", "EXTRACT", "DOWNLOAD"]):
             tags.add(ComplianceTag.DATA_EXPORT)
-            if 'CUSTOMER' in name_upper or 'PERSONAL' in name_upper:
+            if "CUSTOMER" in name_upper or "PERSONAL" in name_upper:
                 tags.add(ComplianceTag.GDPR_DATA_EXPORT)
 
-        if any(kw in name_upper for kw in ['UPDATE', 'MODIFY', 'CHANGE']):
+        if any(kw in name_upper for kw in ["UPDATE", "MODIFY", "CHANGE"]):
             tags.add(ComplianceTag.DATA_MODIFICATION)
 
         return tags
@@ -248,15 +250,15 @@ class ComplianceTagger:
         verbs_upper = [v.upper() for v in verbs]
 
         # Data deletion operations
-        if 'DELETE' in verbs_upper:
+        if "DELETE" in verbs_upper:
             tags.add(ComplianceTag.DATA_DELETION)
 
         # Data modification operations
-        if any(v in verbs_upper for v in ['WRITE', 'REWRITE', 'UPDATE']):
+        if any(v in verbs_upper for v in ["WRITE", "REWRITE", "UPDATE"]):
             tags.add(ComplianceTag.DATA_MODIFICATION)
 
         # Audit trail operations
-        if any(v in verbs_upper for v in ['DISPLAY', 'WRITE']) and 'AUDIT' in ' '.join(verbs_upper):
+        if any(v in verbs_upper for v in ["DISPLAY", "WRITE"]) and "AUDIT" in " ".join(verbs_upper):
             tags.add(ComplianceTag.AUDIT_LOGGING)
 
         return tags
@@ -269,22 +271,22 @@ class ComplianceTagger:
             file_upper = file_name.upper()
 
             # Customer data files
-            if any(kw in file_upper for kw in ['CUSTOMER', 'CLIENT', 'ACCOUNT']):
+            if any(kw in file_upper for kw in ["CUSTOMER", "CLIENT", "ACCOUNT"]):
                 tags.add(ComplianceTag.CUSTOMER_DATA)
                 tags.add(ComplianceTag.GDPR_PERSONAL_DATA)
 
             # Financial files
-            if any(kw in file_upper for kw in ['TRANSACTION', 'LEDGER', 'GL', 'BALANCE']):
+            if any(kw in file_upper for kw in ["TRANSACTION", "LEDGER", "GL", "BALANCE"]):
                 tags.add(ComplianceTag.FINANCIAL_TRANSACTION)
                 tags.add(ComplianceTag.SOX_FINANCIAL_REPORTING)
 
             # Payment files
-            if any(kw in file_upper for kw in ['CARD', 'PAYMENT', 'CHARGE']):
+            if any(kw in file_upper for kw in ["CARD", "PAYMENT", "CHARGE"]):
                 tags.add(ComplianceTag.PAYMENT_PROCESSING)
                 tags.add(ComplianceTag.PCI_CARDHOLDER_DATA)
 
             # Audit files
-            if 'AUDIT' in file_upper or 'LOG' in file_upper:
+            if "AUDIT" in file_upper or "LOG" in file_upper:
                 tags.add(ComplianceTag.AUDIT_LOGGING)
 
         return tags
@@ -363,14 +365,13 @@ class ComplianceTagger:
             tags_by_procedure: Dictionary mapping procedure names to tags
         """
         data = {
-            'generated_at': str(Path(file_path).stat().st_mtime),
-            'procedures': {
-                proc: [tag.value for tag in tags]
-                for proc, tags in tags_by_procedure.items()
-            }
+            "generated_at": str(Path(file_path).stat().st_mtime),
+            "procedures": {
+                proc: [tag.value for tag in tags] for proc, tags in tags_by_procedure.items()
+            },
         }
 
-        with open(file_path, 'w') as f:
+        with open(file_path, "w") as f:
             json.dump(data, f, indent=2)
 
     def load_tags(self, file_path: str) -> Dict[str, Set[ComplianceTag]]:
@@ -383,13 +384,11 @@ class ComplianceTagger:
         Returns:
             Dictionary mapping procedure names to tags
         """
-        with open(file_path, 'r') as f:
+        with open(file_path, "r") as f:
             data = json.load(f)
 
         tags_by_procedure = {}
-        for proc, tag_values in data.get('procedures', {}).items():
-            tags_by_procedure[proc] = {
-                ComplianceTag(tag_val) for tag_val in tag_values
-            }
+        for proc, tag_values in data.get("procedures", {}).items():
+            tags_by_procedure[proc] = {ComplianceTag(tag_val) for tag_val in tag_values}
 
         return tags_by_procedure

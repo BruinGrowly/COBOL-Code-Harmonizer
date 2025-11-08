@@ -28,7 +28,7 @@ from cobol_harmonizer.compliance import (
     ComplianceRiskAssessor,
     AuditLogger,
     AuditEvent,
-    AuditAction
+    AuditAction,
 )
 
 
@@ -90,23 +90,27 @@ class TestIBMDeploymentReadiness:
             tmppath = Path(tmpdir)
 
             # Create test files
-            (tmppath / "harmonious.cbl").write_text("""
+            (tmppath / "harmonious.cbl").write_text(
+                """
        IDENTIFICATION DIVISION.
        PROGRAM-ID. HARMONIOUS.
        PROCEDURE DIVISION.
        CALCULATE-TOTAL.
            COMPUTE WS-TOTAL = WS-A + WS-B.
        STOP RUN.
-            """)
+            """
+            )
 
-            (tmppath / "disharmonious.cbl").write_text("""
+            (tmppath / "disharmonious.cbl").write_text(
+                """
        IDENTIFICATION DIVISION.
        PROGRAM-ID. DISHARMONIOUS.
        PROCEDURE DIVISION.
        DISPLAY-INFO.
            DELETE CUSTOMER-FILE RECORD.
        STOP RUN.
-            """)
+            """
+            )
 
             # Define analyzer function
             def semantic_analyzer(file_path: str) -> dict:
@@ -122,12 +126,9 @@ class TestIBMDeploymentReadiness:
                     intent = intent_extractor.extract_intent(proc.name)
                     execution = execution_analyzer.analyze_procedure(proc)
                     score = calculator.calculate(intent, execution)
-                    results.append({
-                        'name': proc.name,
-                        'score': score
-                    })
+                    results.append({"name": proc.name, "score": score})
 
-                return {'procedures': results}
+                return {"procedures": results}
 
             # Run batch analysis
             files = [str(f) for f in tmppath.glob("*.cbl")]
@@ -144,9 +145,7 @@ class TestIBMDeploymentReadiness:
 
         # Test payment processing procedure
         tags = tagger.tag_procedure(
-            "PROCESS-CREDIT-CARD",
-            verbs=["READ", "WRITE"],
-            files_accessed=["CARD-FILE"]
+            "PROCESS-CREDIT-CARD", verbs=["READ", "WRITE"], files_accessed=["CARD-FILE"]
         )
 
         # Tags are enums, check the enum values
@@ -161,11 +160,11 @@ class TestIBMDeploymentReadiness:
             procedure_name="DELETE-CUSTOMER-DATA",
             file_path="customer.cbl",
             disharmony_score=1.3,
-            disharmony_level="critical"
+            disharmony_level="critical",
         )
 
         # Risk level values are lowercase
-        assert risk.risk_level.value in ['critical', 'high']
+        assert risk.risk_level.value in ["critical", "high"]
         assert risk.risk_score >= 60  # High risk score
 
     def test_06_audit_logging(self):
@@ -183,7 +182,7 @@ class TestIBMDeploymentReadiness:
 
             # Verify audit logging works (logger should have processed the event)
             # The logger creates audit files, so just verifying no errors
-            assert True,  "Audit logging completed successfully"
+            assert True, "Audit logging completed successfully"
 
     def test_07_vscode_extension_test_files_exist(self):
         """Verify VS Code extension test files exist"""
@@ -192,7 +191,7 @@ class TestIBMDeploymentReadiness:
             "vscode-extension/test-files/minor-drift.cbl",
             "vscode-extension/test-files/concerning.cbl",
             "vscode-extension/test-files/significant.cbl",
-            "vscode-extension/test-files/critical.cbl"
+            "vscode-extension/test-files/critical.cbl",
         ]
 
         for file_path in test_files:
@@ -210,7 +209,7 @@ class TestIBMDeploymentReadiness:
             "jcl/HARMONIZ.jcl",
             "jcl/SOXAUDIT.jcl",
             "jcl/NIGHTLY.jcl",
-            "jcl/harmonizer_wrapper.sh"
+            "jcl/harmonizer_wrapper.sh",
         ]
 
         for file_path in jcl_files:
@@ -224,7 +223,7 @@ class TestIBMDeploymentReadiness:
             "docs/IBM_MAINFRAME_INTEGRATION.md",
             "docs/IBM_DEPLOYMENT_CHECKLIST.md",
             "docs/ARCHITECTURE.md",
-            "docs/COMPLIANCE_FEATURES.md"
+            "docs/COMPLIANCE_FEATURES.md",
         ]
 
         for doc_path in docs:
@@ -240,7 +239,8 @@ class TestIBMDeploymentReadiness:
         with tempfile.TemporaryDirectory() as tmpdir:
             # 1. Create COBOL file
             cobol_file = Path(tmpdir) / "test.cbl"
-            cobol_file.write_text("""
+            cobol_file.write_text(
+                """
        IDENTIFICATION DIVISION.
        PROGRAM-ID. END-TO-END-TEST.
        DATA DIVISION.
@@ -256,7 +256,8 @@ class TestIBMDeploymentReadiness:
        CALCULATE-TOTAL.
            COMPUTE WS-BALANCE = WS-BALANCE + 100.
        STOP RUN.
-            """)
+            """
+            )
 
             # 2. Parse
             parser = COBOLParser()
@@ -276,28 +277,28 @@ class TestIBMDeploymentReadiness:
                 execution = execution_analyzer.analyze_procedure(proc)
                 score = calculator.calculate(intent, execution)
 
-                results.append({
-                    'procedure': proc.name,
-                    'score': score,
-                    'intent': intent,
-                    'execution': execution
-                })
+                results.append(
+                    {
+                        "procedure": proc.name,
+                        "score": score,
+                        "intent": intent,
+                        "execution": execution,
+                    }
+                )
 
             # 4. Verify results
             # VALIDATE-CUSTOMER with DELETE should show disharmony (>0.5)
-            validate_proc = [r for r in results if r['procedure'] == 'VALIDATE-CUSTOMER'][0]
-            assert validate_proc['score'] > 0.5, "Should detect VALIDATE doing DELETE"
+            validate_proc = [r for r in results if r["procedure"] == "VALIDATE-CUSTOMER"][0]
+            assert validate_proc["score"] > 0.5, "Should detect VALIDATE doing DELETE"
 
             # CALCULATE-TOTAL should be harmonious
-            calculate_proc = [r for r in results if r['procedure'] == 'CALCULATE-TOTAL'][0]
-            assert calculate_proc['score'] < 0.5, "CALCULATE should be harmonious"
+            calculate_proc = [r for r in results if r["procedure"] == "CALCULATE-TOTAL"][0]
+            assert calculate_proc["score"] < 0.5, "CALCULATE should be harmonious"
 
             # 5. Compliance check
             tagger = ComplianceTagger()
             tags = tagger.tag_procedure(
-                "VALIDATE-CUSTOMER",
-                verbs=["DELETE"],
-                files_accessed=["CUSTOMERS"]
+                "VALIDATE-CUSTOMER", verbs=["DELETE"], files_accessed=["CUSTOMERS"]
             )
 
             # 6. Risk assessment
@@ -305,8 +306,8 @@ class TestIBMDeploymentReadiness:
             risk = assessor.assess_procedure(
                 procedure_name="VALIDATE-CUSTOMER",
                 file_path=str(cobol_file),
-                disharmony_score=validate_proc['score'],
-                disharmony_level="critical"
+                disharmony_score=validate_proc["score"],
+                disharmony_level="critical",
             )
 
             assert risk.risk_score > 50, "High-risk procedure should have high score"
@@ -328,6 +329,7 @@ class TestIBMDeploymentRequirements:
     def test_python_39_compatibility(self):
         """Verify code runs on Python 3.9+"""
         import sys
+
         major, minor = sys.version_info[:2]
         assert major >= 3, "Requires Python 3.x"
         # Note: We're testing on 3.11, but code should work on 3.9+
@@ -353,11 +355,14 @@ class TestIBMDeploymentRequirements:
         with tempfile.TemporaryDirectory() as tmpdir:
             # Test UTF-8
             utf8_file = Path(tmpdir) / "utf8.cbl"
-            utf8_file.write_text("""
+            utf8_file.write_text(
+                """
        IDENTIFICATION DIVISION.
        PROGRAM-ID. UTF8-TEST.
        STOP RUN.
-            """, encoding='utf-8')
+            """,
+                encoding="utf-8",
+            )
 
             parser = COBOLParser()
             program = parser.parse_file(str(utf8_file))
@@ -374,12 +379,12 @@ def test_deployment_readiness_summary():
 
     # Check all critical paths exist
     critical_components = {
-        'Core Engine': Path('cobol_harmonizer'),
-        'VS Code Extension': Path('vscode-extension/extension.js'),
-        'JCL Templates': Path('jcl'),
-        'Test Suite': Path('tests'),
-        'Documentation': Path('docs'),
-        'Examples': Path('examples')
+        "Core Engine": Path("cobol_harmonizer"),
+        "VS Code Extension": Path("vscode-extension/extension.js"),
+        "JCL Templates": Path("jcl"),
+        "Test Suite": Path("tests"),
+        "Documentation": Path("docs"),
+        "Examples": Path("examples"),
     }
 
     missing = []
@@ -391,21 +396,23 @@ def test_deployment_readiness_summary():
 
     # Verify can parse and analyze
     parser = COBOLParser()
-    program = parser.parse_source("""
+    program = parser.parse_source(
+        """
        IDENTIFICATION DIVISION.
        PROGRAM-ID. FINAL-CHECK.
        PROCEDURE DIVISION.
        TEST-PROC.
            DISPLAY "Ready for IBM".
        STOP RUN.
-    """)
+    """
+    )
 
     assert program is not None
     assert len(program.procedures) == 1
 
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("  COBOL CODE HARMONIZER - IBM DEPLOYMENT READINESS")
-    print("="*70)
+    print("=" * 70)
     print("✅ Core parsing engine: PASS")
     print("✅ Semantic analysis: PASS")
     print("✅ Batch processing: PASS")
@@ -414,10 +421,10 @@ def test_deployment_readiness_summary():
     print("✅ JCL integration: PASS")
     print("✅ Documentation: PASS")
     print("✅ Test coverage: 85%+")
-    print("="*70)
+    print("=" * 70)
     print("  STATUS: READY FOR IBM DEPLOYMENT ✨")
-    print("="*70 + "\n")
+    print("=" * 70 + "\n")
 
 
-if __name__ == '__main__':
-    pytest.main([__file__, '-v', '--tb=short'])
+if __name__ == "__main__":
+    pytest.main([__file__, "-v", "--tb=short"])

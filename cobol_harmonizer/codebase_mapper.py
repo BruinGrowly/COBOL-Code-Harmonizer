@@ -20,7 +20,7 @@ class CodebaseMapper:
             "minor_drift": 1,
             "concerning": 2,
             "significant": 3,
-            "critical": 4
+            "critical": 4,
         }
 
     def analyze_codebase(self, batch_results: Dict) -> Dict:
@@ -36,10 +36,7 @@ class CodebaseMapper:
         file_results = batch_results.get("file_results", [])
 
         if not file_results:
-            return {
-                "status": "empty",
-                "message": "No files to analyze"
-            }
+            return {"status": "empty", "message": "No files to analyze"}
 
         return {
             "overview": self._generate_overview(batch_results),
@@ -49,7 +46,7 @@ class CodebaseMapper:
             "recommendations": self._generate_recommendations(batch_results),
             "file_rankings": self._rank_files(batch_results),
             "procedure_rankings": self._rank_procedures(batch_results),
-            "dimension_analysis": self._analyze_dimensions(batch_results)
+            "dimension_analysis": self._analyze_dimensions(batch_results),
         }
 
     def _generate_overview(self, batch_results: Dict) -> Dict:
@@ -65,7 +62,7 @@ class CodebaseMapper:
             "requires_action_count": stats.get("requires_action_count", 0),
             "files_with_issues": stats.get("files_with_issues", 0),
             "files_clean": stats.get("files_clean", 0),
-            "severity_breakdown": stats.get("severity_breakdown", {})
+            "severity_breakdown": stats.get("severity_breakdown", {}),
         }
 
     def _calculate_health_metrics(self, batch_results: Dict) -> Dict:
@@ -78,7 +75,7 @@ class CodebaseMapper:
                 "health_score": 0.0,
                 "harmony_rate": 0.0,
                 "action_required_rate": 0.0,
-                "grade": "N/A"
+                "grade": "N/A",
             }
 
         # Calculate harmony rate (percentage of harmonious procedures)
@@ -119,7 +116,7 @@ class CodebaseMapper:
             "harmony_rate": round(harmony_rate * 100, 2),
             "action_required_rate": round(action_rate * 100, 2),
             "grade": grade,
-            "interpretation": self._interpret_health_score(health_score)
+            "interpretation": self._interpret_health_score(health_score),
         }
 
     def _interpret_health_score(self, score: float) -> str:
@@ -146,32 +143,29 @@ class CodebaseMapper:
             results = file_result.get("results", [])
 
             if results:
-                avg_score = statistics.mean(
-                    r.get("disharmony_score", 0) for r in results
-                )
+                avg_score = statistics.mean(r.get("disharmony_score", 0) for r in results)
                 max_score = max(r.get("disharmony_score", 0) for r in results)
                 critical_count = sum(
-                    1 for r in results
-                    if r.get("severity_level", "") == "critical"
+                    1 for r in results if r.get("severity_level", "") == "critical"
                 )
 
-                file_scores.append({
-                    "file_path": file_path,
-                    "avg_disharmony": avg_score,
-                    "max_disharmony": max_score,
-                    "critical_count": critical_count,
-                    "total_procedures": file_result.get("total_procedures", 0),
-                    "issue_count": len(results)
-                })
+                file_scores.append(
+                    {
+                        "file_path": file_path,
+                        "avg_disharmony": avg_score,
+                        "max_disharmony": max_score,
+                        "critical_count": critical_count,
+                        "total_procedures": file_result.get("total_procedures", 0),
+                        "issue_count": len(results),
+                    }
+                )
 
         # Sort by average disharmony (descending)
         file_scores.sort(key=lambda x: x["avg_disharmony"], reverse=True)
 
         return {
             "worst_files": file_scores[:10],  # Top 10 worst files
-            "critical_files": [
-                f for f in file_scores if f["critical_count"] > 0
-            ]
+            "critical_files": [f for f in file_scores if f["critical_count"] > 0],
         }
 
     def _analyze_semantic_patterns(self, batch_results: Dict) -> Dict:
@@ -180,12 +174,7 @@ class CodebaseMapper:
 
         # Track semantic shifts
         shift_patterns = defaultdict(int)
-        dimension_drifts = {
-            "Love": 0,
-            "Justice": 0,
-            "Power": 0,
-            "Wisdom": 0
-        }
+        dimension_drifts = {"Love": 0, "Justice": 0, "Power": 0, "Wisdom": 0}
 
         for file_result in file_results:
             for result in file_result.get("results", []):
@@ -202,19 +191,14 @@ class CodebaseMapper:
                         dimension_drifts[from_dim] += 1
 
         # Sort patterns by frequency
-        sorted_patterns = sorted(
-            shift_patterns.items(),
-            key=lambda x: x[1],
-            reverse=True
-        )
+        sorted_patterns = sorted(shift_patterns.items(), key=lambda x: x[1], reverse=True)
 
         return {
             "common_shifts": sorted_patterns[:10],
             "dimension_drifts": dimension_drifts,
-            "most_unstable_dimension": max(
-                dimension_drifts.items(),
-                key=lambda x: x[1]
-            )[0] if dimension_drifts else None
+            "most_unstable_dimension": (
+                max(dimension_drifts.items(), key=lambda x: x[1])[0] if dimension_drifts else None
+            ),
         }
 
     def _generate_recommendations(self, batch_results: Dict) -> List[Dict]:
@@ -227,61 +211,69 @@ class CodebaseMapper:
         # Critical issues
         critical_count = severity_breakdown.get("critical", 0)
         if critical_count > 0:
-            recommendations.append({
-                "priority": "CRITICAL",
-                "category": "Semantic Bugs",
-                "title": f"Fix {critical_count} Critical Semantic Bug(s)",
-                "description": (
-                    f"Found {critical_count} procedure(s) with critical disharmony. "
-                    "These procedures have names that severely contradict their "
-                    "implementations and likely represent bugs."
-                ),
-                "action": "Review and either rename or refactor these procedures immediately"
-            })
+            recommendations.append(
+                {
+                    "priority": "CRITICAL",
+                    "category": "Semantic Bugs",
+                    "title": f"Fix {critical_count} Critical Semantic Bug(s)",
+                    "description": (
+                        f"Found {critical_count} procedure(s) with critical disharmony. "
+                        "These procedures have names that severely contradict their "
+                        "implementations and likely represent bugs."
+                    ),
+                    "action": "Review and either rename or refactor these procedures immediately",
+                }
+            )
 
         # Significant issues
         significant_count = severity_breakdown.get("significant", 0)
         if significant_count > 0:
-            recommendations.append({
-                "priority": "HIGH",
-                "category": "Code Quality",
-                "title": f"Address {significant_count} Significant Disharmony Issue(s)",
-                "description": (
-                    f"Found {significant_count} procedure(s) with significant semantic "
-                    "drift. These should be refactored for better maintainability."
-                ),
-                "action": "Plan refactoring sprint to address these procedures"
-            })
+            recommendations.append(
+                {
+                    "priority": "HIGH",
+                    "category": "Code Quality",
+                    "title": f"Address {significant_count} Significant Disharmony Issue(s)",
+                    "description": (
+                        f"Found {significant_count} procedure(s) with significant semantic "
+                        "drift. These should be refactored for better maintainability."
+                    ),
+                    "action": "Plan refactoring sprint to address these procedures",
+                }
+            )
 
         # Concerning issues
         concerning_count = severity_breakdown.get("concerning", 0)
         if concerning_count > 0:
-            recommendations.append({
-                "priority": "MEDIUM",
-                "category": "Maintenance",
-                "title": f"Review {concerning_count} Concerning Procedure(s)",
-                "description": (
-                    f"Found {concerning_count} procedure(s) with concerning semantic "
-                    "drift. Review for potential improvements."
-                ),
-                "action": "Add to technical debt backlog"
-            })
+            recommendations.append(
+                {
+                    "priority": "MEDIUM",
+                    "category": "Maintenance",
+                    "title": f"Review {concerning_count} Concerning Procedure(s)",
+                    "description": (
+                        f"Found {concerning_count} procedure(s) with concerning semantic "
+                        "drift. Review for potential improvements."
+                    ),
+                    "action": "Add to technical debt backlog",
+                }
+            )
 
         # Health score recommendations
         health_metrics = self._calculate_health_metrics(batch_results)
         health_score = health_metrics.get("health_score", 0)
 
         if health_score < 70:
-            recommendations.append({
-                "priority": "HIGH",
-                "category": "Codebase Health",
-                "title": f"Improve Codebase Health (Current: {health_score}/100)",
-                "description": (
-                    f"Overall codebase health score is {health_metrics.get('grade')}. "
-                    "Focus on reducing technical debt systematically."
-                ),
-                "action": "Establish baseline and track improvements over time"
-            })
+            recommendations.append(
+                {
+                    "priority": "HIGH",
+                    "category": "Codebase Health",
+                    "title": f"Improve Codebase Health (Current: {health_score}/100)",
+                    "description": (
+                        f"Overall codebase health score is {health_metrics.get('grade')}. "
+                        "Focus on reducing technical debt systematically."
+                    ),
+                    "action": "Establish baseline and track improvements over time",
+                }
+            )
 
         return recommendations
 
@@ -298,22 +290,22 @@ class CodebaseMapper:
                 continue
 
             # Calculate file metrics
-            avg_score = statistics.mean(
-                r.get("disharmony_score", 0) for r in results
-            ) if results else 0
-
-            harmonious_count = sum(
-                1 for r in results if r.get("is_harmonious", True)
+            avg_score = (
+                statistics.mean(r.get("disharmony_score", 0) for r in results) if results else 0
             )
 
-            file_rankings.append({
-                "file_path": file_result.get("file_path"),
-                "program_id": file_result.get("program_id"),
-                "total_procedures": total_procs,
-                "avg_disharmony": round(avg_score, 3),
-                "harmonious_count": harmonious_count,
-                "harmony_rate": round(harmonious_count / total_procs * 100, 2)
-            })
+            harmonious_count = sum(1 for r in results if r.get("is_harmonious", True))
+
+            file_rankings.append(
+                {
+                    "file_path": file_result.get("file_path"),
+                    "program_id": file_result.get("program_id"),
+                    "total_procedures": total_procs,
+                    "avg_disharmony": round(avg_score, 3),
+                    "harmonious_count": harmonious_count,
+                    "harmony_rate": round(harmonious_count / total_procs * 100, 2),
+                }
+            )
 
         # Sort by harmony rate (ascending) - worst first
         file_rankings.sort(key=lambda x: (x["harmony_rate"], -x["avg_disharmony"]))
@@ -329,19 +321,18 @@ class CodebaseMapper:
             file_path = file_result.get("file_path")
 
             for result in file_result.get("results", []):
-                all_procedures.append({
-                    "file_path": file_path,
-                    "procedure_name": result.get("procedure_name"),
-                    "disharmony_score": result.get("disharmony_score", 0),
-                    "severity_level": result.get("severity_level"),
-                    "dominant_shift": result.get("dominant_shift")
-                })
+                all_procedures.append(
+                    {
+                        "file_path": file_path,
+                        "procedure_name": result.get("procedure_name"),
+                        "disharmony_score": result.get("disharmony_score", 0),
+                        "severity_level": result.get("severity_level"),
+                        "dominant_shift": result.get("dominant_shift"),
+                    }
+                )
 
         # Sort by disharmony score (descending)
-        all_procedures.sort(
-            key=lambda x: x["disharmony_score"],
-            reverse=True
-        )
+        all_procedures.sort(key=lambda x: x["disharmony_score"], reverse=True)
 
         return all_procedures[:50]  # Top 50 worst procedures
 
@@ -371,12 +362,10 @@ class CodebaseMapper:
         # Calculate averages
         if total_procedures > 0:
             intent_avg = {
-                dim: round(total / total_procedures, 3)
-                for dim, total in intent_totals.items()
+                dim: round(total / total_procedures, 3) for dim, total in intent_totals.items()
             }
             execution_avg = {
-                dim: round(total / total_procedures, 3)
-                for dim, total in execution_totals.items()
+                dim: round(total / total_procedures, 3) for dim, total in execution_totals.items()
             }
         else:
             intent_avg = {dim: 0 for dim in intent_totals}
@@ -391,7 +380,7 @@ class CodebaseMapper:
             "execution_distribution": execution_avg,
             "dominant_intent_dimension": dominant_intent,
             "dominant_execution_dimension": dominant_execution,
-            "alignment": dominant_intent == dominant_execution
+            "alignment": dominant_intent == dominant_execution,
         }
 
     def generate_summary_report(self, analysis: Dict) -> str:
@@ -404,47 +393,43 @@ class CodebaseMapper:
         Returns:
             Formatted report string
         """
-        lines = [
-            "=" * 70,
-            "COBOL CODEBASE ANALYSIS REPORT",
-            "=" * 70,
-            ""
-        ]
+        lines = ["=" * 70, "COBOL CODEBASE ANALYSIS REPORT", "=" * 70, ""]
 
         # Overview
         overview = analysis.get("overview", {})
-        lines.extend([
-            "OVERVIEW",
-            "-" * 70,
-            f"Total Files:       {overview.get('total_files', 0)}",
-            f"Total Procedures:  {overview.get('total_procedures', 0)}",
-            f"Harmonious:        {overview.get('harmonious_count', 0)}",
-            f"Disharmonious:     {overview.get('disharmonious_count', 0)}",
-            f"Requires Action:   {overview.get('requires_action_count', 0)}",
-            ""
-        ])
+        lines.extend(
+            [
+                "OVERVIEW",
+                "-" * 70,
+                f"Total Files:       {overview.get('total_files', 0)}",
+                f"Total Procedures:  {overview.get('total_procedures', 0)}",
+                f"Harmonious:        {overview.get('harmonious_count', 0)}",
+                f"Disharmonious:     {overview.get('disharmonious_count', 0)}",
+                f"Requires Action:   {overview.get('requires_action_count', 0)}",
+                "",
+            ]
+        )
 
         # Health Metrics
         health = analysis.get("health_metrics", {})
-        lines.extend([
-            "CODEBASE HEALTH",
-            "-" * 70,
-            f"Health Score:      {health.get('health_score', 0)}/100 (Grade: {health.get('grade', 'N/A')})",
-            f"Harmony Rate:      {health.get('harmony_rate', 0)}%",
-            f"Action Required:   {health.get('action_required_rate', 0)}%",
-            f"Assessment:        {health.get('interpretation', 'Unknown')}",
-            ""
-        ])
+        lines.extend(
+            [
+                "CODEBASE HEALTH",
+                "-" * 70,
+                f"Health Score:      {health.get('health_score', 0)}/100 (Grade: {health.get('grade', 'N/A')})",
+                f"Harmony Rate:      {health.get('harmony_rate', 0)}%",
+                f"Action Required:   {health.get('action_required_rate', 0)}%",
+                f"Assessment:        {health.get('interpretation', 'Unknown')}",
+                "",
+            ]
+        )
 
         # Hotspots
         hotspots = analysis.get("hotspots", {})
         worst_files = hotspots.get("worst_files", [])[:5]
 
         if worst_files:
-            lines.extend([
-                "TOP 5 PROBLEM FILES",
-                "-" * 70
-            ])
+            lines.extend(["TOP 5 PROBLEM FILES", "-" * 70])
             for i, file_info in enumerate(worst_files, 1):
                 lines.append(
                     f"{i}. {file_info.get('file_path')} "
@@ -456,17 +441,16 @@ class CodebaseMapper:
         # Recommendations
         recommendations = analysis.get("recommendations", [])
         if recommendations:
-            lines.extend([
-                "RECOMMENDATIONS",
-                "-" * 70
-            ])
+            lines.extend(["RECOMMENDATIONS", "-" * 70])
             for rec in recommendations:
-                lines.extend([
-                    f"[{rec.get('priority')}] {rec.get('title')}",
-                    f"  {rec.get('description')}",
-                    f"  → {rec.get('action')}",
-                    ""
-                ])
+                lines.extend(
+                    [
+                        f"[{rec.get('priority')}] {rec.get('title')}",
+                        f"  {rec.get('description')}",
+                        f"  → {rec.get('action')}",
+                        "",
+                    ]
+                )
 
         lines.append("=" * 70)
 

@@ -24,6 +24,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class FileAnalysisResult:
     """Result of analyzing a single file"""
+
     file_path: str
     success: bool
     error_message: Optional[str] = None
@@ -39,6 +40,7 @@ class FileAnalysisResult:
 @dataclass
 class BatchAnalysisResults:
     """Results of batch analysis"""
+
     total_files: int
     successful: int
     failed: int
@@ -50,13 +52,13 @@ class BatchAnalysisResults:
     def to_dict(self) -> dict:
         """Convert to dictionary"""
         return {
-            'total_files': self.total_files,
-            'successful': self.successful,
-            'failed': self.failed,
-            'skipped': self.skipped,
-            'total_time_ms': self.total_time_ms,
-            'avg_time_per_file_ms': self.avg_time_per_file_ms,
-            'results': [r.to_dict() for r in self.results]
+            "total_files": self.total_files,
+            "successful": self.successful,
+            "failed": self.failed,
+            "skipped": self.skipped,
+            "total_time_ms": self.total_time_ms,
+            "avg_time_per_file_ms": self.avg_time_per_file_ms,
+            "results": [r.to_dict() for r in self.results],
         }
 
 
@@ -71,10 +73,12 @@ class BatchAnalyzer:
     - Hash-based change detection
     """
 
-    def __init__(self,
-                 max_workers: Optional[int] = None,
-                 enable_incremental: bool = True,
-                 cache_dir: str = '.harmonizer-cache/batch'):
+    def __init__(
+        self,
+        max_workers: Optional[int] = None,
+        enable_incremental: bool = True,
+        cache_dir: str = ".harmonizer-cache/batch",
+    ):
         """
         Initialize batch analyzer
 
@@ -87,14 +91,14 @@ class BatchAnalyzer:
         self.enable_incremental = enable_incremental
         self.cache_dir = Path(cache_dir)
         self.cache_dir.mkdir(parents=True, exist_ok=True)
-        self.hash_cache_file = self.cache_dir / 'file_hashes.json'
+        self.hash_cache_file = self.cache_dir / "file_hashes.json"
         self.file_hashes = self._load_hash_cache()
 
     def _load_hash_cache(self) -> Dict[str, str]:
         """Load file hash cache from disk"""
         if self.hash_cache_file.exists():
             try:
-                with open(self.hash_cache_file, 'r') as f:
+                with open(self.hash_cache_file, "r") as f:
                     return json.load(f)
             except:
                 return {}
@@ -103,7 +107,7 @@ class BatchAnalyzer:
     def _save_hash_cache(self):
         """Save file hash cache to disk"""
         try:
-            with open(self.hash_cache_file, 'w') as f:
+            with open(self.hash_cache_file, "w") as f:
                 json.dump(self.file_hashes, f, indent=2)
         except Exception as e:
             logger.warning(f"Failed to save hash cache: {e}")
@@ -111,7 +115,7 @@ class BatchAnalyzer:
     def _calculate_file_hash(self, file_path: str) -> str:
         """Calculate SHA-256 hash of file content"""
         try:
-            with open(file_path, 'rb') as f:
+            with open(file_path, "rb") as f:
                 return hashlib.sha256(f.read()).hexdigest()
         except:
             return ""
@@ -126,11 +130,13 @@ class BatchAnalyzer:
 
         return current_hash != cached_hash
 
-    def analyze_files(self,
-                     file_paths: List[str],
-                     analyzer_func: Callable[[str], Any],
-                     progress_callback: Optional[Callable[[int, int], None]] = None,
-                     skip_unchanged: bool = True) -> BatchAnalysisResults:
+    def analyze_files(
+        self,
+        file_paths: List[str],
+        analyzer_func: Callable[[str], Any],
+        progress_callback: Optional[Callable[[int, int], None]] = None,
+        skip_unchanged: bool = True,
+    ) -> BatchAnalysisResults:
         """
         Analyze multiple files in parallel
 
@@ -188,7 +194,7 @@ class BatchAnalyzer:
             skipped=skipped,
             total_time_ms=total_time_ms,
             avg_time_per_file_ms=avg_time,
-            results=results
+            results=results,
         )
 
     def _analyze_single_file(self, file_path: str, analyzer_func: Callable) -> FileAnalysisResult:
@@ -205,7 +211,7 @@ class BatchAnalyzer:
                 success=True,
                 analysis_time_ms=analysis_time_ms,
                 file_hash=file_hash,
-                metrics=metrics if isinstance(metrics, dict) else None
+                metrics=metrics if isinstance(metrics, dict) else None,
             )
 
         except Exception as e:
@@ -214,5 +220,5 @@ class BatchAnalyzer:
                 file_path=file_path,
                 success=False,
                 error_message=str(e),
-                analysis_time_ms=analysis_time_ms
+                analysis_time_ms=analysis_time_ms,
             )

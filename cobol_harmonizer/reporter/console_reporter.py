@@ -53,7 +53,7 @@ class ConsoleReporter:
         results: List[Dict],
         threshold: float = 0.5,
         show_all: bool = False,
-        verbose: bool = False
+        verbose: bool = False,
     ):
         """
         Print analysis results in beautiful format.
@@ -66,16 +66,14 @@ class ConsoleReporter:
         """
         # Filter results based on threshold
         if not show_all:
-            results = [r for r in results if r['disharmony_score'] >= threshold]
+            results = [r for r in results if r["disharmony_score"] >= threshold]
 
         if not results:
-            self.print_success(
-                f"All procedures are harmonious (disharmony < {threshold})! 🎉"
-            )
+            self.print_success(f"All procedures are harmonious (disharmony < {threshold})! 🎉")
             return
 
         # Sort by disharmony score (descending)
-        results = sorted(results, key=lambda x: x['disharmony_score'], reverse=True)
+        results = sorted(results, key=lambda x: x["disharmony_score"], reverse=True)
 
         for result in results:
             self._print_procedure_result(result, verbose)
@@ -85,36 +83,38 @@ class ConsoleReporter:
 
         # Severity styling
         severity_styles = {
-            'harmonious': ('green', '✓', 'HARMONIOUS'),
-            'minor_drift': ('yellow', '⚠️', 'MINOR DRIFT'),
-            'concerning': ('yellow', '⚠️', 'CONCERNING'),
-            'significant': ('red', '🔴', 'SIGNIFICANT'),
-            'critical': ('red', '💥', 'CRITICAL')
+            "harmonious": ("green", "✓", "HARMONIOUS"),
+            "minor_drift": ("yellow", "⚠️", "MINOR DRIFT"),
+            "concerning": ("yellow", "⚠️", "CONCERNING"),
+            "significant": ("red", "🔴", "SIGNIFICANT"),
+            "critical": ("red", "💥", "CRITICAL"),
         }
 
         color, emoji, label = severity_styles.get(
-            result['severity_level'],
-            ('white', '?', 'UNKNOWN')
+            result["severity_level"], ("white", "?", "UNKNOWN")
         )
 
         # Create title
         title = Text()
-        title.append(result['procedure_name'], style=f"bold {color}")
+        title.append(result["procedure_name"], style=f"bold {color}")
         title.append(f"  {emoji} {label}", style=color)
 
         # Create content
         content = []
 
         # Disharmony score
-        score_color = 'green' if result['disharmony_score'] < 0.3 else \
-                     'yellow' if result['disharmony_score'] < 0.8 else 'red'
+        score_color = (
+            "green"
+            if result["disharmony_score"] < 0.3
+            else "yellow" if result["disharmony_score"] < 0.8 else "red"
+        )
         content.append(
             f"[{score_color}]Disharmony Score: {result['disharmony_score']:.3f}[/{score_color}]"
         )
 
         # Dimensional shift
-        shift = result['dominant_shift']
-        if shift['from'] != shift['to']:
+        shift = result["dominant_shift"]
+        if shift["from"] != shift["to"]:
             content.append(
                 f"\n[dim]Semantic Shift:[/dim] "
                 f"[cyan]{shift['from']}[/cyan] → [magenta]{shift['to']}[/magenta]"
@@ -126,7 +126,7 @@ class ConsoleReporter:
         # Verbose info
         if verbose:
             content.append("\n[dim]Intent Coordinates:[/dim]")
-            intent = result['intent_coords']
+            intent = result["intent_coords"]
             content.append(
                 f"  L={intent['love']:.2f}, "
                 f"J={intent['justice']:.2f}, "
@@ -135,7 +135,7 @@ class ConsoleReporter:
             )
 
             content.append("\n[dim]Execution Coordinates:[/dim]")
-            execution = result['execution_coords']
+            execution = result["execution_coords"]
             content.append(
                 f"  L={execution['love']:.2f}, "
                 f"J={execution['justice']:.2f}, "
@@ -144,27 +144,22 @@ class ConsoleReporter:
             )
 
             content.append("\n[dim]Trajectory (Intent → Execution):[/dim]")
-            trajectory = result['trajectory']
-            for dim in ['love', 'justice', 'power', 'wisdom']:
-                delta = trajectory[f'{dim}_delta']
-                arrow = '↑' if delta > 0 else '↓' if delta < 0 else '→'
+            trajectory = result["trajectory"]
+            for dim in ["love", "justice", "power", "wisdom"]:
+                delta = trajectory[f"{dim}_delta"]
+                arrow = "↑" if delta > 0 else "↓" if delta < 0 else "→"
                 content.append(f"  {dim.capitalize()}: {arrow} {delta:+.2f}")
 
         # Suggestions
-        if 'suggestions' in result and result['suggestions']:
+        if "suggestions" in result and result["suggestions"]:
             content.append("\n[bold cyan]Suggested Names:[/bold cyan]")
-            for name, score in result['suggestions'][:3]:
+            for name, score in result["suggestions"][:3]:
                 match_pct = int(score * 100)
                 content.append(f"  • {name} ({match_pct}% match)")
 
         # Create panel
         panel_content = "\n".join(content)
-        panel = Panel(
-            panel_content,
-            title=title,
-            border_style=color,
-            box=box.ROUNDED
-        )
+        panel = Panel(panel_content, title=title, border_style=color, box=box.ROUNDED)
 
         self.console.print(panel)
         self.console.print()
@@ -173,14 +168,14 @@ class ConsoleReporter:
         """Print summary statistics"""
 
         total = len(results)
-        harmonious = sum(1 for r in results if r['is_harmonious'])
-        requires_action = sum(1 for r in results if r['requires_action'])
-        above_threshold = sum(1 for r in results if r['disharmony_score'] >= threshold)
+        harmonious = sum(1 for r in results if r["is_harmonious"])
+        requires_action = sum(1 for r in results if r["requires_action"])
+        above_threshold = sum(1 for r in results if r["disharmony_score"] >= threshold)
 
         # Count by severity
         severity_counts = {}
         for result in results:
-            level = result['severity_level']
+            level = result["severity_level"]
             severity_counts[level] = severity_counts.get(level, 0) + 1
 
         # Create summary table
@@ -197,9 +192,12 @@ class ConsoleReporter:
         if severity_counts:
             table.add_row("", "")  # Spacer
             for level, count in sorted(severity_counts.items()):
-                label = level.replace('_', ' ').title()
-                color = 'green' if level == 'harmonious' else \
-                       'yellow' if level in ['minor_drift', 'concerning'] else 'red'
+                label = level.replace("_", " ").title()
+                color = (
+                    "green"
+                    if level == "harmonious"
+                    else "yellow" if level in ["minor_drift", "concerning"] else "red"
+                )
                 table.add_row(label, f"[{color}]{count}[/{color}]")
 
         self.console.print(table)
@@ -225,12 +223,9 @@ class ConsoleReporter:
 
         Shows how procedure moves through LJPW space.
         """
-        trajectory = result['trajectory']
+        trajectory = result["trajectory"]
 
-        table = Table(
-            title=f"Semantic Trajectory: {result['procedure_name']}",
-            box=box.ROUNDED
-        )
+        table = Table(title=f"Semantic Trajectory: {result['procedure_name']}", box=box.ROUNDED)
 
         table.add_column("Dimension", style="cyan")
         table.add_column("Intent", justify="right", style="blue")
@@ -238,20 +233,20 @@ class ConsoleReporter:
         table.add_column("Δ", justify="right")
         table.add_column("", justify="center")
 
-        intent = result['intent_coords']
-        execution = result['execution_coords']
+        intent = result["intent_coords"]
+        execution = result["execution_coords"]
 
-        for dim in ['love', 'justice', 'power', 'wisdom']:
-            delta = trajectory[f'{dim}_delta']
-            arrow = '↑' if delta > 0.05 else '↓' if delta < -0.05 else '→'
-            symbol = '⚠️' if abs(delta) > 0.3 else '✓' if abs(delta) < 0.1 else ''
+        for dim in ["love", "justice", "power", "wisdom"]:
+            delta = trajectory[f"{dim}_delta"]
+            arrow = "↑" if delta > 0.05 else "↓" if delta < -0.05 else "→"
+            symbol = "⚠️" if abs(delta) > 0.3 else "✓" if abs(delta) < 0.1 else ""
 
             table.add_row(
                 dim.capitalize(),
                 f"{intent[dim]:.2f}",
                 f"{execution[dim]:.2f}",
                 f"{delta:+.2f}",
-                f"{arrow} {symbol}"
+                f"{arrow} {symbol}",
             )
 
         self.console.print(table)
@@ -273,17 +268,10 @@ class ConsoleReporter:
             bar_length = int(percentage / 2)  # Scale to fit
             bar = "█" * bar_length
 
-            color = {
-                'Love': 'yellow',
-                'Justice': 'blue',
-                'Power': 'red',
-                'Wisdom': 'green'
-            }.get(dimension, 'white')
-
-            table.add_row(
-                dimension,
-                str(count),
-                f"[{color}]{bar}[/{color}] {percentage:.0f}%"
+            color = {"Love": "yellow", "Justice": "blue", "Power": "red", "Wisdom": "green"}.get(
+                dimension, "white"
             )
+
+            table.add_row(dimension, str(count), f"[{color}]{bar}[/{color}] {percentage:.0f}%")
 
         self.console.print(table)

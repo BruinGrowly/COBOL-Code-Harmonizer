@@ -24,11 +24,11 @@ class Baseline:
         self.data = baseline_data or {
             "version": "0.1.0",
             "created_at": datetime.utcnow().isoformat() + "Z",
-            "files": {}
+            "files": {},
         }
 
     @classmethod
-    def from_file(cls, baseline_path: str) -> 'Baseline':
+    def from_file(cls, baseline_path: str) -> "Baseline":
         """
         Load baseline from file.
 
@@ -43,17 +43,15 @@ class Baseline:
         if not baseline_file.exists():
             raise FileNotFoundError(f"Baseline file not found: {baseline_path}")
 
-        with open(baseline_file, 'r', encoding='utf-8') as f:
+        with open(baseline_file, "r", encoding="utf-8") as f:
             baseline_data = json.load(f)
 
         return cls(baseline_data)
 
     @classmethod
     def from_analysis_results(
-        cls,
-        batch_results: Dict,
-        description: Optional[str] = None
-    ) -> 'Baseline':
+        cls, batch_results: Dict, description: Optional[str] = None
+    ) -> "Baseline":
         """
         Create baseline from batch analysis results.
 
@@ -69,7 +67,7 @@ class Baseline:
             "created_at": datetime.utcnow().isoformat() + "Z",
             "description": description or "Baseline snapshot",
             "statistics": batch_results.get("statistics", {}),
-            "files": {}
+            "files": {},
         }
 
         # Store results by file
@@ -86,13 +84,13 @@ class Baseline:
                     "is_harmonious": result.get("is_harmonious", True),
                     "requires_action": result.get("requires_action", False),
                     "intent_coords": result.get("intent_coords", {}),
-                    "execution_coords": result.get("execution_coords", {})
+                    "execution_coords": result.get("execution_coords", {}),
                 }
 
             baseline_data["files"][file_path] = {
                 "program_id": file_result.get("program_id", "unknown"),
                 "total_procedures": file_result.get("total_procedures", 0),
-                "procedures": procedures
+                "procedures": procedures,
             }
 
         return cls(baseline_data)
@@ -107,7 +105,7 @@ class Baseline:
         output_file = Path(output_path)
         output_file.parent.mkdir(parents=True, exist_ok=True)
 
-        with open(output_file, 'w', encoding='utf-8') as f:
+        with open(output_file, "w", encoding="utf-8") as f:
             json.dump(self.data, f, indent=2)
 
     def compare(self, current_results: Dict) -> Dict:
@@ -132,19 +130,16 @@ class Baseline:
                 "improvements": 0,
                 "unchanged": 0,
                 "new_procedures": 0,
-                "removed_procedures": 0
+                "removed_procedures": 0,
             },
             "file_comparisons": [],
             "regressions": [],
             "improvements": [],
-            "new_issues": []
+            "new_issues": [],
         }
 
         baseline_files = set(self.data.get("files", {}).keys())
-        current_files = {
-            fr.get("file_path"): fr
-            for fr in current_results.get("file_results", [])
-        }
+        current_files = {fr.get("file_path"): fr for fr in current_results.get("file_results", [])}
         current_file_paths = set(current_files.keys())
 
         # Find new and removed files
@@ -158,9 +153,7 @@ class Baseline:
         # Compare common files
         for file_path in common_files:
             file_comparison = self._compare_file(
-                file_path,
-                self.data["files"][file_path],
-                current_files[file_path]
+                file_path, self.data["files"][file_path], current_files[file_path]
             )
 
             comparison["file_comparisons"].append(file_comparison)
@@ -181,21 +174,18 @@ class Baseline:
             file_result = current_files[file_path]
             for result in file_result.get("results", []):
                 if not result.get("is_harmonious", True):
-                    comparison["new_issues"].append({
-                        "file_path": file_path,
-                        "procedure_name": result.get("procedure_name"),
-                        "disharmony_score": result.get("disharmony_score"),
-                        "severity_level": result.get("severity_level")
-                    })
+                    comparison["new_issues"].append(
+                        {
+                            "file_path": file_path,
+                            "procedure_name": result.get("procedure_name"),
+                            "disharmony_score": result.get("disharmony_score"),
+                            "severity_level": result.get("severity_level"),
+                        }
+                    )
 
         return comparison
 
-    def _compare_file(
-        self,
-        file_path: str,
-        baseline_file: Dict,
-        current_file: Dict
-    ) -> Dict:
+    def _compare_file(self, file_path: str, baseline_file: Dict, current_file: Dict) -> Dict:
         """Compare a single file against baseline"""
         comparison = {
             "file_path": file_path,
@@ -205,14 +195,11 @@ class Baseline:
             "new_procedures": 0,
             "removed_procedures": 0,
             "regression_details": [],
-            "improvement_details": []
+            "improvement_details": [],
         }
 
         baseline_procs = baseline_file.get("procedures", {})
-        current_results = {
-            r.get("procedure_name"): r
-            for r in current_file.get("results", [])
-        }
+        current_results = {r.get("procedure_name"): r for r in current_file.get("results", [])}
 
         baseline_proc_names = set(baseline_procs.keys())
         current_proc_names = set(current_results.keys())
@@ -242,27 +229,31 @@ class Baseline:
             elif delta > 0:
                 # Regression: score got worse
                 comparison["regressions"] += 1
-                comparison["regression_details"].append({
-                    "file_path": file_path,
-                    "procedure_name": proc_name,
-                    "baseline_score": baseline_score,
-                    "current_score": current_score,
-                    "delta": delta,
-                    "baseline_severity": baseline_proc.get("severity_level"),
-                    "current_severity": current_proc.get("severity_level")
-                })
+                comparison["regression_details"].append(
+                    {
+                        "file_path": file_path,
+                        "procedure_name": proc_name,
+                        "baseline_score": baseline_score,
+                        "current_score": current_score,
+                        "delta": delta,
+                        "baseline_severity": baseline_proc.get("severity_level"),
+                        "current_severity": current_proc.get("severity_level"),
+                    }
+                )
             else:
                 # Improvement: score got better
                 comparison["improvements"] += 1
-                comparison["improvement_details"].append({
-                    "file_path": file_path,
-                    "procedure_name": proc_name,
-                    "baseline_score": baseline_score,
-                    "current_score": current_score,
-                    "delta": delta,
-                    "baseline_severity": baseline_proc.get("severity_level"),
-                    "current_severity": current_proc.get("severity_level")
-                })
+                comparison["improvement_details"].append(
+                    {
+                        "file_path": file_path,
+                        "procedure_name": proc_name,
+                        "baseline_score": baseline_score,
+                        "current_score": current_score,
+                        "delta": delta,
+                        "baseline_severity": baseline_proc.get("severity_level"),
+                        "current_severity": current_proc.get("severity_level"),
+                    }
+                )
 
         return comparison
 
@@ -296,10 +287,7 @@ class BaselineManager:
         self.baseline_dir.mkdir(parents=True, exist_ok=True)
 
     def save_baseline(
-        self,
-        batch_results: Dict,
-        name: str = "baseline",
-        description: Optional[str] = None
+        self, batch_results: Dict, name: str = "baseline", description: Optional[str] = None
     ) -> str:
         """
         Save a new baseline.
@@ -353,25 +341,25 @@ class BaselineManager:
 
         for baseline_file in sorted(self.baseline_dir.glob("*.json")):
             try:
-                with open(baseline_file, 'r', encoding='utf-8') as f:
+                with open(baseline_file, "r", encoding="utf-8") as f:
                     data = json.load(f)
 
-                baselines.append({
-                    "name": baseline_file.stem,
-                    "path": str(baseline_file),
-                    "created_at": data.get("created_at"),
-                    "description": data.get("description"),
-                    "file_count": len(data.get("files", {}))
-                })
+                baselines.append(
+                    {
+                        "name": baseline_file.stem,
+                        "path": str(baseline_file),
+                        "created_at": data.get("created_at"),
+                        "description": data.get("description"),
+                        "file_count": len(data.get("files", {})),
+                    }
+                )
             except Exception:
                 continue
 
         return baselines
 
     def compare_to_baseline(
-        self,
-        current_results: Dict,
-        baseline_name: str = "baseline_latest"
+        self, current_results: Dict, baseline_name: str = "baseline_latest"
     ) -> Dict:
         """
         Compare current results to a named baseline.
@@ -428,7 +416,7 @@ def format_comparison_summary(comparison: Dict) -> str:
         f"  Unchanged:    {summary.get('unchanged', 0)}",
         f"  New:          {summary.get('new_procedures', 0)}",
         f"  Removed:      {summary.get('removed_procedures', 0)}",
-        ""
+        "",
     ]
 
     # Show top regressions

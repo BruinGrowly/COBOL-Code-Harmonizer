@@ -9,8 +9,10 @@ from pathlib import Path
 
 # ===== Exceptions =====
 
+
 class CopybookError(Exception):
     """Base exception for copybook-related errors"""
+
     pass
 
 
@@ -30,12 +32,11 @@ class CircularCopybookError(CopybookError):
 
     def __init__(self, chain: List[str]):
         self.chain = chain
-        super().__init__(
-            f"Circular copybook dependency detected: {' → '.join(chain)}"
-        )
+        super().__init__(f"Circular copybook dependency detected: {' → '.join(chain)}")
 
 
 # ===== Core Models =====
+
 
 @dataclass
 class ReplacingClause:
@@ -47,6 +48,7 @@ class ReplacingClause:
         COPY TEMPLATE REPLACING LEADING ==PRE==  BY ==CUST==.
         COPY TEMPLATE REPLACING TRAILING ==SUF== BY ==ACCT==.
     """
+
     original: str  # What to replace (e.g., ":TAG:")
     replacement: str  # What to replace with (e.g., "CUST")
     is_leading: bool = False  # LEADING replacement (match at start)
@@ -67,6 +69,7 @@ class CopyStatement:
         COPY SQLCA.
         COPY CUSTOMER REPLACING ==:PREFIX:== BY ==CUST==.
     """
+
     copybook_name: str
     line_number: int
     column_start: int
@@ -76,7 +79,7 @@ class CopyStatement:
     # Filled in during resolution
     resolved_path: Optional[str] = None
     content: Optional[str] = None
-    nested_copies: List['CopyStatement'] = field(default_factory=list)
+    nested_copies: List["CopyStatement"] = field(default_factory=list)
 
     def __str__(self) -> str:
         result = f"COPY {self.copybook_name}"
@@ -90,6 +93,7 @@ class SourceLocation:
     """
     Location in original source file (before copybook resolution)
     """
+
     file_path: str
     line_number: int
     is_copybook: bool
@@ -109,6 +113,7 @@ class SourceMap:
     This allows error messages to reference the original source location
     even after copybooks have been inlined.
     """
+
     mappings: Dict[int, SourceLocation] = field(default_factory=dict)
 
     def add_mapping(self, resolved_line: int, location: SourceLocation):
@@ -128,6 +133,7 @@ class Copybook:
     """
     Resolved copybook information
     """
+
     name: str
     path: str
     content: str
@@ -145,6 +151,7 @@ class ResolvedSource:
     """
     COBOL source with all copybooks resolved and inlined
     """
+
     original_path: str
     resolved_content: str
     copybooks_used: List[Copybook] = field(default_factory=list)
@@ -175,36 +182,42 @@ class CopybookConfig:
     """
 
     # Search paths (in order of priority)
-    search_paths: List[str] = field(default_factory=lambda: [
-        './copybooks',
-        './copy',
-        './COPY',
-        '../copybooks',
-        '../copy',
-    ])
+    search_paths: List[str] = field(
+        default_factory=lambda: [
+            "./copybooks",
+            "./copy",
+            "./COPY",
+            "../copybooks",
+            "../copy",
+        ]
+    )
 
     # File extensions to try (in order)
-    extensions: List[str] = field(default_factory=lambda: [
-        '.cpy',
-        '.CPY',
-        '.cbl',
-        '.CBL',
-        '.cob',
-        '.COB',
-        '',  # No extension (common on mainframe)
-    ])
+    extensions: List[str] = field(
+        default_factory=lambda: [
+            ".cpy",
+            ".CPY",
+            ".cbl",
+            ".CBL",
+            ".cob",
+            ".COB",
+            "",  # No extension (common on mainframe)
+        ]
+    )
 
     # Naming conventions to try
     # Some systems use C$COPY or COPY$ prefix
-    prefixes: List[str] = field(default_factory=lambda: [
-        '',
-        'C$',
-        'COPY$',
-    ])
+    prefixes: List[str] = field(
+        default_factory=lambda: [
+            "",
+            "C$",
+            "COPY$",
+        ]
+    )
 
     # Cache settings
     enable_cache: bool = True
-    cache_dir: str = '.harmonizer-cache/copybooks'
+    cache_dir: str = ".harmonizer-cache/copybooks"
     max_cache_size_mb: int = 100
     cache_ttl_hours: int = 24
 
@@ -234,6 +247,7 @@ class CopybookResolutionStats:
     """
     Statistics about copybook resolution
     """
+
     total_copybooks_found: int = 0
     total_copybooks_resolved: int = 0
     total_copybooks_cached: int = 0

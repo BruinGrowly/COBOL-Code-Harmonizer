@@ -15,11 +15,11 @@ from .cobol_parser import (
 )
 
 __all__ = [
-    'COBOLParser',
-    'COBOLProgram',
-    'COBOLFormat',
-    'COBOLStandard',
-    'COBOLDialect',
-    'COBOLStatement',
-    'Procedure',
+    "COBOLParser",
+    "COBOLProgram",
+    "COBOLFormat",
+    "COBOLStandard",
+    "COBOLDialect",
+    "COBOLStatement",
+    "Procedure",
 ]

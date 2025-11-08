@@ -29,34 +29,34 @@ class CallExtractor:
     # Pattern for CALL statements
     # Matches: CALL 'PROG', CALL "PROG", CALL WS-PROGRAM-NAME
     CALL_PATTERN = re.compile(
-        r'\bCALL\s+'                      # CALL keyword
-        r'(?:'                             # Group for either:
-        r'[\'"]([A-Z0-9\-]+)[\'"]'        #   Quoted program name
-        r'|'                               # OR
-        r'([A-Z0-9\-]+)'                  #   Variable name (dynamic)
-        r')',
-        re.IGNORECASE
+        r"\bCALL\s+"  # CALL keyword
+        r"(?:"  # Group for either:
+        r'[\'"]([A-Z0-9\-]+)[\'"]'  #   Quoted program name
+        r"|"  # OR
+        r"([A-Z0-9\-]+)"  #   Variable name (dynamic)
+        r")",
+        re.IGNORECASE,
     )
 
     # Pattern for PERFORM statements
     # Matches: PERFORM PARA, PERFORM 100-PROCESS, PERFORM PARA THRU PARA-END
     PERFORM_PATTERN = re.compile(
-        r'\bPERFORM\s+'                    # PERFORM keyword
-        r'([A-Z0-9\-]+)'                   # Paragraph/section name
-        r'(?:\s+THRU\s+([A-Z0-9\-]+))?',  # Optional THRU clause
-        re.IGNORECASE
+        r"\bPERFORM\s+"  # PERFORM keyword
+        r"([A-Z0-9\-]+)"  # Paragraph/section name
+        r"(?:\s+THRU\s+([A-Z0-9\-]+))?",  # Optional THRU clause
+        re.IGNORECASE,
     )
 
     # Pattern to identify procedure division sections and paragraphs
     # Allow leading whitespace for COBOL's fixed-format columns 1-6
     PARAGRAPH_PATTERN = re.compile(
-        r'^\s*([A-Z0-9\-]+)\s*\.',        # Paragraph name with optional leading spaces
-        re.IGNORECASE | re.MULTILINE
+        r"^\s*([A-Z0-9\-]+)\s*\.",  # Paragraph name with optional leading spaces
+        re.IGNORECASE | re.MULTILINE,
     )
 
     SECTION_PATTERN = re.compile(
-        r'^\s*([A-Z0-9\-]+)\s+SECTION\s*\.',  # Section name with optional leading spaces
-        re.IGNORECASE | re.MULTILINE
+        r"^\s*([A-Z0-9\-]+)\s+SECTION\s*\.",  # Section name with optional leading spaces
+        re.IGNORECASE | re.MULTILINE,
     )
 
     def __init__(self, parser: Optional[COBOLParser] = None):
@@ -73,7 +73,7 @@ class CallExtractor:
         Returns:
             List of CallSite objects
         """
-        with open(file_path, 'r', encoding='utf-8', errors='replace') as f:
+        with open(file_path, "r", encoding="utf-8", errors="replace") as f:
             source = f.read()
 
         # Parse the program
@@ -81,7 +81,9 @@ class CallExtractor:
 
         return self.extract_from_source(source, program.program_id, Path(file_path).name)
 
-    def extract_from_source(self, source: str, program_name: str, source_file: str) -> List[CallSite]:
+    def extract_from_source(
+        self, source: str, program_name: str, source_file: str
+    ) -> List[CallSite]:
         """
         Extract all call sites from COBOL source code
 
@@ -125,16 +127,16 @@ class CallExtractor:
         procedures = {}  # line_number -> (procedure_name, is_section)
         in_procedure_division = False
 
-        lines = source.split('\n')
+        lines = source.split("\n")
         for line_num, line in enumerate(lines, 1):
             # Skip comments and empty lines
-            if not line.strip() or line.strip().startswith('*'):
+            if not line.strip() or line.strip().startswith("*"):
                 continue
 
             stripped = line.strip()
 
             # Check if we've entered PROCEDURE DIVISION
-            if 'PROCEDURE' in stripped.upper() and 'DIVISION' in stripped.upper():
+            if "PROCEDURE" in stripped.upper() and "DIVISION" in stripped.upper():
                 in_procedure_division = True
                 continue
 
@@ -147,10 +149,19 @@ class CallExtractor:
             if section_match:
                 section_name = section_match.group(1)
                 # Filter out DIVISION keywords and other false positives
-                if not any(keyword in section_name.upper() for keyword in [
-                    'DIVISION', 'IDENTIFICATION', 'ENVIRONMENT', 'DATA', 'WORKING-STORAGE',
-                    'FILE', 'LINKAGE', 'LOCAL-STORAGE'
-                ]):
+                if not any(
+                    keyword in section_name.upper()
+                    for keyword in [
+                        "DIVISION",
+                        "IDENTIFICATION",
+                        "ENVIRONMENT",
+                        "DATA",
+                        "WORKING-STORAGE",
+                        "FILE",
+                        "LINKAGE",
+                        "LOCAL-STORAGE",
+                    ]
+                ):
                     procedures[line_num] = (section_name, True)  # is_section=True
                 continue
 
@@ -163,14 +174,41 @@ class CallExtractor:
                 # - DIVISION keywords
                 # - Level numbers (01, 05, etc.)
                 # - COBOL reserved words at start of line
-                if (not para_name.endswith('DIVISION') and
-                    not para_name.isdigit() and
-                    not any(keyword == para_name.upper() for keyword in [
-                        'IF', 'ELSE', 'THEN', 'END-IF', 'PERFORM', 'CALL', 'EVALUATE',
-                        'END-EVALUATE', 'WHEN', 'SEARCH', 'END-SEARCH', 'READ', 'WRITE',
-                        'OPEN', 'CLOSE', 'MOVE', 'ADD', 'SUBTRACT', 'MULTIPLY', 'DIVIDE',
-                        'COMPUTE', 'DISPLAY', 'ACCEPT', 'STOP', 'GOBACK', 'EXIT'
-                    ])):
+                if (
+                    not para_name.endswith("DIVISION")
+                    and not para_name.isdigit()
+                    and not any(
+                        keyword == para_name.upper()
+                        for keyword in [
+                            "IF",
+                            "ELSE",
+                            "THEN",
+                            "END-IF",
+                            "PERFORM",
+                            "CALL",
+                            "EVALUATE",
+                            "END-EVALUATE",
+                            "WHEN",
+                            "SEARCH",
+                            "END-SEARCH",
+                            "READ",
+                            "WRITE",
+                            "OPEN",
+                            "CLOSE",
+                            "MOVE",
+                            "ADD",
+                            "SUBTRACT",
+                            "MULTIPLY",
+                            "DIVIDE",
+                            "COMPUTE",
+                            "DISPLAY",
+                            "ACCEPT",
+                            "STOP",
+                            "GOBACK",
+                            "EXIT",
+                        ]
+                    )
+                ):
                     procedures[line_num] = (para_name, False)  # is_section=False
 
         return procedures
@@ -199,19 +237,15 @@ class CallExtractor:
         return containing_proc
 
     def _extract_call_statements(
-        self,
-        source: str,
-        program_name: str,
-        source_file: str,
-        procedures: dict
+        self, source: str, program_name: str, source_file: str, procedures: dict
     ) -> List[CallSite]:
         """Extract CALL statements from source"""
         call_sites = []
-        lines = source.split('\n')
+        lines = source.split("\n")
 
         for line_num, line in enumerate(lines, 1):
             # Skip comments
-            if line.strip().startswith('*'):
+            if line.strip().startswith("*"):
                 continue
 
             # Find CALL statements
@@ -234,27 +268,25 @@ class CallExtractor:
                 # Find containing procedure
                 caller = self._find_containing_procedure(line_num, procedures)
 
-                call_sites.append(CallSite(
-                    caller=f"{program_name}.{caller}",
-                    callee=callee,
-                    call_type=call_type,
-                    line_number=line_num,
-                    source_file=source_file,
-                    is_dynamic=is_dynamic
-                ))
+                call_sites.append(
+                    CallSite(
+                        caller=f"{program_name}.{caller}",
+                        callee=callee,
+                        call_type=call_type,
+                        line_number=line_num,
+                        source_file=source_file,
+                        is_dynamic=is_dynamic,
+                    )
+                )
 
         return call_sites
 
     def _extract_perform_statements(
-        self,
-        source: str,
-        program_name: str,
-        source_file: str,
-        procedures: dict
+        self, source: str, program_name: str, source_file: str, procedures: dict
     ) -> List[CallSite]:
         """Extract PERFORM statements from source"""
         call_sites = []
-        lines = source.split('\n')
+        lines = source.split("\n")
 
         # Build set of known procedures for validation
         # Extract procedure names from tuples (procedure_name, is_section)
@@ -271,7 +303,7 @@ class CallExtractor:
 
         for line_num, line in enumerate(lines, 1):
             # Skip comments
-            if line.strip().startswith('*'):
+            if line.strip().startswith("*"):
                 continue
 
             # Find PERFORM statements
@@ -280,7 +312,7 @@ class CallExtractor:
                 thru_para = match.group(2)
 
                 # Skip PERFORM with inline code (UNTIL, TIMES, VARYING)
-                if any(keyword in line.upper() for keyword in ['UNTIL', 'TIMES', 'VARYING']):
+                if any(keyword in line.upper() for keyword in ["UNTIL", "TIMES", "VARYING"]):
                     # Could still be "PERFORM PARA UNTIL" - check if target is a known procedure
                     if target_para not in known_procedures:
                         continue
@@ -289,27 +321,35 @@ class CallExtractor:
                 caller = self._find_containing_procedure(line_num, procedures)
 
                 # Determine if it's a section or paragraph (already tracked in procedure_types)
-                call_type = CallType.SECTION_PERFORM if procedure_types.get(target_para, False) else CallType.PROCEDURE_PERFORM
+                call_type = (
+                    CallType.SECTION_PERFORM
+                    if procedure_types.get(target_para, False)
+                    else CallType.PROCEDURE_PERFORM
+                )
 
-                call_sites.append(CallSite(
-                    caller=f"{program_name}.{caller}",
-                    callee=target_para,
-                    call_type=call_type,
-                    line_number=line_num,
-                    source_file=source_file,
-                    is_dynamic=False
-                ))
-
-                # If THRU clause, add the end paragraph as well
-                if thru_para:
-                    call_sites.append(CallSite(
+                call_sites.append(
+                    CallSite(
                         caller=f"{program_name}.{caller}",
-                        callee=thru_para,
+                        callee=target_para,
                         call_type=call_type,
                         line_number=line_num,
                         source_file=source_file,
-                        is_dynamic=False
-                    ))
+                        is_dynamic=False,
+                    )
+                )
+
+                # If THRU clause, add the end paragraph as well
+                if thru_para:
+                    call_sites.append(
+                        CallSite(
+                            caller=f"{program_name}.{caller}",
+                            callee=thru_para,
+                            call_type=call_type,
+                            line_number=line_num,
+                            source_file=source_file,
+                            is_dynamic=False,
+                        )
+                    )
 
         return call_sites
 
@@ -324,13 +364,17 @@ class CallExtractor:
             Dictionary of statistics
         """
         stats = {
-            'total_calls': len(call_sites),
-            'program_calls': sum(1 for cs in call_sites if cs.call_type == CallType.PROGRAM_CALL),
-            'dynamic_calls': sum(1 for cs in call_sites if cs.call_type == CallType.DYNAMIC_CALL),
-            'perform_statements': sum(1 for cs in call_sites if cs.call_type == CallType.PROCEDURE_PERFORM),
-            'section_calls': sum(1 for cs in call_sites if cs.call_type == CallType.SECTION_PERFORM),
-            'unique_callers': len(set(cs.caller for cs in call_sites)),
-            'unique_callees': len(set(cs.callee for cs in call_sites)),
+            "total_calls": len(call_sites),
+            "program_calls": sum(1 for cs in call_sites if cs.call_type == CallType.PROGRAM_CALL),
+            "dynamic_calls": sum(1 for cs in call_sites if cs.call_type == CallType.DYNAMIC_CALL),
+            "perform_statements": sum(
+                1 for cs in call_sites if cs.call_type == CallType.PROCEDURE_PERFORM
+            ),
+            "section_calls": sum(
+                1 for cs in call_sites if cs.call_type == CallType.SECTION_PERFORM
+            ),
+            "unique_callers": len(set(cs.caller for cs in call_sites)),
+            "unique_callees": len(set(cs.callee for cs in call_sites)),
         }
 
         return stats

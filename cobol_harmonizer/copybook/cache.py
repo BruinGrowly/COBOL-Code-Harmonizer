@@ -101,9 +101,7 @@ class CopybookCache:
             except Exception as e:
                 logger.warning(f"Failed to cache {copybook_name} to disk: {e}")
 
-    def _is_valid_cache_entry(self,
-                              cached: Copybook,
-                              file_path: Optional[str]) -> bool:
+    def _is_valid_cache_entry(self, cached: Copybook, file_path: Optional[str]) -> bool:
         """
         Check if cached copybook is still valid
 
@@ -156,8 +154,8 @@ class CopybookCache:
             Hex digest of file content
         """
         sha256 = hashlib.sha256()
-        with open(file_path, 'rb') as f:
-            for chunk in iter(lambda: f.read(4096), b''):
+        with open(file_path, "rb") as f:
+            for chunk in iter(lambda: f.read(4096), b""):
                 sha256.update(chunk)
         return sha256.hexdigest()
 
@@ -172,7 +170,7 @@ class CopybookCache:
             Path to cache file
         """
         # Create safe filename from copybook name
-        safe_name = copybook_name.replace('/', '_').replace('\\', '_')
+        safe_name = copybook_name.replace("/", "_").replace("\\", "_")
         return self._cache_dir / f"{safe_name}.cache.json"
 
     def _save_to_disk(self, copybook_name: str, copybook: Copybook):
@@ -187,19 +185,19 @@ class CopybookCache:
 
         # Serialize to JSON
         cache_data = {
-            'version': '1.0',
-            'timestamp': datetime.now().isoformat(),
-            'copybook': {
-                'name': copybook.name,
-                'path': copybook.path,
-                'content': copybook.content,
-                'hash': copybook.hash,
-                'resolution_time_ms': copybook.resolution_time_ms,
+            "version": "1.0",
+            "timestamp": datetime.now().isoformat(),
+            "copybook": {
+                "name": copybook.name,
+                "path": copybook.path,
+                "content": copybook.content,
+                "hash": copybook.hash,
+                "resolution_time_ms": copybook.resolution_time_ms,
                 # Note: nested_copies and source_map not cached (would be too large)
-            }
+            },
         }
 
-        with open(cache_file, 'w', encoding='utf-8') as f:
+        with open(cache_file, "w", encoding="utf-8") as f:
             json.dump(cache_data, f, indent=2)
 
     def _load_from_disk(self, copybook_name: str) -> Optional[Copybook]:
@@ -228,17 +226,17 @@ class CopybookCache:
                 return None
 
             # Load from JSON
-            with open(cache_file, 'r', encoding='utf-8') as f:
+            with open(cache_file, "r", encoding="utf-8") as f:
                 cache_data = json.load(f)
 
             # Reconstruct Copybook object
-            cb_data = cache_data['copybook']
+            cb_data = cache_data["copybook"]
             copybook = Copybook(
-                name=cb_data['name'],
-                path=cb_data['path'],
-                content=cb_data['content'],
-                hash=cb_data.get('hash', ''),
-                resolution_time_ms=cb_data.get('resolution_time_ms', 0.0),
+                name=cb_data["name"],
+                path=cb_data["path"],
+                content=cb_data["content"],
+                hash=cb_data.get("hash", ""),
+                resolution_time_ms=cb_data.get("resolution_time_ms", 0.0),
                 source_map=SourceMap(),  # Empty source map
                 nested_copies=[],  # Not cached
             )
@@ -277,19 +275,21 @@ class CopybookCache:
             Dictionary with cache statistics
         """
         stats = {
-            'memory_cache_size': len(self._memory_cache),
-            'disk_cache_enabled': self._cache_dir is not None,
+            "memory_cache_size": len(self._memory_cache),
+            "disk_cache_enabled": self._cache_dir is not None,
         }
 
         if self._cache_dir and self._cache_dir.exists():
             cache_files = list(self._cache_dir.glob("*.cache.json"))
             total_size = sum(f.stat().st_size for f in cache_files)
 
-            stats.update({
-                'disk_cache_files': len(cache_files),
-                'disk_cache_size_bytes': total_size,
-                'disk_cache_size_mb': round(total_size / (1024 * 1024), 2),
-            })
+            stats.update(
+                {
+                    "disk_cache_files": len(cache_files),
+                    "disk_cache_size_bytes": total_size,
+                    "disk_cache_size_mb": round(total_size / (1024 * 1024), 2),
+                }
+            )
 
         return stats
 

@@ -36,7 +36,7 @@ class CallGraphVisualizer:
         self,
         highlight_nodes: Optional[Set[str]] = None,
         show_metrics: bool = True,
-        show_line_numbers: bool = False
+        show_line_numbers: bool = False,
     ) -> str:
         """
         Export to GraphViz DOT format
@@ -70,7 +70,7 @@ class CallGraphVisualizer:
             # Write node
             out.write(f'  "{node_id}" [\n')
             out.write(f'    label="{label}",\n')
-            out.write(f'    shape={shape},\n')
+            out.write(f"    shape={shape},\n")
             out.write(f'    fillcolor="{color}",\n')
             out.write('    style="filled,rounded"\n')
             out.write("  ];\n")
@@ -167,28 +167,32 @@ class CallGraphVisualizer:
         # Build nodes list
         nodes = []
         for node_id, node in self.graph.nodes.items():
-            nodes.append({
-                "id": node_id,
-                "name": node.name,
-                "type": node.node_type.value,
-                "fan_in": node.metrics.fan_in,
-                "fan_out": node.metrics.fan_out,
-                "depth": node.metrics.depth,
-                "complexity": node.metrics.complexity,
-                "file": node.file_path,
-                "line": node.start_line,
-            })
+            nodes.append(
+                {
+                    "id": node_id,
+                    "name": node.name,
+                    "type": node.node_type.value,
+                    "fan_in": node.metrics.fan_in,
+                    "fan_out": node.metrics.fan_out,
+                    "depth": node.metrics.depth,
+                    "complexity": node.metrics.complexity,
+                    "file": node.file_path,
+                    "line": node.start_line,
+                }
+            )
 
         # Build links list
         links = []
         for edge in self.graph.edges:
-            links.append({
-                "source": edge.source,
-                "target": edge.target,
-                "type": edge.call_type.value,
-                "count": edge.call_count,
-                "lines": edge.line_numbers,
-            })
+            links.append(
+                {
+                    "source": edge.source,
+                    "target": edge.target,
+                    "type": edge.call_type.value,
+                    "count": edge.call_count,
+                    "lines": edge.line_numbers,
+                }
+            )
 
         return {
             "nodes": nodes,
@@ -199,7 +203,7 @@ class CallGraphVisualizer:
                 "total_nodes": len(self.graph.nodes),
                 "total_edges": len(self.graph.edges),
                 "max_depth": self.graph.max_depth,
-            }
+            },
         }
 
     def to_ascii(self, max_depth: int = 3, entry_point: Optional[str] = None) -> str:
@@ -249,7 +253,7 @@ class CallGraphVisualizer:
             # Print children
             callees = self.graph.get_callees(node_id)
             for i, callee_id in enumerate(callees):
-                is_last = (i == len(callees) - 1)
+                is_last = i == len(callees) - 1
                 new_prefix = prefix + ("    " if is_last else "│   ")
                 branch = "└── " if is_last else "├── "
                 print_tree(callee_id, prefix + branch, depth + 1)
@@ -319,9 +323,7 @@ class CallGraphVisualizer:
 
         # Top fan-in nodes (most called)
         nodes_by_fan_in = sorted(
-            self.graph.nodes.values(),
-            key=lambda n: n.metrics.fan_in,
-            reverse=True
+            self.graph.nodes.values(), key=lambda n: n.metrics.fan_in, reverse=True
         )
         out.write("Most called nodes (top 5):\n")
         for node in nodes_by_fan_in[:5]:
@@ -331,9 +333,7 @@ class CallGraphVisualizer:
 
         # Top fan-out nodes (call most)
         nodes_by_fan_out = sorted(
-            self.graph.nodes.values(),
-            key=lambda n: n.metrics.fan_out,
-            reverse=True
+            self.graph.nodes.values(), key=lambda n: n.metrics.fan_out, reverse=True
         )
         out.write("Nodes that call most (top 5):\n")
         for node in nodes_by_fan_out[:5]:

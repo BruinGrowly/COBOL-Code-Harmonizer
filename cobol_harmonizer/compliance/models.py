@@ -12,6 +12,7 @@ from enum import Enum
 
 class ComplianceFramework(Enum):
     """Regulatory frameworks and standards"""
+
     SOX = "sox"  # Sarbanes-Oxley Act (financial reporting)
     PCI_DSS = "pci_dss"  # Payment Card Industry Data Security Standard
     GDPR = "gdpr"  # General Data Protection Regulation
@@ -25,6 +26,7 @@ class ComplianceFramework(Enum):
 
 class AuditAction(Enum):
     """Types of auditable actions"""
+
     ANALYSIS = "analysis"  # Code analysis performed
     BASELINE_SAVE = "baseline_save"  # Baseline snapshot created
     BASELINE_COMPARE = "baseline_compare"  # Baseline comparison
@@ -39,6 +41,7 @@ class AuditAction(Enum):
 @dataclass
 class ComplianceRule:
     """A compliance rule that code must satisfy"""
+
     rule_id: str
     framework: ComplianceFramework
     name: str
@@ -54,10 +57,11 @@ class ComplianceRule:
 
         # Simple pattern matching (supports wildcards)
         for pattern in self.applies_to:
-            if '*' in pattern:
+            if "*" in pattern:
                 # Convert wildcard pattern to regex-like matching
                 import re
-                regex_pattern = pattern.replace('*', '.*')
+
+                regex_pattern = pattern.replace("*", ".*")
                 if re.match(regex_pattern, procedure_name):
                     return True
             elif pattern in procedure_name:
@@ -69,6 +73,7 @@ class ComplianceRule:
 @dataclass
 class ComplianceConfig:
     """Configuration for compliance features"""
+
     enabled: bool = True
     frameworks: List[ComplianceFramework] = field(default_factory=list)
     audit_log_path: str = ".audit_log"
@@ -92,6 +97,7 @@ class ComplianceConfig:
 @dataclass
 class AuditEntry:
     """Single audit log entry"""
+
     timestamp: datetime
     action: AuditAction
     user: Optional[str]
@@ -105,21 +111,22 @@ class AuditEntry:
     def to_dict(self) -> Dict:
         """Convert to dictionary for JSON serialization"""
         return {
-            'timestamp': self.timestamp.isoformat(),
-            'action': self.action.value,
-            'user': self.user,
-            'file_path': self.file_path,
-            'procedure_name': self.procedure_name,
-            'details': self.details,
-            'result': self.result,
-            'justification': self.justification,
-            'environment': self.environment,
+            "timestamp": self.timestamp.isoformat(),
+            "action": self.action.value,
+            "user": self.user,
+            "file_path": self.file_path,
+            "procedure_name": self.procedure_name,
+            "details": self.details,
+            "result": self.result,
+            "justification": self.justification,
+            "environment": self.environment,
         }
 
 
 @dataclass
 class ComplianceViolation:
     """A compliance rule violation"""
+
     rule: ComplianceRule
     procedure_name: str
     file_path: str
@@ -132,6 +139,7 @@ class ComplianceViolation:
 @dataclass
 class AuditReport:
     """Comprehensive audit report for compliance"""
+
     report_id: str
     generated_at: datetime
     report_type: str  # 'compliance', 'audit_trail', 'risk_assessment'
@@ -163,39 +171,37 @@ class AuditReport:
     def to_dict(self) -> Dict:
         """Convert to dictionary for JSON serialization"""
         return {
-            'report_id': self.report_id,
-            'generated_at': self.generated_at.isoformat(),
-            'report_type': self.report_type,
-            'period_start': self.period_start.isoformat(),
-            'period_end': self.period_end.isoformat(),
-            'summary': {
-                'total_files_analyzed': self.total_files_analyzed,
-                'total_procedures_analyzed': self.total_procedures_analyzed,
-                'total_violations': self.total_violations,
-                'critical_violations': self.critical_violations,
-                'high_violations': self.high_violations,
+            "report_id": self.report_id,
+            "generated_at": self.generated_at.isoformat(),
+            "report_type": self.report_type,
+            "period_start": self.period_start.isoformat(),
+            "period_end": self.period_end.isoformat(),
+            "summary": {
+                "total_files_analyzed": self.total_files_analyzed,
+                "total_procedures_analyzed": self.total_procedures_analyzed,
+                "total_violations": self.total_violations,
+                "critical_violations": self.critical_violations,
+                "high_violations": self.high_violations,
             },
-            'violations': [
+            "violations": [
                 {
-                    'rule_id': v.rule.rule_id,
-                    'framework': v.rule.framework.value,
-                    'procedure_name': v.procedure_name,
-                    'file_path': v.file_path,
-                    'severity': v.severity,
-                    'description': v.description,
-                    'recommendation': v.recommendation,
-                    'evidence': v.evidence,
+                    "rule_id": v.rule.rule_id,
+                    "framework": v.rule.framework.value,
+                    "procedure_name": v.procedure_name,
+                    "file_path": v.file_path,
+                    "severity": v.severity,
+                    "description": v.description,
+                    "recommendation": v.recommendation,
+                    "evidence": v.evidence,
                 }
                 for v in self.violations
             ],
-            'audit_trail': [entry.to_dict() for entry in self.audit_entries],
-            'framework_status': {
-                f.value: status for f, status in self.framework_status.items()
+            "audit_trail": [entry.to_dict() for entry in self.audit_entries],
+            "framework_status": {f.value: status for f, status in self.framework_status.items()},
+            "baseline_deviations": self.baseline_deviations,
+            "high_risk_changes": self.high_risk_changes,
+            "metadata": {
+                "generated_by": self.generated_by,
+                "attestation": self.attestation,
             },
-            'baseline_deviations': self.baseline_deviations,
-            'high_risk_changes': self.high_risk_changes,
-            'metadata': {
-                'generated_by': self.generated_by,
-                'attestation': self.attestation,
-            }
         }

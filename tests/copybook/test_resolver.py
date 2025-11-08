@@ -11,7 +11,7 @@ from cobol_harmonizer.copybook.resolver import CopybookResolver
 from cobol_harmonizer.copybook.models import (
     CopybookConfig,
     CopybookNotFoundError,
-    CircularCopybookError
+    CircularCopybookError,
 )
 
 
@@ -28,15 +28,12 @@ class TestCopybookResolver:
     @pytest.fixture
     def fixtures_dir(self):
         """Get the fixtures directory"""
-        return Path(__file__).parent.parent / 'fixtures'
+        return Path(__file__).parent.parent / "fixtures"
 
     @pytest.fixture
     def resolver_with_fixtures(self, fixtures_dir):
         """Create a resolver with test fixtures"""
-        config = CopybookConfig(
-            search_paths=[str(fixtures_dir)],
-            enable_cache=True
-        )
+        config = CopybookConfig(search_paths=[str(fixtures_dir)], enable_cache=True)
         return CopybookResolver(config)
 
     def test_find_copy_statements(self, resolver_with_fixtures):
@@ -53,8 +50,8 @@ class TestCopybookResolver:
         copy_statements = resolver_with_fixtures.find_copy_statements(source)
 
         assert len(copy_statements) == 2
-        assert copy_statements[0].copybook_name == 'TEST-RECORD'
-        assert copy_statements[1].copybook_name == 'NESTED-RECORD'
+        assert copy_statements[0].copybook_name == "TEST-RECORD"
+        assert copy_statements[1].copybook_name == "NESTED-RECORD"
 
     def test_resolve_simple_copybook(self, resolver_with_fixtures):
         """Test resolving a simple copybook"""
@@ -64,9 +61,9 @@ class TestCopybookResolver:
         copybook = resolver_with_fixtures.resolve_copybook(copy_stmt)
 
         assert copybook is not None
-        assert copybook.name == 'TEST-RECORD'
-        assert 'TEST-ID' in copybook.content
-        assert 'TEST-NAME' in copybook.content
+        assert copybook.name == "TEST-RECORD"
+        assert "TEST-ID" in copybook.content
+        assert "TEST-NAME" in copybook.content
 
     def test_resolve_nested_copybook(self, resolver_with_fixtures):
         """Test resolving nested copybooks"""
@@ -76,7 +73,7 @@ class TestCopybookResolver:
         copybook = resolver_with_fixtures.resolve_copybook(copy_stmt)
 
         assert copybook is not None
-        assert copybook.name == 'NESTED-RECORD'
+        assert copybook.name == "NESTED-RECORD"
         # Should have nested copy statement
         assert len(copybook.nested_copies) > 0
 
@@ -90,7 +87,7 @@ class TestCopybookResolver:
       COPY TEST-RECORD.
       01 WS-VAR PIC X.
 """
-        program_file = temp_dir / 'TEST.cbl'
+        program_file = temp_dir / "TEST.cbl"
         program_file.write_text(program)
 
         # Resolve
@@ -100,8 +97,8 @@ class TestCopybookResolver:
 
         assert resolved is not None
         assert len(resolved.copybooks_used) > 0
-        assert resolved.copybooks_used[0].name == 'TEST-RECORD'
-        assert 'TEST-ID' in resolved.resolved_content
+        assert resolved.copybooks_used[0].name == "TEST-RECORD"
+        assert "TEST-ID" in resolved.resolved_content
         assert resolved.total_lines_from_copybooks > 0
 
     def test_copybook_not_found_error(self, temp_dir):
@@ -119,8 +116,8 @@ class TestCopybookResolver:
     def test_circular_dependency_detection(self, temp_dir):
         """Test detection of circular copybook dependencies"""
         # Create circular copybooks
-        (temp_dir / 'COPY-A.cpy').write_text('01 A.\n      COPY COPY-B.')
-        (temp_dir / 'COPY-B.cpy').write_text('01 B.\n      COPY COPY-A.')
+        (temp_dir / "COPY-A.cpy").write_text("01 A.\n      COPY COPY-B.")
+        (temp_dir / "COPY-B.cpy").write_text("01 B.\n      COPY COPY-A.")
 
         config = CopybookConfig(search_paths=[str(temp_dir)])
         resolver = CopybookResolver(config)
@@ -134,7 +131,9 @@ class TestCopybookResolver:
     def test_basic_replacing_clause(self, temp_dir):
         """Test basic REPLACING clause"""
         # Create copybook
-        (temp_dir / 'TEMPLATE.cpy').write_text('01 ==PREFIX==RECORD.\n   05 ==PREFIX==ID PIC 9(10).')
+        (temp_dir / "TEMPLATE.cpy").write_text(
+            "01 ==PREFIX==RECORD.\n   05 ==PREFIX==ID PIC 9(10)."
+        )
 
         config = CopybookConfig(search_paths=[str(temp_dir)])
         resolver = CopybookResolver(config)
@@ -144,9 +143,9 @@ class TestCopybookResolver:
         copy_stmt = resolver.find_copy_statements(source)[0]
         copybook = resolver.resolve_copybook(copy_stmt)
 
-        assert 'CUSTOMER-RECORD' in copybook.content
-        assert 'CUSTOMER-ID' in copybook.content
-        assert '==PREFIX==' not in copybook.content
+        assert "CUSTOMER-RECORD" in copybook.content
+        assert "CUSTOMER-ID" in copybook.content
+        assert "==PREFIX==" not in copybook.content
 
     def test_inline_copybooks_with_source_mapping(self, temp_dir, fixtures_dir):
         """Test inlining copybooks with source mapping"""
@@ -157,7 +156,7 @@ class TestCopybookResolver:
       COPY TEST-RECORD.
       01 WS-VAR PIC X.
 """
-        program_file = temp_dir / 'TEST.cbl'
+        program_file = temp_dir / "TEST.cbl"
         program_file.write_text(program)
 
         config = CopybookConfig(search_paths=[str(fixtures_dir)])
@@ -182,6 +181,7 @@ class TestCopybookResolver:
 
         # First resolution (cache miss)
         import time
+
         start1 = time.time()
         copybook1 = resolver_with_fixtures.resolve_copybook(copy_stmt1)
         time1 = time.time() - start1
@@ -202,15 +202,12 @@ class TestCopybookResolver:
         # Create deeply nested copybooks
         for i in range(15):
             next_i = i + 1
-            content = f'01 LEVEL-{i}.\n'
+            content = f"01 LEVEL-{i}.\n"
             if next_i < 15:
-                content += f'      COPY LEVEL-{next_i}.'
-            (temp_dir / f'LEVEL-{i}.cpy').write_text(content)
+                content += f"      COPY LEVEL-{next_i}."
+            (temp_dir / f"LEVEL-{i}.cpy").write_text(content)
 
-        config = CopybookConfig(
-            search_paths=[str(temp_dir)],
-            max_depth=10  # Limit to 10 levels
-        )
+        config = CopybookConfig(search_paths=[str(temp_dir)], max_depth=10)  # Limit to 10 levels
         resolver = CopybookResolver(config)
 
         source = """      COPY LEVEL-0."""
@@ -241,8 +238,8 @@ class TestCopybookResolver:
         copybook1 = resolver.resolve_copybook(copy_statements[0])
         copybook2 = resolver.resolve_copybook(copy_statements[1])
 
-        assert copybook1.name == 'TEST-RECORD'
-        assert copybook2.name == 'NESTED-RECORD'
+        assert copybook1.name == "TEST-RECORD"
+        assert copybook2.name == "NESTED-RECORD"
 
     def test_copy_statement_line_numbers(self, resolver_with_fixtures):
         """Test that COPY statement line numbers are accurate"""

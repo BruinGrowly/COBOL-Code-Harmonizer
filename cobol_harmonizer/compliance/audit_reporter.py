@@ -17,6 +17,7 @@ from .risk_assessor import RiskAssessment, RiskLevel
 
 class ReportFormat(Enum):
     """Report output formats"""
+
     JSON = "json"
     HTML = "html"
     PDF = "pdf"
@@ -46,7 +47,7 @@ class ComplianceReporter:
         report_type: str = "compliance",
         period_start: Optional[datetime] = None,
         period_end: Optional[datetime] = None,
-        generated_by: Optional[str] = None
+        generated_by: Optional[str] = None,
     ) -> AuditReport:
         """
         Generate comprehensive audit report.
@@ -88,8 +89,8 @@ class ComplianceReporter:
             total_files_analyzed=unique_files,
             total_procedures_analyzed=len(assessments),
             total_violations=len(violations),
-            critical_violations=sum(1 for v in violations if v.severity == 'critical'),
-            high_violations=sum(1 for v in violations if v.severity == 'high'),
+            critical_violations=sum(1 for v in violations if v.severity == "critical"),
+            high_violations=sum(1 for v in violations if v.severity == "high"),
             violations=violations,
             audit_entries=audit_entries or [],
             framework_status=framework_status,
@@ -115,7 +116,7 @@ class ComplianceReporter:
                     framework=ComplianceFramework.CUSTOM,
                     name="Critical Risk Procedure",
                     description="Procedure has critical compliance risk",
-                    severity="critical"
+                    severity="critical",
                 )
 
                 violation = ComplianceViolation(
@@ -131,11 +132,11 @@ class ComplianceReporter:
                     ),
                     recommendation="\n".join(assessment.recommendations),
                     evidence={
-                        'disharmony_score': assessment.disharmony_score,
-                        'risk_score': assessment.risk_score,
-                        'compliance_tags': [tag.value for tag in assessment.compliance_tags],
-                        'fan_in': assessment.fan_in,
-                    }
+                        "disharmony_score": assessment.disharmony_score,
+                        "risk_score": assessment.risk_score,
+                        "compliance_tags": [tag.value for tag in assessment.compliance_tags],
+                        "fan_in": assessment.fan_in,
+                    },
                 )
                 violations.append(violation)
 
@@ -148,7 +149,7 @@ class ComplianceReporter:
                     framework=ComplianceFramework.CUSTOM,
                     name="High Risk Compliance Procedure",
                     description="Compliance-tagged procedure with high risk",
-                    severity="high"
+                    severity="high",
                 )
 
                 violation = ComplianceViolation(
@@ -161,18 +162,22 @@ class ComplianceReporter:
                         f"Compliance tags: {', '.join(tag.value for tag in assessment.compliance_tags)}. "
                         f"Requires review."
                     ),
-                    recommendation="\n".join(assessment.recommendations[:3]),  # Top 3 recommendations
+                    recommendation="\n".join(
+                        assessment.recommendations[:3]
+                    ),  # Top 3 recommendations
                     evidence={
-                        'disharmony_score': assessment.disharmony_score,
-                        'risk_score': assessment.risk_score,
-                        'compliance_tags': [tag.value for tag in assessment.compliance_tags],
-                    }
+                        "disharmony_score": assessment.disharmony_score,
+                        "risk_score": assessment.risk_score,
+                        "compliance_tags": [tag.value for tag in assessment.compliance_tags],
+                    },
                 )
                 violations.append(violation)
 
         return violations
 
-    def _assess_framework_status(self, assessments: List[RiskAssessment]) -> Dict[ComplianceFramework, str]:
+    def _assess_framework_status(
+        self, assessments: List[RiskAssessment]
+    ) -> Dict[ComplianceFramework, str]:
         """Assess compliance status for each framework"""
         status = {}
 
@@ -200,8 +205,7 @@ class ComplianceReporter:
         for framework, relevant_tags in framework_tag_mapping.items():
             # Find assessments relevant to this framework
             relevant = [
-                a for a in assessments
-                if any(tag in a.compliance_tags for tag in relevant_tags)
+                a for a in assessments if any(tag in a.compliance_tags for tag in relevant_tags)
             ]
 
             if not relevant:
@@ -227,15 +231,17 @@ class ComplianceReporter:
 
         for assessment in assessments:
             if assessment.risk_level in [RiskLevel.CRITICAL, RiskLevel.HIGH]:
-                high_risk.append({
-                    'procedure_name': assessment.procedure_name,
-                    'file_path': assessment.file_path,
-                    'risk_level': assessment.risk_level.value,
-                    'risk_score': assessment.risk_score,
-                    'compliance_level': assessment.compliance_level.value,
-                    'compliance_tags': [tag.value for tag in assessment.compliance_tags],
-                    'impact': f"{assessment.fan_in} dependent procedures",
-                })
+                high_risk.append(
+                    {
+                        "procedure_name": assessment.procedure_name,
+                        "file_path": assessment.file_path,
+                        "risk_level": assessment.risk_level.value,
+                        "risk_score": assessment.risk_score,
+                        "compliance_level": assessment.compliance_level.value,
+                        "compliance_tags": [tag.value for tag in assessment.compliance_tags],
+                        "impact": f"{assessment.fan_in} dependent procedures",
+                    }
+                )
 
         return high_risk
 
@@ -247,7 +253,7 @@ class ComplianceReporter:
             report: Audit report
             output_path: Path to output file
         """
-        with open(output_path, 'w') as f:
+        with open(output_path, "w") as f:
             json.dump(report.to_dict(), f, indent=2)
 
     def export_markdown(self, report: AuditReport, output_path: str) -> None:
@@ -293,8 +299,8 @@ class ComplianceReporter:
             md.append(f"")
 
             # Group by severity
-            critical = [v for v in report.violations if v.severity == 'critical']
-            high = [v for v in report.violations if v.severity == 'high']
+            critical = [v for v in report.violations if v.severity == "critical"]
+            high = [v for v in report.violations if v.severity == "high"]
 
             if critical:
                 md.append(f"### Critical Violations ({len(critical)})")
@@ -335,7 +341,7 @@ class ComplianceReporter:
                 md.append(f"- **Risk Score:** {change['risk_score']}/100")
                 md.append(f"- **Compliance Level:** {change['compliance_level']}")
                 md.append(f"- **Impact:** {change['impact']}")
-                if change['compliance_tags']:
+                if change["compliance_tags"]:
                     md.append(f"- **Tags:** {', '.join(change['compliance_tags'])}")
                 md.append(f"")
 
@@ -346,8 +352,8 @@ class ComplianceReporter:
         md.append(f"")
 
         # Write to file
-        with open(output_path, 'w') as f:
-            f.write('\n'.join(md))
+        with open(output_path, "w") as f:
+            f.write("\n".join(md))
 
     def export_csv(self, report: AuditReport, output_path: str) -> None:
         """
@@ -359,31 +365,35 @@ class ComplianceReporter:
         """
         import csv
 
-        with open(output_path, 'w', newline='') as f:
+        with open(output_path, "w", newline="") as f:
             writer = csv.writer(f)
 
             # Header
-            writer.writerow([
-                'Procedure Name',
-                'File Path',
-                'Severity',
-                'Rule ID',
-                'Rule Name',
-                'Description',
-                'Recommendation'
-            ])
+            writer.writerow(
+                [
+                    "Procedure Name",
+                    "File Path",
+                    "Severity",
+                    "Rule ID",
+                    "Rule Name",
+                    "Description",
+                    "Recommendation",
+                ]
+            )
 
             # Violations
             for v in report.violations:
-                writer.writerow([
-                    v.procedure_name,
-                    v.file_path,
-                    v.severity,
-                    v.rule.rule_id,
-                    v.rule.name,
-                    v.description,
-                    v.recommendation
-                ])
+                writer.writerow(
+                    [
+                        v.procedure_name,
+                        v.file_path,
+                        v.severity,
+                        v.rule.rule_id,
+                        v.rule.name,
+                        v.description,
+                        v.recommendation,
+                    ]
+                )
 
     def export_html(self, report: AuditReport, output_path: str) -> None:
         """
@@ -466,7 +476,7 @@ class ComplianceReporter:
 </html>
 """
 
-        with open(output_path, 'w') as f:
+        with open(output_path, "w") as f:
             f.write(html)
 
     def _generate_html_framework_status(self, report: AuditReport) -> str:
@@ -481,13 +491,15 @@ class ComplianceReporter:
             elif "Needs Review" in status:
                 css_class = "needs-review"
 
-            icon = "✅" if css_class == "compliant" else ("⚠️" if css_class == "needs-review" else "❌")
+            icon = (
+                "✅" if css_class == "compliant" else ("⚠️" if css_class == "needs-review" else "❌")
+            )
 
             html += f'<div class="framework-item {css_class}">'
-            html += f'<strong>{framework.value.upper()}:</strong> {icon} {status}'
-            html += '</div>'
+            html += f"<strong>{framework.value.upper()}:</strong> {icon} {status}"
+            html += "</div>"
 
-        html += '</div>'
+        html += "</div>"
         return html
 
     def _generate_html_violations(self, report: AuditReport) -> str:
@@ -496,14 +508,14 @@ class ComplianceReporter:
 
         for v in report.violations:
             html += f'<div class="violation {v.severity}">'
-            html += f'<h3>{v.procedure_name}</h3>'
-            html += f'<p><strong>File:</strong> <code>{v.file_path}</code></p>'
-            html += f'<p><strong>Rule:</strong> {v.rule.name} ({v.rule.rule_id})</p>'
-            html += f'<p><strong>Severity:</strong> {v.severity.upper()}</p>'
-            html += f'<p><strong>Description:</strong> {v.description}</p>'
-            html += f'<p><strong>Recommendation:</strong></p>'
+            html += f"<h3>{v.procedure_name}</h3>"
+            html += f"<p><strong>File:</strong> <code>{v.file_path}</code></p>"
+            html += f"<p><strong>Rule:</strong> {v.rule.name} ({v.rule.rule_id})</p>"
+            html += f"<p><strong>Severity:</strong> {v.severity.upper()}</p>"
+            html += f"<p><strong>Description:</strong> {v.description}</p>"
+            html += f"<p><strong>Recommendation:</strong></p>"
             html += f'<pre style="background: #f5f5f5; padding: 10px; border-radius: 3px;">{v.recommendation}</pre>'
-            html += '</div>'
+            html += "</div>"
 
         return html
 
@@ -518,8 +530,8 @@ class ComplianceReporter:
             html += f'<p><strong>Risk Score:</strong> {change["risk_score"]}/100</p>'
             html += f'<p><strong>Compliance Level:</strong> {change["compliance_level"]}</p>'
             html += f'<p><strong>Impact:</strong> {change["impact"]}</p>'
-            if change['compliance_tags']:
+            if change["compliance_tags"]:
                 html += f'<p><strong>Tags:</strong> {", ".join(change["compliance_tags"])}</p>'
-            html += '</div>'
+            html += "</div>"
 
         return html

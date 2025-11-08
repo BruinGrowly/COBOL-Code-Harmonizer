@@ -22,7 +22,7 @@ class JSONReporter:
         program_id: str,
         results: List[Dict],
         threshold: Optional[float] = None,
-        metadata: Optional[Dict] = None
+        metadata: Optional[Dict] = None,
     ) -> str:
         """
         Generate JSON report from analysis results.
@@ -44,19 +44,16 @@ class JSONReporter:
         report = {
             "harmonizer_version": self.version,
             "generated_at": datetime.utcnow().isoformat() + "Z",
-            "file": {
-                "path": str(file_path),
-                "program_id": program_id
-            },
+            "file": {"path": str(file_path), "program_id": program_id},
             "analysis": {
                 "threshold": threshold,
                 "total_procedures": summary["total"],
                 "harmonious_count": summary["harmonious"],
                 "disharmonious_count": summary["disharmonious"],
                 "requires_action_count": summary["requires_action"],
-                "severity_breakdown": summary["severity_breakdown"]
+                "severity_breakdown": summary["severity_breakdown"],
             },
-            "procedures": results
+            "procedures": results,
         }
 
         # Add optional metadata
@@ -66,9 +63,7 @@ class JSONReporter:
         return json.dumps(report, indent=2)
 
     def generate_batch_report(
-        self,
-        file_results: List[Dict],
-        metadata: Optional[Dict] = None
+        self, file_results: List[Dict], metadata: Optional[Dict] = None
     ) -> str:
         """
         Generate JSON report for batch analysis of multiple files.
@@ -99,8 +94,7 @@ class JSONReporter:
 
             # Aggregate severity counts
             for severity, count in summary["severity_breakdown"].items():
-                all_severity_counts[severity] = \
-                    all_severity_counts.get(severity, 0) + count
+                all_severity_counts[severity] = all_severity_counts.get(severity, 0) + count
 
         # Build batch report
         report = {
@@ -112,9 +106,9 @@ class JSONReporter:
                 "harmonious_count": total_harmonious,
                 "disharmonious_count": total_disharmonious,
                 "requires_action_count": total_requires_action,
-                "severity_breakdown": all_severity_counts
+                "severity_breakdown": all_severity_counts,
             },
-            "files": file_results
+            "files": file_results,
         }
 
         if metadata:
@@ -133,14 +127,10 @@ class JSONReporter:
         output_file = Path(output_path)
         output_file.parent.mkdir(parents=True, exist_ok=True)
 
-        with open(output_file, 'w', encoding='utf-8') as f:
+        with open(output_file, "w", encoding="utf-8") as f:
             f.write(report_json)
 
-    def _calculate_summary(
-        self,
-        results: List[Dict],
-        threshold: Optional[float]
-    ) -> Dict:
+    def _calculate_summary(self, results: List[Dict], threshold: Optional[float]) -> Dict:
         """Calculate summary statistics from results"""
 
         total = len(results)
@@ -157,10 +147,7 @@ class JSONReporter:
         # Calculate above threshold if provided
         above_threshold = 0
         if threshold is not None:
-            above_threshold = sum(
-                1 for r in results
-                if r.get("disharmony_score", 0) >= threshold
-            )
+            above_threshold = sum(1 for r in results if r.get("disharmony_score", 0) >= threshold)
 
         return {
             "total": total,
@@ -168,7 +155,7 @@ class JSONReporter:
             "disharmonious": disharmonious,
             "requires_action": requires_action,
             "above_threshold": above_threshold if threshold else None,
-            "severity_breakdown": severity_breakdown
+            "severity_breakdown": severity_breakdown,
         }
 
     def format_for_ci(self, results: List[Dict], threshold: float = 0.8) -> Dict:
@@ -184,10 +171,7 @@ class JSONReporter:
         Returns:
             CI-friendly dictionary
         """
-        critical_issues = [
-            r for r in results
-            if r.get("disharmony_score", 0) >= threshold
-        ]
+        critical_issues = [r for r in results if r.get("disharmony_score", 0) >= threshold]
 
         passed = len(critical_issues) == 0
 
@@ -201,8 +185,8 @@ class JSONReporter:
                     "procedure": issue["procedure_name"],
                     "score": issue["disharmony_score"],
                     "severity": issue["severity_level"],
-                    "explanation": issue["explanation"]
+                    "explanation": issue["explanation"],
                 }
                 for issue in critical_issues
-            ]
+            ],
         }

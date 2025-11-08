@@ -21,10 +21,7 @@ class SARIFReporter:
         self.sarif_version = "2.1.0"
 
     def generate_report(
-        self,
-        file_path: str,
-        results: List[Dict],
-        metadata: Optional[Dict] = None
+        self, file_path: str, results: List[Dict], metadata: Optional[Dict] = None
     ) -> str:
         """
         Generate SARIF report from analysis results.
@@ -49,11 +46,11 @@ class SARIFReporter:
                     "invocations": [
                         {
                             "executionSuccessful": True,
-                            "endTimeUtc": datetime.utcnow().isoformat() + "Z"
+                            "endTimeUtc": datetime.utcnow().isoformat() + "Z",
                         }
-                    ]
+                    ],
                 }
-            ]
+            ],
         }
 
         # Add optional properties
@@ -63,9 +60,7 @@ class SARIFReporter:
         return json.dumps(sarif, indent=2)
 
     def generate_batch_report(
-        self,
-        file_results: List[Dict],
-        metadata: Optional[Dict] = None
+        self, file_results: List[Dict], metadata: Optional[Dict] = None
     ) -> str:
         """
         Generate SARIF report for batch analysis of multiple files.
@@ -103,11 +98,11 @@ class SARIFReporter:
                     "invocations": [
                         {
                             "executionSuccessful": True,
-                            "endTimeUtc": datetime.utcnow().isoformat() + "Z"
+                            "endTimeUtc": datetime.utcnow().isoformat() + "Z",
                         }
-                    ]
+                    ],
                 }
-            ]
+            ],
         }
 
         if metadata:
@@ -126,7 +121,7 @@ class SARIFReporter:
         output_file = Path(output_path)
         output_file.parent.mkdir(parents=True, exist_ok=True)
 
-        with open(output_file, 'w', encoding='utf-8') as f:
+        with open(output_file, "w", encoding="utf-8") as f:
             f.write(report_json)
 
     def _build_tool_metadata(self) -> Dict:
@@ -144,7 +139,7 @@ class SARIFReporter:
                 "fullDescription": {
                     "text": "Detects semantic disharmony between COBOL procedure names and their implementations using the Love, Justice, Power, Wisdom (LJPW) semantic framework."
                 },
-                "rules": self._build_rules()
+                "rules": self._build_rules(),
             }
         }
 
@@ -154,98 +149,69 @@ class SARIFReporter:
             {
                 "id": "COBOL-HARMONIZER-CRITICAL",
                 "name": "CriticalDisharmony",
-                "shortDescription": {
-                    "text": "Critical semantic disharmony detected"
-                },
+                "shortDescription": {"text": "Critical semantic disharmony detected"},
                 "fullDescription": {
                     "text": "The procedure name severely contradicts its implementation. This indicates a critical semantic bug that will confuse developers and likely cause maintenance issues."
                 },
-                "defaultConfiguration": {
-                    "level": "error"
-                },
+                "defaultConfiguration": {"level": "error"},
                 "helpUri": "https://github.com/BruinGrowly/COBOL-Code-Harmonizer/blob/main/docs/PHILOSOPHY.md",
                 "help": {
                     "text": "Critical disharmony (score >= 1.2) indicates the procedure name lies about its behavior. For example, a procedure named GET-CUSTOMER-BALANCE that actually deletes records. This is a severe semantic bug that requires immediate attention.",
-                    "markdown": "**Critical Semantic Disharmony**\n\nThe procedure name severely contradicts its implementation. This typically occurs when:\n- A READ/GET procedure modifies or deletes data\n- A DELETE procedure creates or reads data\n- A VALIDATE procedure performs destructive operations\n\nThis is a critical bug that will confuse developers and cause maintenance issues."
+                    "markdown": "**Critical Semantic Disharmony**\n\nThe procedure name severely contradicts its implementation. This typically occurs when:\n- A READ/GET procedure modifies or deletes data\n- A DELETE procedure creates or reads data\n- A VALIDATE procedure performs destructive operations\n\nThis is a critical bug that will confuse developers and cause maintenance issues.",
                 },
                 "properties": {
                     "tags": ["semantic", "maintainability", "security"],
-                    "precision": "high"
-                }
+                    "precision": "high",
+                },
             },
             {
                 "id": "COBOL-HARMONIZER-SIGNIFICANT",
                 "name": "SignificantDisharmony",
-                "shortDescription": {
-                    "text": "Significant semantic disharmony detected"
-                },
+                "shortDescription": {"text": "Significant semantic disharmony detected"},
                 "fullDescription": {
                     "text": "The procedure name significantly contradicts its implementation. This indicates a serious semantic issue that should be addressed."
                 },
-                "defaultConfiguration": {
-                    "level": "error"
-                },
+                "defaultConfiguration": {"level": "error"},
                 "helpUri": "https://github.com/BruinGrowly/COBOL-Code-Harmonizer/blob/main/docs/PHILOSOPHY.md",
                 "help": {
                     "text": "Significant disharmony (score 0.8-1.2) indicates substantial contradiction between the procedure name and its behavior. This requires refactoring.",
-                    "markdown": "**Significant Semantic Disharmony**\n\nThe procedure name and implementation are substantially misaligned. Consider:\n- Renaming the procedure to match its actual behavior\n- Refactoring the procedure to match its name\n- Splitting the procedure into multiple well-named procedures"
+                    "markdown": "**Significant Semantic Disharmony**\n\nThe procedure name and implementation are substantially misaligned. Consider:\n- Renaming the procedure to match its actual behavior\n- Refactoring the procedure to match its name\n- Splitting the procedure into multiple well-named procedures",
                 },
-                "properties": {
-                    "tags": ["semantic", "maintainability"],
-                    "precision": "high"
-                }
+                "properties": {"tags": ["semantic", "maintainability"], "precision": "high"},
             },
             {
                 "id": "COBOL-HARMONIZER-CONCERNING",
                 "name": "ConcerningDisharmony",
-                "shortDescription": {
-                    "text": "Concerning semantic disharmony detected"
-                },
+                "shortDescription": {"text": "Concerning semantic disharmony detected"},
                 "fullDescription": {
                     "text": "The procedure name noticeably contradicts its implementation. Consider refactoring for clarity."
                 },
-                "defaultConfiguration": {
-                    "level": "warning"
-                },
+                "defaultConfiguration": {"level": "warning"},
                 "helpUri": "https://github.com/BruinGrowly/COBOL-Code-Harmonizer/blob/main/docs/PHILOSOPHY.md",
                 "help": {
                     "text": "Concerning disharmony (score 0.5-0.8) indicates noticeable semantic drift. Review and consider refactoring.",
-                    "markdown": "**Concerning Semantic Disharmony**\n\nThe procedure shows noticeable semantic drift between name and implementation. While not critical, this should be reviewed for potential refactoring."
+                    "markdown": "**Concerning Semantic Disharmony**\n\nThe procedure shows noticeable semantic drift between name and implementation. While not critical, this should be reviewed for potential refactoring.",
                 },
-                "properties": {
-                    "tags": ["semantic", "maintainability"],
-                    "precision": "medium"
-                }
+                "properties": {"tags": ["semantic", "maintainability"], "precision": "medium"},
             },
             {
                 "id": "COBOL-HARMONIZER-MINOR",
                 "name": "MinorDrift",
-                "shortDescription": {
-                    "text": "Minor semantic drift detected"
-                },
+                "shortDescription": {"text": "Minor semantic drift detected"},
                 "fullDescription": {
                     "text": "The procedure shows minor semantic drift. This is often acceptable but worth reviewing."
                 },
-                "defaultConfiguration": {
-                    "level": "note"
-                },
+                "defaultConfiguration": {"level": "note"},
                 "helpUri": "https://github.com/BruinGrowly/COBOL-Code-Harmonizer/blob/main/docs/PHILOSOPHY.md",
                 "help": {
                     "text": "Minor drift (score 0.3-0.5) indicates slight semantic misalignment. This is often acceptable but worth reviewing for clarity.",
-                    "markdown": "**Minor Semantic Drift**\n\nThe procedure shows slight semantic drift. This is often acceptable for complex procedures that perform multiple operations, but consider if the name could be more accurate."
+                    "markdown": "**Minor Semantic Drift**\n\nThe procedure shows slight semantic drift. This is often acceptable for complex procedures that perform multiple operations, but consider if the name could be more accurate.",
                 },
-                "properties": {
-                    "tags": ["semantic", "maintainability"],
-                    "precision": "medium"
-                }
-            }
+                "properties": {"tags": ["semantic", "maintainability"], "precision": "medium"},
+            },
         ]
 
-    def _convert_results_to_sarif(
-        self,
-        file_path: str,
-        results: List[Dict]
-    ) -> List[Dict]:
+    def _convert_results_to_sarif(self, file_path: str, results: List[Dict]) -> List[Dict]:
         """Convert analysis results to SARIF result format"""
         sarif_results = []
 
@@ -263,21 +229,15 @@ class SARIFReporter:
             sarif_result = {
                 "ruleId": rule_id,
                 "level": sarif_level,
-                "message": {
-                    "text": self._build_result_message(result)
-                },
+                "message": {"text": self._build_result_message(result)},
                 "locations": [
                     {
                         "physicalLocation": {
-                            "artifactLocation": {
-                                "uri": self._normalize_path(file_path)
-                            },
+                            "artifactLocation": {"uri": self._normalize_path(file_path)},
                             "region": {
                                 "startLine": result.get("line_number", 1),
-                                "snippet": {
-                                    "text": result.get("procedure_name", "unknown")
-                                }
-                            }
+                                "snippet": {"text": result.get("procedure_name", "unknown")},
+                            },
                         }
                     }
                 ],
@@ -288,8 +248,8 @@ class SARIFReporter:
                     "intent_coords": result.get("intent_coords", {}),
                     "execution_coords": result.get("execution_coords", {}),
                     "dominant_shift": result.get("dominant_shift", {}),
-                    "ljpw_framework": True
-                }
+                    "ljpw_framework": True,
+                },
             }
 
             # Add suggestions if available
@@ -327,9 +287,7 @@ class SARIFReporter:
         fixes = []
         for i, suggestion in enumerate(suggestions[:3]):  # Limit to 3 suggestions
             fix = {
-                "description": {
-                    "text": f"Rename to '{suggestion}' to match actual behavior"
-                },
+                "description": {"text": f"Rename to '{suggestion}' to match actual behavior"},
                 "artifactChanges": [
                     {
                         "artifactLocation": {
@@ -339,15 +297,13 @@ class SARIFReporter:
                             {
                                 "deletedRegion": {
                                     "startLine": result.get("line_number", 1),
-                                    "startColumn": 1
+                                    "startColumn": 1,
                                 },
-                                "insertedContent": {
-                                    "text": f"       {suggestion}."
-                                }
+                                "insertedContent": {"text": f"       {suggestion}."},
                             }
-                        ]
+                        ],
                     }
-                ]
+                ],
             }
             fixes.append(fix)
 
@@ -355,14 +311,7 @@ class SARIFReporter:
 
     def _build_artifacts(self, file_path: str) -> List[Dict]:
         """Build SARIF artifact entries"""
-        return [
-            {
-                "location": {
-                    "uri": self._normalize_path(file_path)
-                },
-                "sourceLanguage": "COBOL"
-            }
-        ]
+        return [{"location": {"uri": self._normalize_path(file_path)}, "sourceLanguage": "COBOL"}]
 
     def _normalize_path(self, file_path: str) -> str:
         """Normalize file path for SARIF"""
@@ -385,7 +334,7 @@ class SARIFReporter:
             "critical": "COBOL-HARMONIZER-CRITICAL",
             "significant": "COBOL-HARMONIZER-SIGNIFICANT",
             "concerning": "COBOL-HARMONIZER-CONCERNING",
-            "minor_drift": "COBOL-HARMONIZER-MINOR"
+            "minor_drift": "COBOL-HARMONIZER-MINOR",
         }
         return severity_map.get(severity.lower(), "COBOL-HARMONIZER-MINOR")
 
@@ -396,6 +345,6 @@ class SARIFReporter:
             "significant": "error",
             "concerning": "warning",
             "minor_drift": "note",
-            "harmonious": "none"
+            "harmonious": "none",
         }
         return severity_map.get(severity.lower(), "note")

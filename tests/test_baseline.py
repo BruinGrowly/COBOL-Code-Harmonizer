@@ -15,11 +15,7 @@ class TestBaseline:
     def setup_method(self):
         """Set up test fixtures"""
         self.sample_batch_results = {
-            "statistics": {
-                "total_procedures": 5,
-                "harmonious_count": 3,
-                "disharmonious_count": 2
-            },
+            "statistics": {"total_procedures": 5, "harmonious_count": 3, "disharmonious_count": 2},
             "file_results": [
                 {
                     "file_path": "file1.cbl",
@@ -32,8 +28,18 @@ class TestBaseline:
                             "severity_level": "harmonious",
                             "is_harmonious": True,
                             "requires_action": False,
-                            "intent_coords": {"love": 0.1, "justice": 0.2, "power": 0.1, "wisdom": 0.6},
-                            "execution_coords": {"love": 0.1, "justice": 0.3, "power": 0.0, "wisdom": 0.6}
+                            "intent_coords": {
+                                "love": 0.1,
+                                "justice": 0.2,
+                                "power": 0.1,
+                                "wisdom": 0.6,
+                            },
+                            "execution_coords": {
+                                "love": 0.1,
+                                "justice": 0.3,
+                                "power": 0.0,
+                                "wisdom": 0.6,
+                            },
                         },
                         {
                             "procedure_name": "PROC2",
@@ -41,12 +47,22 @@ class TestBaseline:
                             "severity_level": "significant",
                             "is_harmonious": False,
                             "requires_action": True,
-                            "intent_coords": {"love": 0.0, "justice": 0.0, "power": 0.0, "wisdom": 1.0},
-                            "execution_coords": {"love": 0.0, "justice": 0.0, "power": 1.0, "wisdom": 0.0}
-                        }
-                    ]
+                            "intent_coords": {
+                                "love": 0.0,
+                                "justice": 0.0,
+                                "power": 0.0,
+                                "wisdom": 1.0,
+                            },
+                            "execution_coords": {
+                                "love": 0.0,
+                                "justice": 0.0,
+                                "power": 1.0,
+                                "wisdom": 0.0,
+                            },
+                        },
+                    ],
                 }
-            ]
+            ],
         }
 
     def test_initialization(self):
@@ -60,8 +76,7 @@ class TestBaseline:
     def test_from_analysis_results(self):
         """Test creating baseline from analysis results"""
         baseline = Baseline.from_analysis_results(
-            self.sample_batch_results,
-            description="Test baseline"
+            self.sample_batch_results, description="Test baseline"
         )
 
         assert baseline.data["description"] == "Test baseline"
@@ -117,9 +132,9 @@ class TestBaseline:
                             "is_harmonious": False,
                             "requires_action": True,
                             "intent_coords": {},
-                            "execution_coords": {}
+                            "execution_coords": {},
                         }
-                    ]
+                    ],
                 }
             ]
         }
@@ -153,9 +168,9 @@ class TestBaseline:
                             "is_harmonious": True,
                             "requires_action": False,
                             "intent_coords": {},
-                            "execution_coords": {}
+                            "execution_coords": {},
                         }
-                    ]
+                    ],
                 }
             ]
         }
@@ -181,7 +196,7 @@ class TestBaseline:
                     "file_path": "file1.cbl",
                     "program_id": "PROG1",
                     "total_procedures": 2,
-                    "results": []
+                    "results": [],
                 },
                 {
                     "file_path": "file2.cbl",  # New file!
@@ -193,10 +208,10 @@ class TestBaseline:
                             "disharmony_score": 0.8,
                             "severity_level": "concerning",
                             "is_harmonious": False,
-                            "requires_action": True
+                            "requires_action": True,
                         }
-                    ]
-                }
+                    ],
+                },
             ]
         }
 
@@ -210,9 +225,7 @@ class TestBaseline:
         baseline = Baseline.from_analysis_results(self.sample_batch_results)
 
         # Remove file
-        empty_results = {
-            "file_results": []
-        }
+        empty_results = {"file_results": []}
 
         comparison = baseline.compare(empty_results)
 
@@ -261,16 +274,12 @@ class TestBaselineManager:
                         "file_path": "test.cbl",
                         "program_id": "TEST",
                         "total_procedures": 1,
-                        "results": []
+                        "results": [],
                     }
                 ]
             }
 
-            path = manager.save_baseline(
-                batch_results,
-                name="test",
-                description="Test baseline"
-            )
+            path = manager.save_baseline(batch_results, name="test", description="Test baseline")
 
             assert Path(path).exists()
 
@@ -284,9 +293,7 @@ class TestBaselineManager:
             manager = BaselineManager(tmpdir)
 
             # Save baseline
-            batch_results = {
-                "file_results": []
-            }
+            batch_results = {"file_results": []}
             manager.save_baseline(batch_results, name="test")
 
             # Load baseline
@@ -330,9 +337,9 @@ class TestBaselineManager:
                                 "is_harmonious": False,
                                 "requires_action": False,
                                 "intent_coords": {},
-                                "execution_coords": {}
+                                "execution_coords": {},
                             }
-                        ]
+                        ],
                     }
                 ]
             }
@@ -354,9 +361,9 @@ class TestBaselineManager:
                                 "is_harmonious": False,
                                 "requires_action": True,
                                 "intent_coords": {},
-                                "execution_coords": {}
+                                "execution_coords": {},
                             }
-                        ]
+                        ],
                     }
                 ]
             }
@@ -397,7 +404,7 @@ def test_format_comparison_summary():
             "improvements": 3,
             "unchanged": 10,
             "new_procedures": 1,
-            "removed_procedures": 0
+            "removed_procedures": 0,
         },
         "regressions": [
             {
@@ -405,7 +412,7 @@ def test_format_comparison_summary():
                 "file_path": "bad.cbl",
                 "baseline_score": 0.5,
                 "current_score": 1.2,
-                "delta": 0.7
+                "delta": 0.7,
             }
         ],
         "improvements": [
@@ -414,9 +421,9 @@ def test_format_comparison_summary():
                 "file_path": "good.cbl",
                 "baseline_score": 1.0,
                 "current_score": 0.3,
-                "delta": -0.7
+                "delta": -0.7,
             }
-        ]
+        ],
     }
 
     summary_text = format_comparison_summary(comparison)
