@@ -6,6 +6,7 @@ Supports JSON and YAML formats.
 """
 
 import json
+import copy
 from pathlib import Path
 from typing import Dict, Optional, Any, List
 import os
@@ -81,7 +82,7 @@ class Config:
             config_dict: Optional configuration dictionary to use
         """
         self.config = self._deep_merge(
-            self.DEFAULT_CONFIG.copy(),
+            copy.deepcopy(self.DEFAULT_CONFIG),
             config_dict or {}
         )
 

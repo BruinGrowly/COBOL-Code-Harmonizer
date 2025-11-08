@@ -1,11 +1,21 @@
 """
-Tests for BatchAnalyzer
+LEGACY Tests for BatchAnalyzer (PRE v0.5.0)
+
+These tests are for the OLD BatchAnalyzer API (before the v0.5.0 refactor).
+The BatchAnalyzer was refactored to use a generic analyzer function approach,
+making these tests incompatible with the current implementation.
+
+For current BatchAnalyzer tests, see: test_batch_analyzer_refactored.py
+
+These tests are kept for historical reference but are SKIPPED.
 """
 
 import pytest
 import tempfile
 from pathlib import Path
 from cobol_harmonizer.batch_analyzer import BatchAnalyzer
+
+pytestmark = pytest.mark.skip(reason="Legacy tests for old BatchAnalyzer API (pre v0.5.0). See test_batch_analyzer_refactored.py for current tests.")
 
 
 class TestBatchAnalyzer:
