@@ -141,7 +141,12 @@ class TestVerbMapper:
         for verb in important_verbs:
             coords = self.mapper.map_verb(verb)
             # Should not return default for these verbs
-            assert coords != (0.25, 0.25, 0.25, 0.25), f"Verb {verb} should have specific mapping"
+            assert coords != (
+                0.25,
+                0.25,
+                0.25,
+                0.25,
+            ), f"Verb {verb} should have specific mapping"
 
     def test_coordinates_sum_reasonable(self):
         """Test that coordinates are reasonable values"""
@@ -159,4 +164,6 @@ class TestVerbMapper:
 
             # Sum should be close to 1.0 (normalized)
             total = l + j + p + w
-            assert 0.8 <= total <= 1.2, f"{verb}: Coordinates sum is {total}, expected ~1.0"
+            assert (
+                0.8 <= total <= 1.2
+            ), f"{verb}: Coordinates sum is {total}, expected ~1.0"

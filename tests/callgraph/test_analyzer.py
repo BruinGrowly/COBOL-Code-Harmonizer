@@ -16,11 +16,21 @@ class TestCallGraphAnalyzer:
     def sample_graph(self):
         """Create a sample call graph for testing"""
         call_sites = [
-            CallSite("PROG.MAIN", "SUB1", CallType.PROCEDURE_PERFORM, 10, "prog.cbl", False),
-            CallSite("PROG.MAIN", "SUB2", CallType.PROCEDURE_PERFORM, 11, "prog.cbl", False),
-            CallSite("PROG.SUB1", "SUB3", CallType.PROCEDURE_PERFORM, 20, "prog.cbl", False),
-            CallSite("PROG.SUB2", "SUB3", CallType.PROCEDURE_PERFORM, 30, "prog.cbl", False),
-            CallSite("PROG.SUB3", "SUB4", CallType.PROCEDURE_PERFORM, 40, "prog.cbl", False),
+            CallSite(
+                "PROG.MAIN", "SUB1", CallType.PROCEDURE_PERFORM, 10, "prog.cbl", False
+            ),
+            CallSite(
+                "PROG.MAIN", "SUB2", CallType.PROCEDURE_PERFORM, 11, "prog.cbl", False
+            ),
+            CallSite(
+                "PROG.SUB1", "SUB3", CallType.PROCEDURE_PERFORM, 20, "prog.cbl", False
+            ),
+            CallSite(
+                "PROG.SUB2", "SUB3", CallType.PROCEDURE_PERFORM, 30, "prog.cbl", False
+            ),
+            CallSite(
+                "PROG.SUB3", "SUB4", CallType.PROCEDURE_PERFORM, 40, "prog.cbl", False
+            ),
         ]
 
         builder = CallGraphBuilder()
@@ -116,13 +126,17 @@ class TestCallGraphAnalyzer:
     def test_find_dead_code(self):
         """Test finding dead code"""
         call_sites = [
-            CallSite("PROG.MAIN", "SUB1", CallType.PROCEDURE_PERFORM, 10, "prog.cbl", False),
+            CallSite(
+                "PROG.MAIN", "SUB1", CallType.PROCEDURE_PERFORM, 10, "prog.cbl", False
+            ),
             # SUB2 is never called - dead code
         ]
 
         # Manually add SUB2 as a caller to simulate orphaned node
         call_sites.append(
-            CallSite("PROG.SUB2", "SUB3", CallType.PROCEDURE_PERFORM, 20, "prog.cbl", False)
+            CallSite(
+                "PROG.SUB2", "SUB3", CallType.PROCEDURE_PERFORM, 20, "prog.cbl", False
+            )
         )
 
         builder = CallGraphBuilder()
@@ -153,7 +167,8 @@ class TestCallGraphAnalyzer:
         assert len(cycles) > 0
         # Check that the cycle contains all three nodes
         assert any(
-            "PROG.A" in cycle and "PROG.B" in cycle and "PROG.C" in cycle for cycle in cycles
+            "PROG.A" in cycle and "PROG.B" in cycle and "PROG.C" in cycle
+            for cycle in cycles
         )
 
     def test_find_hot_spots(self, analyzer):
@@ -199,7 +214,9 @@ class TestCallGraphAnalyzer:
     def test_zero_impact_leaf_node(self):
         """Test impact analysis on leaf node (no callers)"""
         call_sites = [
-            CallSite("PROG.MAIN", "LEAF", CallType.PROCEDURE_PERFORM, 10, "prog.cbl", False),
+            CallSite(
+                "PROG.MAIN", "LEAF", CallType.PROCEDURE_PERFORM, 10, "prog.cbl", False
+            ),
         ]
 
         builder = CallGraphBuilder()
@@ -217,10 +234,14 @@ class TestCallGraphAnalyzer:
         """Test complex transitive impact calculation"""
         call_sites = [
             # MAIN -> A -> B -> C -> TARGET
-            CallSite("PROG.MAIN", "A", CallType.PROCEDURE_PERFORM, 10, "prog.cbl", False),
+            CallSite(
+                "PROG.MAIN", "A", CallType.PROCEDURE_PERFORM, 10, "prog.cbl", False
+            ),
             CallSite("PROG.A", "B", CallType.PROCEDURE_PERFORM, 20, "prog.cbl", False),
             CallSite("PROG.B", "C", CallType.PROCEDURE_PERFORM, 30, "prog.cbl", False),
-            CallSite("PROG.C", "TARGET", CallType.PROCEDURE_PERFORM, 40, "prog.cbl", False),
+            CallSite(
+                "PROG.C", "TARGET", CallType.PROCEDURE_PERFORM, 40, "prog.cbl", False
+            ),
         ]
 
         builder = CallGraphBuilder()

@@ -36,10 +36,16 @@ def cli():
     default=0.5,
     help="Disharmony threshold for reporting (default: 0.5)",
 )
-@click.option("--show-all", "-a", is_flag=True, help="Show all procedures, even harmonious ones")
-@click.option("--suggest-names", "-s", is_flag=True, help="Suggest better procedure names")
+@click.option(
+    "--show-all", "-a", is_flag=True, help="Show all procedures, even harmonious ones"
+)
+@click.option(
+    "--suggest-names", "-s", is_flag=True, help="Suggest better procedure names"
+)
 @click.option("--verbose", "-v", is_flag=True, help="Show detailed analysis")
-def analyze(file_path: str, threshold: float, show_all: bool, suggest_names: bool, verbose: bool):
+def analyze(
+    file_path: str, threshold: float, show_all: bool, suggest_names: bool, verbose: bool
+):
     """
     Analyze a COBOL source file for semantic disharmony.
 
@@ -81,11 +87,15 @@ def analyze(file_path: str, threshold: float, show_all: bool, suggest_names: boo
             execution = execution_analyzer.analyze_procedure(procedure)
 
             # Calculate disharmony
-            analysis = calculator.calculate_detailed_analysis(procedure.name, intent, execution)
+            analysis = calculator.calculate_detailed_analysis(
+                procedure.name, intent, execution
+            )
 
             # Add suggestions if requested
             if suggest_names and not analysis["is_harmonious"]:
-                suggestions = intent_extractor.suggest_better_names(execution, procedure.name)
+                suggestions = intent_extractor.suggest_better_names(
+                    execution, procedure.name
+                )
                 analysis["suggestions"] = suggestions
 
             results.append(analysis)
@@ -111,7 +121,9 @@ def analyze(file_path: str, threshold: float, show_all: bool, suggest_names: boo
 
 @cli.command()
 @click.argument("file_path", type=click.Path(exists=True))
-@click.option("--output", "-o", type=click.Path(), help="Output file path (default: stdout)")
+@click.option(
+    "--output", "-o", type=click.Path(), help="Output file path (default: stdout)"
+)
 @click.option(
     "--format",
     "-f",
@@ -146,7 +158,9 @@ def report(file_path: str, output: Optional[str], format: str):
         for procedure in program.procedures:
             intent = intent_extractor.extract_intent(procedure.name)
             execution = execution_analyzer.analyze_procedure(procedure)
-            analysis = calculator.calculate_detailed_analysis(procedure.name, intent, execution)
+            analysis = calculator.calculate_detailed_analysis(
+                procedure.name, intent, execution
+            )
             results.append(analysis)
 
         # Generate report based on format

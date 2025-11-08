@@ -158,7 +158,11 @@ class BatchAnalyzer:
         # Filter unchanged files
         files_to_analyze = []
         for file_path in file_paths:
-            if skip_unchanged and self.enable_incremental and not self._has_file_changed(file_path):
+            if (
+                skip_unchanged
+                and self.enable_incremental
+                and not self._has_file_changed(file_path)
+            ):
                 skipped += 1
             else:
                 files_to_analyze.append(file_path)
@@ -197,7 +201,9 @@ class BatchAnalyzer:
             results=results,
         )
 
-    def _analyze_single_file(self, file_path: str, analyzer_func: Callable) -> FileAnalysisResult:
+    def _analyze_single_file(
+        self, file_path: str, analyzer_func: Callable
+    ) -> FileAnalysisResult:
         """Analyze a single file"""
         start_time = time.time()
 

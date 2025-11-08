@@ -208,7 +208,9 @@ class TestCodebaseMapper:
 
     def test_generate_recommendations(self):
         """Test recommendation generation"""
-        recommendations = self.mapper._generate_recommendations(self.sample_batch_results)
+        recommendations = self.mapper._generate_recommendations(
+            self.sample_batch_results
+        )
 
         assert isinstance(recommendations, list)
         assert len(recommendations) > 0
@@ -344,7 +346,9 @@ class TestCodebaseMapper:
 
     def test_recommendations_priority_levels(self):
         """Test that recommendations have appropriate priorities"""
-        recommendations = self.mapper._generate_recommendations(self.sample_batch_results)
+        recommendations = self.mapper._generate_recommendations(
+            self.sample_batch_results
+        )
 
         priorities = {r["priority"] for r in recommendations}
 

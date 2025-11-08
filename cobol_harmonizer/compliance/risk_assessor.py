@@ -173,7 +173,12 @@ class ComplianceRiskAssessor:
         # Procedures with compliance tags need extra scrutiny
         tagged_component = 10 if has_tags else 0
 
-        total = disharmony_component + compliance_component + impact_component + tagged_component
+        total = (
+            disharmony_component
+            + compliance_component
+            + impact_component
+            + tagged_component
+        )
 
         return round(total, 1)
 
@@ -215,10 +220,17 @@ class ComplianceRiskAssessor:
                 "CRITICAL compliance procedure. Requires documented code review "
                 "and approval before changes."
             )
-            recs.append("Consider adding comprehensive audit logging to this procedure.")
+            recs.append(
+                "Consider adding comprehensive audit logging to this procedure."
+            )
 
-        if assessment.compliance_level in [ComplianceLevel.CRITICAL, ComplianceLevel.HIGH]:
-            recs.append("Ensure this procedure has comprehensive unit tests and integration tests.")
+        if assessment.compliance_level in [
+            ComplianceLevel.CRITICAL,
+            ComplianceLevel.HIGH,
+        ]:
+            recs.append(
+                "Ensure this procedure has comprehensive unit tests and integration tests."
+            )
 
         # Impact recommendations
         if assessment.fan_in > 10:
@@ -331,7 +343,9 @@ class ComplianceRiskAssessor:
 
         return assessments
 
-    def get_critical_procedures(self, assessments: List[RiskAssessment]) -> List[RiskAssessment]:
+    def get_critical_procedures(
+        self, assessments: List[RiskAssessment]
+    ) -> List[RiskAssessment]:
         """
         Get procedures with critical risk.
 
@@ -377,7 +391,9 @@ class ComplianceRiskAssessor:
 
         return {
             "total_procedures": total,
-            "risk_distribution": {level.value: count for level, count in risk_counts.items()},
+            "risk_distribution": {
+                level.value: count for level, count in risk_counts.items()
+            },
             "compliance_distribution": {
                 level.value: count for level, count in compliance_counts.items()
             },
@@ -385,5 +401,7 @@ class ComplianceRiskAssessor:
             "critical_risk_percentage": (
                 (risk_counts[RiskLevel.CRITICAL] / total * 100) if total > 0 else 0
             ),
-            "high_risk_percentage": (risk_counts[RiskLevel.HIGH] / total * 100) if total > 0 else 0,
+            "high_risk_percentage": (
+                (risk_counts[RiskLevel.HIGH] / total * 100) if total > 0 else 0
+            ),
         }

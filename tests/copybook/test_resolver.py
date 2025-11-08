@@ -167,7 +167,9 @@ class TestCopybookResolver:
         assert len(resolved.source_map.mappings) > 0
 
         # Should have mappings for both original and copybook lines
-        original_mappings = [m for m in resolved.source_map.mappings if not m.from_copybook]
+        original_mappings = [
+            m for m in resolved.source_map.mappings if not m.from_copybook
+        ]
         copybook_mappings = [m for m in resolved.source_map.mappings if m.from_copybook]
 
         assert len(original_mappings) > 0
@@ -207,7 +209,9 @@ class TestCopybookResolver:
                 content += f"      COPY LEVEL-{next_i}."
             (temp_dir / f"LEVEL-{i}.cpy").write_text(content)
 
-        config = CopybookConfig(search_paths=[str(temp_dir)], max_depth=10)  # Limit to 10 levels
+        config = CopybookConfig(
+            search_paths=[str(temp_dir)], max_depth=10
+        )  # Limit to 10 levels
         resolver = CopybookResolver(config)
 
         source = """      COPY LEVEL-0."""

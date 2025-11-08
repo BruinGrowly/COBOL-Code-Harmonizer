@@ -40,7 +40,9 @@ class CopybookCache:
             self._cache_dir.mkdir(parents=True, exist_ok=True)
             logger.debug(f"Copybook cache directory: {self._cache_dir}")
 
-    def get(self, copybook_name: str, file_path: Optional[str] = None) -> Optional[Copybook]:
+    def get(
+        self, copybook_name: str, file_path: Optional[str] = None
+    ) -> Optional[Copybook]:
         """
         Get copybook from cache
 
@@ -217,7 +219,9 @@ class CopybookCache:
 
         try:
             # Check cache age
-            cache_age = datetime.now() - datetime.fromtimestamp(cache_file.stat().st_mtime)
+            cache_age = datetime.now() - datetime.fromtimestamp(
+                cache_file.stat().st_mtime
+            )
             max_age = timedelta(hours=self.config.cache_ttl_hours)
 
             if cache_age > max_age:
@@ -294,4 +298,6 @@ class CopybookCache:
         return stats
 
     def __repr__(self) -> str:
-        return f"CopybookCache(memory={len(self._memory_cache)}, disk={self._cache_dir})"
+        return (
+            f"CopybookCache(memory={len(self._memory_cache)}, disk={self._cache_dir})"
+        )

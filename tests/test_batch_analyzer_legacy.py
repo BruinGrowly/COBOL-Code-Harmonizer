@@ -52,12 +52,16 @@ class TestBatchAnalyzer:
             (subdir / "test4.cbl").touch()
 
             # Find files non-recursively
-            files = self.analyzer._find_cobol_files(str(tmppath), "*.cbl", recursive=False)
+            files = self.analyzer._find_cobol_files(
+                str(tmppath), "*.cbl", recursive=False
+            )
             # Should find test1.cbl and test2.CBL (case variations)
             assert len(files) >= 2
 
             # Find files recursively
-            files_recursive = self.analyzer._find_cobol_files(str(tmppath), "*.cbl", recursive=True)
+            files_recursive = self.analyzer._find_cobol_files(
+                str(tmppath), "*.cbl", recursive=True
+            )
             # Should find more files including subdirectory
             assert len(files_recursive) >= len(files)
 
@@ -257,7 +261,10 @@ class TestBatchAnalyzer:
                     "file_path": "file1.cbl",
                     "program_id": "PROG1",
                     "total_procedures": 3,
-                    "results": [{"severity_level": "critical"}, {"severity_level": "significant"}],
+                    "results": [
+                        {"severity_level": "critical"},
+                        {"severity_level": "significant"},
+                    ],
                 },
                 {
                     "file_path": "file2.cbl",
@@ -269,7 +276,9 @@ class TestBatchAnalyzer:
         }
 
         # Get files with concerning or higher
-        files = self.analyzer.get_files_by_severity(batch_results, min_severity="concerning")
+        files = self.analyzer.get_files_by_severity(
+            batch_results, min_severity="concerning"
+        )
 
         assert len(files) == 1
         assert files[0]["file_path"] == "file1.cbl"
@@ -295,7 +304,9 @@ class TestBatchAnalyzer:
             def progress_callback(current, total, file_path):
                 progress_calls.append((current, total, file_path))
 
-            self.analyzer.analyze_directory(str(tmppath), progress_callback=progress_callback)
+            self.analyzer.analyze_directory(
+                str(tmppath), progress_callback=progress_callback
+            )
 
             # Verify callback was called
             assert len(progress_calls) > 0

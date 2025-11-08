@@ -288,11 +288,15 @@ class TestIBMDeploymentReadiness:
 
             # 4. Verify results
             # VALIDATE-CUSTOMER with DELETE should show disharmony (>0.5)
-            validate_proc = [r for r in results if r["procedure"] == "VALIDATE-CUSTOMER"][0]
+            validate_proc = [
+                r for r in results if r["procedure"] == "VALIDATE-CUSTOMER"
+            ][0]
             assert validate_proc["score"] > 0.5, "Should detect VALIDATE doing DELETE"
 
             # CALCULATE-TOTAL should be harmonious
-            calculate_proc = [r for r in results if r["procedure"] == "CALCULATE-TOTAL"][0]
+            calculate_proc = [
+                r for r in results if r["procedure"] == "CALCULATE-TOTAL"
+            ][0]
             assert calculate_proc["score"] < 0.5, "CALCULATE should be harmonious"
 
             # 5. Compliance check

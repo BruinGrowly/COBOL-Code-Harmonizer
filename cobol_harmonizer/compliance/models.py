@@ -197,7 +197,9 @@ class AuditReport:
                 for v in self.violations
             ],
             "audit_trail": [entry.to_dict() for entry in self.audit_entries],
-            "framework_status": {f.value: status for f, status in self.framework_status.items()},
+            "framework_status": {
+                f.value: status for f, status in self.framework_status.items()
+            },
             "baseline_deviations": self.baseline_deviations,
             "high_risk_changes": self.high_risk_changes,
             "metadata": {

@@ -139,7 +139,9 @@ class Baseline:
         }
 
         baseline_files = set(self.data.get("files", {}).keys())
-        current_files = {fr.get("file_path"): fr for fr in current_results.get("file_results", [])}
+        current_files = {
+            fr.get("file_path"): fr for fr in current_results.get("file_results", [])
+        }
         current_file_paths = set(current_files.keys())
 
         # Find new and removed files
@@ -163,7 +165,9 @@ class Baseline:
             comparison["summary"]["improvements"] += file_comparison["improvements"]
             comparison["summary"]["unchanged"] += file_comparison["unchanged"]
             comparison["summary"]["new_procedures"] += file_comparison["new_procedures"]
-            comparison["summary"]["removed_procedures"] += file_comparison["removed_procedures"]
+            comparison["summary"]["removed_procedures"] += file_comparison[
+                "removed_procedures"
+            ]
 
             # Collect regression details
             comparison["regressions"].extend(file_comparison["regression_details"])
@@ -185,7 +189,9 @@ class Baseline:
 
         return comparison
 
-    def _compare_file(self, file_path: str, baseline_file: Dict, current_file: Dict) -> Dict:
+    def _compare_file(
+        self, file_path: str, baseline_file: Dict, current_file: Dict
+    ) -> Dict:
         """Compare a single file against baseline"""
         comparison = {
             "file_path": file_path,
@@ -199,7 +205,9 @@ class Baseline:
         }
 
         baseline_procs = baseline_file.get("procedures", {})
-        current_results = {r.get("procedure_name"): r for r in current_file.get("results", [])}
+        current_results = {
+            r.get("procedure_name"): r for r in current_file.get("results", [])
+        }
 
         baseline_proc_names = set(baseline_procs.keys())
         current_proc_names = set(current_results.keys())
@@ -287,7 +295,10 @@ class BaselineManager:
         self.baseline_dir.mkdir(parents=True, exist_ok=True)
 
     def save_baseline(
-        self, batch_results: Dict, name: str = "baseline", description: Optional[str] = None
+        self,
+        batch_results: Dict,
+        name: str = "baseline",
+        description: Optional[str] = None,
     ) -> str:
         """
         Save a new baseline.
@@ -423,7 +434,9 @@ def format_comparison_summary(comparison: Dict) -> str:
     regressions = comparison.get("regressions", [])
     if regressions:
         lines.append("Top Regressions:")
-        for reg in sorted(regressions, key=lambda x: x.get("delta", 0), reverse=True)[:5]:
+        for reg in sorted(regressions, key=lambda x: x.get("delta", 0), reverse=True)[
+            :5
+        ]:
             lines.append(
                 f"  • {reg.get('procedure_name')} in {reg.get('file_path')}: "
                 f"{reg.get('baseline_score', 0):.3f} → {reg.get('current_score', 0):.3f} "

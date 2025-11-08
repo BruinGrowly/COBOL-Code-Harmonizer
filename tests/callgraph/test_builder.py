@@ -176,7 +176,9 @@ class TestCallGraphBuilder:
         graph = builder.build(call_sites)
 
         # Should have only one edge, but with call_count=2
-        edges = [e for e in graph.edges if e.source == "PROG.MAIN" and e.target == "PROG.SUB"]
+        edges = [
+            e for e in graph.edges if e.source == "PROG.MAIN" and e.target == "PROG.SUB"
+        ]
         assert len(edges) == 1
         assert edges[0].call_count == 2
         assert len(edges[0].line_numbers) == 2

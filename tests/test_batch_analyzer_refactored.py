@@ -11,7 +11,11 @@ For legacy tests of the old API, see test_batch_analyzer_legacy.py (skipped).
 import pytest
 import tempfile
 from pathlib import Path
-from cobol_harmonizer.batch_analyzer import BatchAnalyzer, FileAnalysisResult, BatchAnalysisResults
+from cobol_harmonizer.batch_analyzer import (
+    BatchAnalyzer,
+    FileAnalysisResult,
+    BatchAnalysisResults,
+)
 
 
 # Sample analyzer function for testing
@@ -19,7 +23,11 @@ def simple_analyzer(file_path: str) -> dict:
     """Simple analyzer that counts lines"""
     with open(file_path, "r") as f:
         lines = f.readlines()
-    return {"line_count": len(lines), "file_name": Path(file_path).name, "analysis_type": "simple"}
+    return {
+        "line_count": len(lines),
+        "file_name": Path(file_path).name,
+        "analysis_type": "simple",
+    }
 
 
 def failing_analyzer(file_path: str) -> dict:
@@ -40,7 +48,9 @@ class TestRefactoredBatchAnalyzer:
     def test_initialization_custom(self):
         """Test custom initialization"""
         with tempfile.TemporaryDirectory() as tmpdir:
-            analyzer = BatchAnalyzer(max_workers=4, enable_incremental=False, cache_dir=tmpdir)
+            analyzer = BatchAnalyzer(
+                max_workers=4, enable_incremental=False, cache_dir=tmpdir
+            )
             assert analyzer.max_workers == 4
             assert analyzer.enable_incremental == False
             assert analyzer.cache_dir == Path(tmpdir)
@@ -121,7 +131,9 @@ class TestRefactoredBatchAnalyzer:
             test_file = tmppath / "test.cbl"
             test_file.write_text("Line 1\n")
 
-            analyzer = BatchAnalyzer(max_workers=1, enable_incremental=True, cache_dir=tmpdir)
+            analyzer = BatchAnalyzer(
+                max_workers=1, enable_incremental=True, cache_dir=tmpdir
+            )
 
             # First analysis - should process file
             results1 = analyzer.analyze_files([str(test_file)], simple_analyzer)
@@ -146,7 +158,9 @@ class TestRefactoredBatchAnalyzer:
             test_file = tmppath / "test.cbl"
             test_file.write_text("Line 1\n")
 
-            analyzer = BatchAnalyzer(max_workers=1, enable_incremental=False, cache_dir=tmpdir)
+            analyzer = BatchAnalyzer(
+                max_workers=1, enable_incremental=False, cache_dir=tmpdir
+            )
 
             # First analysis
             results1 = analyzer.analyze_files([str(test_file)], simple_analyzer)
@@ -217,7 +231,10 @@ class TestRefactoredBatchAnalyzer:
     def test_batch_analysis_results_to_dict(self):
         """Test BatchAnalysisResults serialization"""
         file_result = FileAnalysisResult(
-            file_path="/test.cbl", success=True, analysis_time_ms=100.0, metrics={"lines": 10}
+            file_path="/test.cbl",
+            success=True,
+            analysis_time_ms=100.0,
+            metrics={"lines": 10},
         )
 
         batch_results = BatchAnalysisResults(
@@ -266,7 +283,10 @@ class TestRefactoredBatchAnalyzer:
 
         assert result.success == False
         assert result.error_message is not None
-        assert "FileNotFoundError" in result.error_message or "No such file" in result.error_message
+        assert (
+            "FileNotFoundError" in result.error_message
+            or "No such file" in result.error_message
+        )
 
 
 # Integration test with real semantic analysis
@@ -295,7 +315,9 @@ class TestBatchAnalyzerIntegration:
             def semantic_analyzer(file_path: str) -> dict:
                 from cobol_harmonizer.parser.cobol_parser import COBOLParser
                 from cobol_harmonizer.semantic.intent_extractor import IntentExtractor
-                from cobol_harmonizer.semantic.execution_analyzer import ExecutionAnalyzer
+                from cobol_harmonizer.semantic.execution_analyzer import (
+                    ExecutionAnalyzer,
+                )
                 from cobol_harmonizer.semantic.disharmony import DisharmonyCalculator
 
                 parser = COBOLParser()
@@ -305,14 +327,19 @@ class TestBatchAnalyzerIntegration:
 
                 program = parser.parse_file(file_path)
 
-                results = {"procedures": [], "total_procedures": len(program.procedures)}
+                results = {
+                    "procedures": [],
+                    "total_procedures": len(program.procedures),
+                }
 
                 for proc in program.procedures:
                     intent = intent_extractor.extract_intent(proc.name)
                     execution = execution_analyzer.analyze_procedure(proc)
                     score = calculator.calculate(intent, execution)
 
-                    results["procedures"].append({"name": proc.name, "disharmony_score": score})
+                    results["procedures"].append(
+                        {"name": proc.name, "disharmony_score": score}
+                    )
 
                 return results
 

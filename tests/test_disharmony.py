@@ -181,7 +181,9 @@ class TestDisharmonyCalculator:
         intent = (0.0, 0.0, 0.0, 1.0)
         execution = (0.0, 0.0, 1.0, 0.0)
 
-        analysis = self.calculator.calculate_detailed_analysis("TEST-PROC", intent, execution)
+        analysis = self.calculator.calculate_detailed_analysis(
+            "TEST-PROC", intent, execution
+        )
 
         assert analysis["requires_action"] == True
 
@@ -189,7 +191,9 @@ class TestDisharmonyCalculator:
         intent2 = (0.1, 0.1, 0.1, 0.7)
         execution2 = (0.1, 0.1, 0.1, 0.6)
 
-        analysis2 = self.calculator.calculate_detailed_analysis("TEST-PROC2", intent2, execution2)
+        analysis2 = self.calculator.calculate_detailed_analysis(
+            "TEST-PROC2", intent2, execution2
+        )
 
         assert analysis2["requires_action"] == False
 
@@ -198,7 +202,9 @@ class TestDisharmonyCalculator:
         intent = (0.123456, 0.234567, 0.345678, 0.456789)
         execution = (0.111111, 0.222222, 0.333333, 0.444444)
 
-        analysis = self.calculator.calculate_detailed_analysis("TEST", intent, execution)
+        analysis = self.calculator.calculate_detailed_analysis(
+            "TEST", intent, execution
+        )
 
         # Check rounding to 3 decimal places
         assert isinstance(analysis["intent_coords"]["love"], float)

@@ -81,7 +81,9 @@ class Config:
         Args:
             config_dict: Optional configuration dictionary to use
         """
-        self.config = self._deep_merge(copy.deepcopy(self.DEFAULT_CONFIG), config_dict or {})
+        self.config = self._deep_merge(
+            copy.deepcopy(self.DEFAULT_CONFIG), config_dict or {}
+        )
 
     @classmethod
     def from_file(cls, config_path: str) -> "Config":
@@ -169,7 +171,9 @@ class Config:
             with open(file_path, "r", encoding="utf-8") as f:
                 return yaml.safe_load(f) or {}
         except ImportError:
-            raise ImportError("YAML support requires PyYAML. Install with: pip install pyyaml")
+            raise ImportError(
+                "YAML support requires PyYAML. Install with: pip install pyyaml"
+            )
 
     @staticmethod
     def _deep_merge(base: Dict, override: Dict) -> Dict:
@@ -177,7 +181,11 @@ class Config:
         result = base.copy()
 
         for key, value in override.items():
-            if key in result and isinstance(result[key], dict) and isinstance(value, dict):
+            if (
+                key in result
+                and isinstance(result[key], dict)
+                and isinstance(value, dict)
+            ):
                 result[key] = Config._deep_merge(result[key], value)
             else:
                 result[key] = value
@@ -262,7 +270,9 @@ class Config:
                 with open(output_file, "w", encoding="utf-8") as f:
                     yaml.safe_dump(self.config, f, default_flow_style=False)
             except ImportError:
-                raise ImportError("YAML support requires PyYAML. Install with: pip install pyyaml")
+                raise ImportError(
+                    "YAML support requires PyYAML. Install with: pip install pyyaml"
+                )
         else:
             raise ValueError(f"Unsupported format: {format}")
 
@@ -305,9 +315,13 @@ class Config:
             else:
                 for level, settings in severity_levels.items():
                     if not isinstance(settings, dict):
-                        errors.append(f"analysis.severity_levels.{level} must be a dictionary")
+                        errors.append(
+                            f"analysis.severity_levels.{level} must be a dictionary"
+                        )
                     elif "max" not in settings:
-                        errors.append(f"analysis.severity_levels.{level} must have 'max' key")
+                        errors.append(
+                            f"analysis.severity_levels.{level} must have 'max' key"
+                        )
 
         return errors
 

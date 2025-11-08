@@ -76,7 +76,9 @@ class DisharmonyCalculator:
         else:
             return DisharmonyLevel.CRITICAL
 
-    def get_trajectory(self, intent: LJPWCoords, execution: LJPWCoords) -> Dict[str, float]:
+    def get_trajectory(
+        self, intent: LJPWCoords, execution: LJPWCoords
+    ) -> Dict[str, float]:
         """
         Calculate dimensional trajectories (differences).
 
@@ -97,7 +99,9 @@ class DisharmonyCalculator:
             "wisdom_delta": w_e - w_i,
         }
 
-    def get_dominant_shift(self, intent: LJPWCoords, execution: LJPWCoords) -> Tuple[str, str]:
+    def get_dominant_shift(
+        self, intent: LJPWCoords, execution: LJPWCoords
+    ) -> Tuple[str, str]:
         """
         Identify the dominant semantic shift.
 
@@ -205,7 +209,8 @@ class DisharmonyCalculator:
             },
             "explanation": explanation,
             "is_harmonious": level == DisharmonyLevel.HARMONIOUS,
-            "requires_action": level in [DisharmonyLevel.SIGNIFICANT, DisharmonyLevel.CRITICAL],
+            "requires_action": level
+            in [DisharmonyLevel.SIGNIFICANT, DisharmonyLevel.CRITICAL],
         }
 
 

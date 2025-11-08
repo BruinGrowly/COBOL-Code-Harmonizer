@@ -79,7 +79,9 @@ class CallExtractor:
         # Parse the program
         program = self.parser.parse_source(source)
 
-        return self.extract_from_source(source, program.program_id, Path(file_path).name)
+        return self.extract_from_source(
+            source, program.program_id, Path(file_path).name
+        )
 
     def extract_from_source(
         self, source: str, program_name: str, source_file: str
@@ -107,7 +109,9 @@ class CallExtractor:
 
         # Extract PERFORM statements (intra-program)
         call_sites.extend(
-            self._extract_perform_statements(source, program_name, source_file, procedures)
+            self._extract_perform_statements(
+                source, program_name, source_file, procedures
+            )
         )
 
         return call_sites
@@ -312,7 +316,9 @@ class CallExtractor:
                 thru_para = match.group(2)
 
                 # Skip PERFORM with inline code (UNTIL, TIMES, VARYING)
-                if any(keyword in line.upper() for keyword in ["UNTIL", "TIMES", "VARYING"]):
+                if any(
+                    keyword in line.upper() for keyword in ["UNTIL", "TIMES", "VARYING"]
+                ):
                     # Could still be "PERFORM PARA UNTIL" - check if target is a known procedure
                     if target_para not in known_procedures:
                         continue
@@ -365,8 +371,12 @@ class CallExtractor:
         """
         stats = {
             "total_calls": len(call_sites),
-            "program_calls": sum(1 for cs in call_sites if cs.call_type == CallType.PROGRAM_CALL),
-            "dynamic_calls": sum(1 for cs in call_sites if cs.call_type == CallType.DYNAMIC_CALL),
+            "program_calls": sum(
+                1 for cs in call_sites if cs.call_type == CallType.PROGRAM_CALL
+            ),
+            "dynamic_calls": sum(
+                1 for cs in call_sites if cs.call_type == CallType.DYNAMIC_CALL
+            ),
             "perform_statements": sum(
                 1 for cs in call_sites if cs.call_type == CallType.PROCEDURE_PERFORM
             ),

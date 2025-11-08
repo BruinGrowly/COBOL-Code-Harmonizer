@@ -132,7 +132,10 @@ class IntentExtractor:
         domain_terms = []
         for token in tokens:
             # If not a recognized keyword, it's a domain term
-            if self.verb_mapper.map_intent_keyword(token) == self.verb_mapper.DEFAULT_COORDS:
+            if (
+                self.verb_mapper.map_intent_keyword(token)
+                == self.verb_mapper.DEFAULT_COORDS
+            ):
                 domain_terms.append(token)
 
         # Suggest verbs based on dominant dimension
