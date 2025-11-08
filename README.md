@@ -145,6 +145,127 @@ python demo_integrated.py
 
 ---
 
+## Compliance & Audit Features (v0.5.0 - NEW!) 🔒
+
+### For Financial Institutions, Healthcare, and Regulated Industries
+
+**Comprehensive audit and compliance tracking for SOX, PCI-DSS, GDPR, HIPAA, and more.**
+
+#### Audit Logging
+
+Track all analysis activities with full traceability:
+
+```python
+from cobol_harmonizer.compliance import AuditLogger, AuditEvent, AuditAction
+
+logger = AuditLogger()
+
+# Log analysis with justification
+event = AuditEvent(AuditAction.ANALYSIS)
+event.with_file("BANKACCT.cbl")
+event.with_procedure("PROCESS-TRANSACTION")
+event.with_justification("Q4 2025 SOX compliance review")
+
+logger.log(event)
+```
+
+**Features:**
+- 📝 Persistent audit trail (JSONL format)
+- 👤 User and environment tracking
+- 🔍 Query capabilities (by user, date, file, action)
+- 🗄️ Configurable retention (default: 365 days)
+
+#### Compliance Tagging
+
+Automatically identifies SOX, PCI-DSS, GDPR-relevant procedures:
+
+```python
+from cobol_harmonizer.compliance import ComplianceTagger
+
+tagger = ComplianceTagger()
+tags = tagger.tag_procedure(
+    "PROCESS-CREDIT-CARD",
+    verbs=["READ", "WRITE", "ENCRYPT"],
+    files_accessed=["CARD-FILE"]
+)
+# Result: {pci_cardholder_data, payment_processing, encryption}
+```
+
+**Supported Frameworks:**
+- **SOX** - Financial reporting, access control, audit trails
+- **PCI-DSS** - Payment card data, encryption
+- **GDPR** - Personal data, right to erasure, data export
+- **HIPAA** - Protected health information
+- **ISO 27001, NIST, FISMA** - Security standards
+
+#### Risk Assessment
+
+Combines semantic disharmony with compliance criticality:
+
+```python
+from cobol_harmonizer.compliance import ComplianceRiskAssessor
+
+assessor = ComplianceRiskAssessor()
+risk = assessor.assess_procedure(
+    procedure_name="PROCESS-PAYMENT",
+    file_path="payment.cbl",
+    disharmony_score=0.65,
+    disharmony_level="concerning",
+    fan_in=10
+)
+
+print(f"Risk Level: {risk.risk_level.value}")  # CRITICAL/HIGH/MEDIUM/LOW
+print(f"Risk Score: {risk.risk_score}/100")
+# Compliance tags, warnings, and recommendations included
+```
+
+**Risk Calculation (0-100):**
+- 40% Semantic disharmony
+- 30% Compliance criticality
+- 20% Call graph impact
+- 10% Compliance tagging
+
+#### Compliance Reports
+
+Generate audit-ready reports in multiple formats:
+
+```python
+from cobol_harmonizer.compliance import ComplianceReporter
+
+reporter = ComplianceReporter()
+report = reporter.generate_report(
+    assessments=risk_assessments,
+    report_type="compliance",
+    generated_by="Compliance Team"
+)
+
+# Export to multiple formats
+reporter.export_html(report, "compliance_report.html")
+reporter.export_json(report, "compliance_report.json")
+reporter.export_markdown(report, "compliance_report.md")
+reporter.export_csv(report, "violations.csv")
+```
+
+**Report Contents:**
+- Executive summary
+- Compliance framework status (SOX compliant? PCI compliant?)
+- Critical violations with recommendations
+- High-risk procedures
+- Audit trail
+- Baseline deviations
+
+**Demo:**
+```bash
+# Run compliance features demo
+python demo_compliance.py
+```
+
+**Documentation:**
+- See [docs/COMPLIANCE_FEATURES.md](docs/COMPLIANCE_FEATURES.md) for complete guide
+- Example configuration in `.compliance_config.json`
+
+---
+
 ## Advanced Features (v0.3.0)
 
 ### Batch Analysis

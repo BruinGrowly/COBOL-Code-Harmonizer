@@ -42,3 +42,8 @@ htmlcov/
 .DS_Store
 Thumbs.db
 .harmonizer-cache/
+
+# Compliance demo outputs
+.demo_audit_log/
+compliance_reports/
+.audit_log/
