@@ -199,7 +199,7 @@ class TestIBMDeploymentReadiness:
             assert full_path.exists(), f"Missing test file: {file_path}"
 
             # Verify file has content
-            content = full_path.read_text()
+            content = full_path.read_text(encoding="utf-8")
             assert len(content) > 100, f"Test file too short: {file_path}"
             assert "IDENTIFICATION DIVISION" in content
 
@@ -231,7 +231,7 @@ class TestIBMDeploymentReadiness:
             assert full_path.exists(), f"Missing documentation: {doc_path}"
 
             # Verify documentation has substantial content
-            content = full_path.read_text()
+            content = full_path.read_text(encoding="utf-8")
             assert len(content) > 1000, f"Documentation too short: {doc_path}"
 
     def test_10_end_to_end_analysis_workflow(self):
