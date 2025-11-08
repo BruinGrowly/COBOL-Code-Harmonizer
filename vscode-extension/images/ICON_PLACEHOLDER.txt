@@ -1,0 +1,28 @@
+Icon Design Specification for COBOL Harmonizer Extension
+==========================================================
+
+Dimensions: 128x128 pixels (PNG format)
+
+Design:
+- Background: Dark blue gradient (#1e3a8a → #3730a3)
+- Main element: Stylized "H" in white/gold (#ffffff → #fbbf24)
+- Accent: Four small dots in corners representing LJPW:
+  - Top-left: Pink (#ec4899) - Love
+  - Top-right: Green (#10b981) - Justice
+  - Bottom-left: Orange (#f97316) - Power
+  - Bottom-right: Purple (#a855f7) - Wisdom
+
+Style: Modern, flat design with subtle gradient
+Font: Bold sans-serif (e.g., Inter, Roboto)
+
+To create:
+1. Use design tool (Figma, Inkscape, Photoshop)
+2. Export as PNG 128x128
+3. Save as: icon.png
+4. Replace this file
+
+Alternative: Use online icon generator at:
+- https://icon.kitchen
+- https://www.logomaker.com
+
+Template provided for quick generation.
