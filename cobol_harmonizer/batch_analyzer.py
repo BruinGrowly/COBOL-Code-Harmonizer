@@ -205,12 +205,16 @@ class BatchAnalyzer:
         self, file_path: str, analyzer_func: Callable
     ) -> FileAnalysisResult:
         """Analyze a single file"""
-        start_time = time.time()
+        start_time = time.perf_counter()  # Use high-resolution timer
 
         try:
             file_hash = self._calculate_file_hash(file_path)
             metrics = analyzer_func(file_path)
-            analysis_time_ms = (time.time() - start_time) * 1000
+            analysis_time_ms = (time.perf_counter() - start_time) * 1000
+
+            # Ensure we always have a positive nonzero time
+            if analysis_time_ms == 0.0:
+                analysis_time_ms = 0.01
 
             return FileAnalysisResult(
                 file_path=file_path,
@@ -221,7 +225,9 @@ class BatchAnalyzer:
             )
 
         except Exception as e:
-            analysis_time_ms = (time.time() - start_time) * 1000
+            analysis_time_ms = (time.perf_counter() - start_time) * 1000
+            if analysis_time_ms == 0.0:
+                analysis_time_ms = 0.01
             return FileAnalysisResult(
                 file_path=file_path,
                 success=False,
