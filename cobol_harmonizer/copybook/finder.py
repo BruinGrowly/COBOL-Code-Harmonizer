@@ -86,7 +86,7 @@ class CopybookFinder:
         # Remove extension if present (will try all extensions anyway)
         for ext in self.config.extensions:
             if ext and name.endswith(ext):
-                name = name[:-len(ext)]
+                name = name[: -len(ext)]
                 break
 
         return name
@@ -117,27 +117,21 @@ class CopybookFinder:
             # Try all prefix + extension combinations
             for prefix in self.config.prefixes:
                 for extension in self.config.extensions:
-                    candidate = self._build_candidate_path(
-                        path, prefix, name, extension
-                    )
+                    candidate = self._build_candidate_path(path, prefix, name, extension)
 
                     if candidate.exists() and candidate.is_file():
                         return str(candidate.resolve())
 
                     # Try case-insensitive match
-                    case_insensitive = self._try_case_insensitive(
-                        path, prefix, name, extension
-                    )
+                    case_insensitive = self._try_case_insensitive(path, prefix, name, extension)
                     if case_insensitive:
                         return str(case_insensitive.resolve())
 
         return None
 
-    def _build_candidate_path(self,
-                             search_path: Path,
-                             prefix: str,
-                             name: str,
-                             extension: str) -> Path:
+    def _build_candidate_path(
+        self, search_path: Path, prefix: str, name: str, extension: str
+    ) -> Path:
         """
         Build a candidate file path
 
@@ -153,11 +147,9 @@ class CopybookFinder:
         filename = f"{prefix}{name}{extension}"
         return search_path / filename
 
-    def _try_case_insensitive(self,
-                              search_path: Path,
-                              prefix: str,
-                              name: str,
-                              extension: str) -> Optional[Path]:
+    def _try_case_insensitive(
+        self, search_path: Path, prefix: str, name: str, extension: str
+    ) -> Optional[Path]:
         """
         Try to find file with case-insensitive match
 
@@ -200,12 +192,12 @@ class CopybookFinder:
             Dictionary with search statistics and configuration
         """
         return {
-            'search_paths': self.config.search_paths,
-            'extensions': self.config.extensions,
-            'prefixes': self.config.prefixes,
-            'cache_size': len(self._cache),
-            'cache_hits': sum(1 for v in self._cache.values() if v is not None),
-            'cache_misses': sum(1 for v in self._cache.values() if v is None),
+            "search_paths": self.config.search_paths,
+            "extensions": self.config.extensions,
+            "prefixes": self.config.prefixes,
+            "cache_size": len(self._cache),
+            "cache_hits": sum(1 for v in self._cache.values() if v is not None),
+            "cache_misses": sum(1 for v in self._cache.values() if v is None),
         }
 
     def __repr__(self) -> str:

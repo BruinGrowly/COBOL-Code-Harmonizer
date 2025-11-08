@@ -14,6 +14,7 @@ from .compliance_tagger import ComplianceTagger, ComplianceTag, ComplianceLevel
 
 class RiskLevel(Enum):
     """Overall risk level"""
+
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
@@ -23,6 +24,7 @@ class RiskLevel(Enum):
 @dataclass
 class RiskAssessment:
     """Risk assessment for a procedure"""
+
     procedure_name: str
     file_path: str
 
@@ -104,7 +106,7 @@ class ComplianceRiskAssessor:
             disharmony_score=disharmony_score,
             compliance_level=compliance_level,
             fan_in=fan_in,
-            has_tags=len(tags) > 0
+            has_tags=len(tags) > 0,
         )
 
         # Determine overall risk level
@@ -136,7 +138,7 @@ class ComplianceRiskAssessor:
         disharmony_score: float,
         compliance_level: ComplianceLevel,
         fan_in: int,
-        has_tags: bool
+        has_tags: bool,
     ) -> float:
         """
         Calculate overall risk score (0-100).
@@ -213,14 +215,10 @@ class ComplianceRiskAssessor:
                 "CRITICAL compliance procedure. Requires documented code review "
                 "and approval before changes."
             )
-            recs.append(
-                "Consider adding comprehensive audit logging to this procedure."
-            )
+            recs.append("Consider adding comprehensive audit logging to this procedure.")
 
         if assessment.compliance_level in [ComplianceLevel.CRITICAL, ComplianceLevel.HIGH]:
-            recs.append(
-                "Ensure this procedure has comprehensive unit tests and integration tests."
-            )
+            recs.append("Ensure this procedure has comprehensive unit tests and integration tests.")
 
         # Impact recommendations
         if assessment.fan_in > 10:
@@ -270,7 +268,10 @@ class ComplianceRiskAssessor:
         warnings = assessment.warnings
 
         # Critical disharmony + critical compliance = highest risk
-        if assessment.disharmony_score > 0.8 and assessment.compliance_level == ComplianceLevel.CRITICAL:
+        if (
+            assessment.disharmony_score > 0.8
+            and assessment.compliance_level == ComplianceLevel.CRITICAL
+        ):
             warnings.append(
                 "⚠️  CRITICAL: High semantic disharmony in compliance-critical procedure. "
                 "This represents significant regulatory risk."
@@ -284,25 +285,26 @@ class ComplianceRiskAssessor:
             )
 
         # PCI + data deletion = special concern
-        if (ComplianceTag.PCI_CARDHOLDER_DATA in assessment.compliance_tags and
-            ComplianceTag.DATA_DELETION in assessment.compliance_tags):
+        if (
+            ComplianceTag.PCI_CARDHOLDER_DATA in assessment.compliance_tags
+            and ComplianceTag.DATA_DELETION in assessment.compliance_tags
+        ):
             warnings.append(
                 "⚠️  PCI-DSS: Cardholder data deletion must follow secure deletion standards. "
                 "Verify compliance with PCI-DSS requirement 3.1."
             )
 
         # SOX + modification = audit concern
-        if (ComplianceTag.SOX_FINANCIAL_REPORTING in assessment.compliance_tags and
-            ComplianceTag.DATA_MODIFICATION in assessment.compliance_tags):
+        if (
+            ComplianceTag.SOX_FINANCIAL_REPORTING in assessment.compliance_tags
+            and ComplianceTag.DATA_MODIFICATION in assessment.compliance_tags
+        ):
             warnings.append(
                 "⚠️  SOX: Financial data modification requires segregation of duties "
                 "and comprehensive audit trail."
             )
 
-    def assess_batch(
-        self,
-        procedures_data: List[Dict]
-    ) -> List[RiskAssessment]:
+    def assess_batch(self, procedures_data: List[Dict]) -> List[RiskAssessment]:
         """
         Assess multiple procedures.
 
@@ -316,23 +318,20 @@ class ComplianceRiskAssessor:
 
         for data in procedures_data:
             assessment = self.assess_procedure(
-                procedure_name=data.get('procedure_name'),
-                file_path=data.get('file_path'),
-                disharmony_score=data.get('disharmony_score', 0.0),
-                disharmony_level=data.get('disharmony_level', 'harmonious'),
-                verbs=data.get('verbs'),
-                fan_in=data.get('fan_in', 0),
-                fan_out=data.get('fan_out', 0),
-                max_depth=data.get('max_depth', 0),
+                procedure_name=data.get("procedure_name"),
+                file_path=data.get("file_path"),
+                disharmony_score=data.get("disharmony_score", 0.0),
+                disharmony_level=data.get("disharmony_level", "harmonious"),
+                verbs=data.get("verbs"),
+                fan_in=data.get("fan_in", 0),
+                fan_out=data.get("fan_out", 0),
+                max_depth=data.get("max_depth", 0),
             )
             assessments.append(assessment)
 
         return assessments
 
-    def get_critical_procedures(
-        self,
-        assessments: List[RiskAssessment]
-    ) -> List[RiskAssessment]:
+    def get_critical_procedures(self, assessments: List[RiskAssessment]) -> List[RiskAssessment]:
         """
         Get procedures with critical risk.
 
@@ -342,15 +341,9 @@ class ComplianceRiskAssessor:
         Returns:
             Filtered list of critical risk procedures
         """
-        return [
-            a for a in assessments
-            if a.risk_level == RiskLevel.CRITICAL
-        ]
+        return [a for a in assessments if a.risk_level == RiskLevel.CRITICAL]
 
-    def get_compliance_summary(
-        self,
-        assessments: List[RiskAssessment]
-    ) -> Dict:
+    def get_compliance_summary(self, assessments: List[RiskAssessment]) -> Dict:
         """
         Generate summary of compliance status.
 
@@ -383,14 +376,14 @@ class ComplianceRiskAssessor:
             all_tags.update(assessment.compliance_tags)
 
         return {
-            'total_procedures': total,
-            'risk_distribution': {
-                level.value: count for level, count in risk_counts.items()
-            },
-            'compliance_distribution': {
+            "total_procedures": total,
+            "risk_distribution": {level.value: count for level, count in risk_counts.items()},
+            "compliance_distribution": {
                 level.value: count for level, count in compliance_counts.items()
             },
-            'unique_compliance_tags': len(all_tags),
-            'critical_risk_percentage': (risk_counts[RiskLevel.CRITICAL] / total * 100) if total > 0 else 0,
-            'high_risk_percentage': (risk_counts[RiskLevel.HIGH] / total * 100) if total > 0 else 0,
+            "unique_compliance_tags": len(all_tags),
+            "critical_risk_percentage": (
+                (risk_counts[RiskLevel.CRITICAL] / total * 100) if total > 0 else 0
+            ),
+            "high_risk_percentage": (risk_counts[RiskLevel.HIGH] / total * 100) if total > 0 else 0,
         }

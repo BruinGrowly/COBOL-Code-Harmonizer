@@ -13,13 +13,15 @@ from enum import Enum
 
 class COBOLFormat(Enum):
     """COBOL source format types"""
-    FIXED = "fixed"      # COBOL-85 standard (columns 7-72)
-    FREE = "free"        # COBOL-2002+ free format
-    MIXED = "mixed"      # Mixed fixed and free (Micro Focus)
+
+    FIXED = "fixed"  # COBOL-85 standard (columns 7-72)
+    FREE = "free"  # COBOL-2002+ free format
+    MIXED = "mixed"  # Mixed fixed and free (Micro Focus)
 
 
 class COBOLStandard(Enum):
     """COBOL standard versions"""
+
     COBOL_74 = "74"
     COBOL_85 = "85"
     COBOL_2002 = "2002"
@@ -30,17 +32,19 @@ class COBOLStandard(Enum):
 
 class COBOLDialect(Enum):
     """COBOL implementation dialects"""
-    STANDARD = "standard"      # ISO/ANSI standard
-    IBM = "ibm"               # IBM Enterprise COBOL
-    MICRO_FOCUS = "microfocus" # Micro Focus COBOL
-    GNU = "gnu"               # GnuCOBOL
-    ACUCOBOL = "acucobol"     # ACUCOBOL-GT
-    FUJITSU = "fujitsu"       # Fujitsu NetCOBOL
+
+    STANDARD = "standard"  # ISO/ANSI standard
+    IBM = "ibm"  # IBM Enterprise COBOL
+    MICRO_FOCUS = "microfocus"  # Micro Focus COBOL
+    GNU = "gnu"  # GnuCOBOL
+    ACUCOBOL = "acucobol"  # ACUCOBOL-GT
+    FUJITSU = "fujitsu"  # Fujitsu NetCOBOL
 
 
 @dataclass
 class COBOLStatement:
     """Represents a single COBOL statement"""
+
     verb: str
     line_number: int
     full_text: str
@@ -50,6 +54,7 @@ class COBOLStatement:
 @dataclass
 class Procedure:
     """Represents a COBOL SECTION or PARAGRAPH"""
+
     name: str
     type: str  # 'SECTION' or 'PARAGRAPH'
     line_number: int
@@ -60,6 +65,7 @@ class Procedure:
 @dataclass
 class COBOLProgram:
     """Represents a parsed COBOL program"""
+
     program_id: str
     procedures: List[Procedure] = field(default_factory=list)
     source_format: COBOLFormat = COBOLFormat.FIXED
@@ -76,16 +82,64 @@ class COBOLParser:
 
     # COBOL verbs for statement identification
     COBOL_VERBS = {
-        'ACCEPT', 'ADD', 'ALTER', 'CALL', 'CANCEL', 'CLOSE', 'COMPUTE',
-        'CONTINUE', 'DELETE', 'DISPLAY', 'DIVIDE', 'ENABLE', 'DISABLE',
-        'EVALUATE', 'EXIT', 'FREE', 'GENERATE', 'GO', 'GOBACK', 'IF',
-        'INITIALIZE', 'INITIATE', 'INSPECT', 'INVOKE', 'MERGE', 'MOVE',
-        'MULTIPLY', 'OPEN', 'PERFORM', 'PURGE', 'READ', 'RECEIVE',
-        'RELEASE', 'RETURN', 'REWRITE', 'SEARCH', 'SEND', 'SET',
-        'SORT', 'START', 'STOP', 'STRING', 'SUBTRACT', 'SUPPRESS',
-        'TERMINATE', 'UNSTRING', 'VALIDATE', 'WRITE', 'XML', 'JSON',
+        "ACCEPT",
+        "ADD",
+        "ALTER",
+        "CALL",
+        "CANCEL",
+        "CLOSE",
+        "COMPUTE",
+        "CONTINUE",
+        "DELETE",
+        "DISPLAY",
+        "DIVIDE",
+        "ENABLE",
+        "DISABLE",
+        "EVALUATE",
+        "EXIT",
+        "FREE",
+        "GENERATE",
+        "GO",
+        "GOBACK",
+        "IF",
+        "INITIALIZE",
+        "INITIATE",
+        "INSPECT",
+        "INVOKE",
+        "MERGE",
+        "MOVE",
+        "MULTIPLY",
+        "OPEN",
+        "PERFORM",
+        "PURGE",
+        "READ",
+        "RECEIVE",
+        "RELEASE",
+        "RETURN",
+        "REWRITE",
+        "SEARCH",
+        "SEND",
+        "SET",
+        "SORT",
+        "START",
+        "STOP",
+        "STRING",
+        "SUBTRACT",
+        "SUPPRESS",
+        "TERMINATE",
+        "UNSTRING",
+        "VALIDATE",
+        "WRITE",
+        "XML",
+        "JSON",
         # SQL verbs (embedded SQL)
-        'SELECT', 'INSERT', 'UPDATE', 'CREATE', 'DROP', 'COMMIT', 'ROLLBACK'
+        "SELECT",
+        "INSERT",
+        "UPDATE",
+        "CREATE",
+        "DROP",
+        "COMMIT",
+        "ROLLBACK",
     }
 
     def __init__(self):
@@ -101,14 +155,14 @@ class COBOLParser:
         Returns:
             COBOLFormat enum value
         """
-        lines = source.split('\n')
+        lines = source.split("\n")
 
         # Check for explicit format directives
         for line in lines[:20]:
             line_upper = line.upper()
-            if '>>SOURCE' in line_upper and 'FREE' in line_upper:
+            if ">>SOURCE" in line_upper and "FREE" in line_upper:
                 return COBOLFormat.FREE
-            if '$SET' in line_upper and 'SOURCEFORMAT' in line_upper and 'FREE' in line_upper:
+            if "$SET" in line_upper and "SOURCEFORMAT" in line_upper and "FREE" in line_upper:
                 return COBOLFormat.FREE
 
         # Check for free-format indicators
@@ -117,8 +171,8 @@ class COBOLParser:
             # and doesn't respect column positioning
             if len(line) > 0 and not line[0].isdigit():
                 # Check if it looks like free format
-                if any(keyword in line.upper() for keyword in ['IDENTIFICATION', 'PROGRAM-ID']):
-                    if not line.startswith(' ' * 7):  # Not in area A/B
+                if any(keyword in line.upper() for keyword in ["IDENTIFICATION", "PROGRAM-ID"]):
+                    if not line.startswith(" " * 7):  # Not in area A/B
                         return COBOLFormat.FREE
 
         return COBOLFormat.FIXED
@@ -136,26 +190,28 @@ class COBOLParser:
         source_upper = source.upper()
 
         # COBOL-2023 indicators
-        if 'JSON GENERATE' in source_upper or 'JSON PARSE' in source_upper:
+        if "JSON GENERATE" in source_upper or "JSON PARSE" in source_upper:
             return COBOLStandard.COBOL_2014  # JSON added in 2014
 
         # COBOL-2014 indicators
-        if 'METHOD-ID' in source_upper and 'OVERLOAD' in source_upper:
+        if "METHOD-ID" in source_upper and "OVERLOAD" in source_upper:
             return COBOLStandard.COBOL_2014
 
         # COBOL-2002 indicators
-        if any(kw in source_upper for kw in ['CLASS-ID', 'METHOD-ID', 'INVOKE', 'OBJECT REFERENCE']):
+        if any(
+            kw in source_upper for kw in ["CLASS-ID", "METHOD-ID", "INVOKE", "OBJECT REFERENCE"]
+        ):
             return COBOLStandard.COBOL_2002
 
-        if 'XML GENERATE' in source_upper or 'XML PARSE' in source_upper:
+        if "XML GENERATE" in source_upper or "XML PARSE" in source_upper:
             return COBOLStandard.COBOL_2002
 
         # COBOL-85 indicators
-        if any(kw in source_upper for kw in ['END-IF', 'END-PERFORM', 'END-READ', 'EVALUATE']):
+        if any(kw in source_upper for kw in ["END-IF", "END-PERFORM", "END-READ", "EVALUATE"]):
             return COBOLStandard.COBOL_85
 
         # COBOL-74 (no scope terminators, no EVALUATE)
-        if 'PROGRAM-ID' in source_upper:
+        if "PROGRAM-ID" in source_upper:
             return COBOLStandard.COBOL_74
 
         return COBOLStandard.UNKNOWN
@@ -173,22 +229,22 @@ class COBOLParser:
         source_upper = source.upper()
 
         # IBM Enterprise COBOL indicators
-        if 'EXEC SQL' in source_upper or 'EXEC CICS' in source_upper:
+        if "EXEC SQL" in source_upper or "EXEC CICS" in source_upper:
             return COBOLDialect.IBM
 
-        if 'EXEC DLI' in source_upper:
+        if "EXEC DLI" in source_upper:
             return COBOLDialect.IBM
 
         # Micro Focus indicators
-        if '$SET' in source_upper or 'SOURCEFORMAT' in source_upper:
+        if "$SET" in source_upper or "SOURCEFORMAT" in source_upper:
             return COBOLDialect.MICRO_FOCUS
 
         # GnuCOBOL indicators
-        if '>>' in source_upper and ('SOURCE' in source_upper or 'IF' in source_upper):
+        if ">>" in source_upper and ("SOURCE" in source_upper or "IF" in source_upper):
             return COBOLDialect.GNU
 
         # ACUCOBOL indicators
-        if 'C$' in source_upper:
+        if "C$" in source_upper:
             return COBOLDialect.ACUCOBOL
 
         return COBOLDialect.STANDARD
@@ -206,10 +262,15 @@ class COBOLParser:
         source_upper = source.upper()
 
         return {
-            'has_oop_features': any(kw in source_upper for kw in ['CLASS-ID', 'METHOD-ID', 'INVOKE']),
-            'has_exec_sql': 'EXEC SQL' in source_upper,
-            'has_exec_cics': 'EXEC CICS' in source_upper,
-            'has_xml_json': any(kw in source_upper for kw in ['XML GENERATE', 'XML PARSE', 'JSON GENERATE', 'JSON PARSE'])
+            "has_oop_features": any(
+                kw in source_upper for kw in ["CLASS-ID", "METHOD-ID", "INVOKE"]
+            ),
+            "has_exec_sql": "EXEC SQL" in source_upper,
+            "has_exec_cics": "EXEC CICS" in source_upper,
+            "has_xml_json": any(
+                kw in source_upper
+                for kw in ["XML GENERATE", "XML PARSE", "JSON GENERATE", "JSON PARSE"]
+            ),
         }
 
     def normalize_fixed_format(self, line: str) -> str:
@@ -226,21 +287,21 @@ class COBOLParser:
             return line
 
         # Check indicator column (column 7)
-        indicator = line[6] if len(line) > 6 else ' '
+        indicator = line[6] if len(line) > 6 else " "
 
         # Skip comment lines
-        if indicator in ['*', '/']:
-            return ''
+        if indicator in ["*", "/"]:
+            return ""
 
         # Skip debug lines (D in column 7)
-        if indicator == 'D':
-            return ''
+        if indicator == "D":
+            return ""
 
         # Extract code area (columns 8-72)
         if len(line) >= 72:
             code = line[7:72]
         else:
-            code = line[7:] if len(line) > 7 else ''
+            code = line[7:] if len(line) > 7 else ""
 
         return code.rstrip()
 
@@ -254,7 +315,7 @@ class COBOLParser:
         Returns:
             List of normalized lines
         """
-        lines = source.split('\n')
+        lines = source.split("\n")
         normalized = []
 
         for line in lines:
@@ -263,8 +324,8 @@ class COBOLParser:
             else:
                 # For free format, just strip and remove comments
                 normalized_line = line.strip()
-                if normalized_line.startswith('*>'):
-                    normalized_line = ''
+                if normalized_line.startswith("*>"):
+                    normalized_line = ""
 
             if normalized_line:  # Skip empty lines
                 normalized.append(normalized_line)
@@ -282,16 +343,16 @@ class COBOLParser:
             Program ID or None
         """
         for line in lines:
-            if 'PROGRAM-ID' in line.upper():
+            if "PROGRAM-ID" in line.upper():
                 # Extract program name after PROGRAM-ID
-                match = re.search(r'PROGRAM-ID\.\s+(\S+)', line.upper())
+                match = re.search(r"PROGRAM-ID\.\s+(\S+)", line.upper())
                 if match:
                     return match.group(1)
         return None
 
     def is_procedure_division_start(self, line: str) -> bool:
         """Check if line marks start of PROCEDURE DIVISION"""
-        return 'PROCEDURE' in line.upper() and 'DIVISION' in line.upper()
+        return "PROCEDURE" in line.upper() and "DIVISION" in line.upper()
 
     def is_section_or_paragraph(self, line: str) -> Optional[Tuple[str, str]]:
         """
@@ -306,22 +367,22 @@ class COBOLParser:
         line_upper = line.upper().strip()
 
         # Check for SECTION
-        if line_upper.endswith('SECTION.') or ' SECTION.' in line_upper:
+        if line_upper.endswith("SECTION.") or " SECTION." in line_upper:
             # Extract section name
-            name = line_upper.replace('SECTION.', '').strip()
-            return (name, 'SECTION')
+            name = line_upper.replace("SECTION.", "").strip()
+            return (name, "SECTION")
 
         # Check for PARAGRAPH (ends with period, no SECTION keyword)
-        if line_upper.endswith('.') and not any(kw in line_upper for kw in ['DIVISION', 'SECTION']):
+        if line_upper.endswith(".") and not any(kw in line_upper for kw in ["DIVISION", "SECTION"]):
             # Check if it's a paragraph (not a statement)
             # Paragraphs typically start at beginning of line or after whitespace
             # and contain hyphenated names
-            words = line_upper.strip().rstrip('.').split()
-            if len(words) == 1 and '-' in words[0]:
-                return (words[0], 'PARAGRAPH')
+            words = line_upper.strip().rstrip(".").split()
+            if len(words) == 1 and "-" in words[0]:
+                return (words[0], "PARAGRAPH")
             # Also handle single-word paragraphs
-            if len(words) == 1 and words[0].replace('-', '').isalnum():
-                return (words[0], 'PARAGRAPH')
+            if len(words) == 1 and words[0].replace("-", "").isalnum():
+                return (words[0], "PARAGRAPH")
 
         return None
 
@@ -347,25 +408,27 @@ class COBOLParser:
 
         # Handle special cases
         # IF ... THEN
-        if words[0] == 'IF':
-            return 'IF'
+        if words[0] == "IF":
+            return "IF"
 
         # GO TO
-        if words[0] == 'GO' and len(words) > 1 and words[1] == 'TO':
-            return 'GO'
+        if words[0] == "GO" and len(words) > 1 and words[1] == "TO":
+            return "GO"
 
         # EXEC SQL (embedded SQL)
-        if words[0] == 'EXEC' and len(words) > 1:
-            if words[1] == 'SQL':
+        if words[0] == "EXEC" and len(words) > 1:
+            if words[1] == "SQL":
                 # Find SQL verb
                 for word in words[2:]:
                     if word in self.COBOL_VERBS:
                         return word
-            return 'EXEC'
+            return "EXEC"
 
         return None
 
-    def parse_procedure(self, lines: List[str], start_idx: int, name: str, proc_type: str) -> Procedure:
+    def parse_procedure(
+        self, lines: List[str], start_idx: int, name: str, proc_type: str
+    ) -> Procedure:
         """
         Parse a single procedure (SECTION or PARAGRAPH).
 
@@ -378,11 +441,7 @@ class COBOLParser:
         Returns:
             Parsed Procedure object
         """
-        procedure = Procedure(
-            name=name,
-            type=proc_type,
-            line_number=start_idx + 1
-        )
+        procedure = Procedure(name=name, type=proc_type, line_number=start_idx + 1)
 
         # Parse statements until next procedure or end
         idx = start_idx + 1
@@ -396,17 +455,13 @@ class COBOLParser:
             # Extract verb and create statement
             verb = self.extract_verb(line)
             if verb:
-                statement = COBOLStatement(
-                    verb=verb,
-                    line_number=idx + 1,
-                    full_text=line
-                )
+                statement = COBOLStatement(verb=verb, line_number=idx + 1, full_text=line)
                 procedure.statements.append(statement)
 
                 # Track PERFORM targets
-                if verb == 'PERFORM':
+                if verb == "PERFORM":
                     # Extract performed procedure name
-                    match = re.search(r'PERFORM\s+([A-Z0-9-]+)', line.upper())
+                    match = re.search(r"PERFORM\s+([A-Z0-9-]+)", line.upper())
                     if match:
                         procedure.performed_procedures.append(match.group(1))
 
@@ -424,7 +479,7 @@ class COBOLParser:
         Returns:
             Parsed COBOLProgram object
         """
-        with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
+        with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
             source = f.read()
 
         return self.parse_source(source)
@@ -449,7 +504,7 @@ class COBOLParser:
         lines = self.preprocess_source(source)
 
         # Extract program ID
-        program_id = self.extract_program_id(lines) or 'UNKNOWN'
+        program_id = self.extract_program_id(lines) or "UNKNOWN"
 
         # Find PROCEDURE DIVISION
         proc_div_idx = None

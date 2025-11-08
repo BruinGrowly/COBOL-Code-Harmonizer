@@ -15,7 +15,9 @@ import tempfile
 from pathlib import Path
 from cobol_harmonizer.batch_analyzer import BatchAnalyzer
 
-pytestmark = pytest.mark.skip(reason="Legacy tests for old BatchAnalyzer API (pre v0.5.0). See test_batch_analyzer_refactored.py for current tests.")
+pytestmark = pytest.mark.skip(
+    reason="Legacy tests for old BatchAnalyzer API (pre v0.5.0). See test_batch_analyzer_refactored.py for current tests."
+)
 
 
 class TestBatchAnalyzer:
@@ -55,9 +57,7 @@ class TestBatchAnalyzer:
             assert len(files) >= 2
 
             # Find files recursively
-            files_recursive = self.analyzer._find_cobol_files(
-                str(tmppath), "*.cbl", recursive=True
-            )
+            files_recursive = self.analyzer._find_cobol_files(str(tmppath), "*.cbl", recursive=True)
             # Should find more files including subdirectory
             assert len(files_recursive) >= len(files)
 
@@ -66,13 +66,15 @@ class TestBatchAnalyzer:
         with tempfile.TemporaryDirectory() as tmpdir:
             # Create test COBOL file
             test_file = Path(tmpdir) / "test.cbl"
-            test_file.write_text("""       IDENTIFICATION DIVISION.
+            test_file.write_text(
+                """       IDENTIFICATION DIVISION.
        PROGRAM-ID. TEST-PROG.
        PROCEDURE DIVISION.
        GET-DATA.
            READ CUSTOMER-FILE.
            STOP RUN.
-    """)
+    """
+            )
 
             result = self.analyzer._analyze_single_file(str(test_file))
 
@@ -93,9 +95,11 @@ class TestBatchAnalyzer:
         """Test file with no procedures"""
         with tempfile.TemporaryDirectory() as tmpdir:
             test_file = Path(tmpdir) / "test.cbl"
-            test_file.write_text("""       IDENTIFICATION DIVISION.
+            test_file.write_text(
+                """       IDENTIFICATION DIVISION.
        PROGRAM-ID. TEST-PROG.
-    """)
+    """
+            )
 
             result = self.analyzer._analyze_single_file(str(test_file))
 
@@ -108,22 +112,26 @@ class TestBatchAnalyzer:
 
             # Create test files
             file1 = tmppath / "test1.cbl"
-            file1.write_text("""       IDENTIFICATION DIVISION.
+            file1.write_text(
+                """       IDENTIFICATION DIVISION.
        PROGRAM-ID. PROG1.
        PROCEDURE DIVISION.
        GET-DATA.
            READ CUSTOMER-FILE.
-    """)
+    """
+            )
 
             file2 = tmppath / "test2.cbl"
-            file2.write_text("""       IDENTIFICATION DIVISION.
+            file2.write_text(
+                """       IDENTIFICATION DIVISION.
        PROGRAM-ID. PROG2.
        PROCEDURE DIVISION.
        VALIDATE-DATA.
            IF CUSTOMER-STATUS = 'ACTIVE'
                CONTINUE
            END-IF.
-    """)
+    """
+            )
 
             results = self.analyzer.analyze_files([str(file1), str(file2)])
 
@@ -140,19 +148,23 @@ class TestBatchAnalyzer:
             tmppath = Path(tmpdir)
 
             # Create test files
-            (tmppath / "test1.cbl").write_text("""       IDENTIFICATION DIVISION.
+            (tmppath / "test1.cbl").write_text(
+                """       IDENTIFICATION DIVISION.
        PROGRAM-ID. PROG1.
        PROCEDURE DIVISION.
        MAIN.
            DISPLAY 'HELLO'.
-    """)
+    """
+            )
 
-            (tmppath / "test2.cbl").write_text("""       IDENTIFICATION DIVISION.
+            (tmppath / "test2.cbl").write_text(
+                """       IDENTIFICATION DIVISION.
        PROGRAM-ID. PROG2.
        PROCEDURE DIVISION.
        PROCESS.
            COMPUTE X = Y + Z.
-    """)
+    """
+            )
 
             results = self.analyzer.analyze_directory(str(tmppath))
 
@@ -174,20 +186,32 @@ class TestBatchAnalyzer:
                 "file_path": "file1.cbl",
                 "total_procedures": 3,
                 "results": [
-                    {"is_harmonious": True, "requires_action": False,
-                     "severity_level": "harmonious", "disharmony_score": 0.1},
-                    {"is_harmonious": False, "requires_action": True,
-                     "severity_level": "critical", "disharmony_score": 1.2}
-                ]
+                    {
+                        "is_harmonious": True,
+                        "requires_action": False,
+                        "severity_level": "harmonious",
+                        "disharmony_score": 0.1,
+                    },
+                    {
+                        "is_harmonious": False,
+                        "requires_action": True,
+                        "severity_level": "critical",
+                        "disharmony_score": 1.2,
+                    },
+                ],
             },
             {
                 "file_path": "file2.cbl",
                 "total_procedures": 2,
                 "results": [
-                    {"is_harmonious": True, "requires_action": False,
-                     "severity_level": "harmonious", "disharmony_score": 0.2}
-                ]
-            }
+                    {
+                        "is_harmonious": True,
+                        "requires_action": False,
+                        "severity_level": "harmonious",
+                        "disharmony_score": 0.2,
+                    }
+                ],
+            },
         ]
 
         stats = self.analyzer._calculate_batch_statistics(file_results, threshold=0.5)
@@ -208,15 +232,13 @@ class TestBatchAnalyzer:
                     "file_path": "file1.cbl",
                     "results": [
                         {"procedure_name": "PROC1", "disharmony_score": 0.5},
-                        {"procedure_name": "PROC2", "disharmony_score": 1.5}
-                    ]
+                        {"procedure_name": "PROC2", "disharmony_score": 1.5},
+                    ],
                 },
                 {
                     "file_path": "file2.cbl",
-                    "results": [
-                        {"procedure_name": "PROC3", "disharmony_score": 1.0}
-                    ]
-                }
+                    "results": [{"procedure_name": "PROC3", "disharmony_score": 1.0}],
+                },
             ]
         }
 
@@ -235,19 +257,14 @@ class TestBatchAnalyzer:
                     "file_path": "file1.cbl",
                     "program_id": "PROG1",
                     "total_procedures": 3,
-                    "results": [
-                        {"severity_level": "critical"},
-                        {"severity_level": "significant"}
-                    ]
+                    "results": [{"severity_level": "critical"}, {"severity_level": "significant"}],
                 },
                 {
                     "file_path": "file2.cbl",
                     "program_id": "PROG2",
                     "total_procedures": 2,
-                    "results": [
-                        {"severity_level": "minor_drift"}
-                    ]
-                }
+                    "results": [{"severity_level": "minor_drift"}],
+                },
             ]
         }
 
@@ -264,22 +281,21 @@ class TestBatchAnalyzer:
             tmppath = Path(tmpdir)
 
             # Create test files
-            (tmppath / "test1.cbl").write_text("""       IDENTIFICATION DIVISION.
+            (tmppath / "test1.cbl").write_text(
+                """       IDENTIFICATION DIVISION.
        PROGRAM-ID. PROG1.
        PROCEDURE DIVISION.
        MAIN.
            DISPLAY 'TEST'.
-    """)
+    """
+            )
 
             progress_calls = []
 
             def progress_callback(current, total, file_path):
                 progress_calls.append((current, total, file_path))
 
-            self.analyzer.analyze_directory(
-                str(tmppath),
-                progress_callback=progress_callback
-            )
+            self.analyzer.analyze_directory(str(tmppath), progress_callback=progress_callback)
 
             # Verify callback was called
             assert len(progress_calls) > 0

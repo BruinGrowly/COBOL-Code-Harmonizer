@@ -17,13 +17,9 @@ from cobol_harmonizer.batch_analyzer import BatchAnalyzer, FileAnalysisResult, B
 # Sample analyzer function for testing
 def simple_analyzer(file_path: str) -> dict:
     """Simple analyzer that counts lines"""
-    with open(file_path, 'r') as f:
+    with open(file_path, "r") as f:
         lines = f.readlines()
-    return {
-        'line_count': len(lines),
-        'file_name': Path(file_path).name,
-        'analysis_type': 'simple'
-    }
+    return {"line_count": len(lines), "file_name": Path(file_path).name, "analysis_type": "simple"}
 
 
 def failing_analyzer(file_path: str) -> dict:
@@ -39,16 +35,12 @@ class TestRefactoredBatchAnalyzer:
         analyzer = BatchAnalyzer()
         assert analyzer.max_workers >= 1
         assert analyzer.enable_incremental == True
-        assert analyzer.cache_dir == Path('.harmonizer-cache/batch')
+        assert analyzer.cache_dir == Path(".harmonizer-cache/batch")
 
     def test_initialization_custom(self):
         """Test custom initialization"""
         with tempfile.TemporaryDirectory() as tmpdir:
-            analyzer = BatchAnalyzer(
-                max_workers=4,
-                enable_incremental=False,
-                cache_dir=tmpdir
-            )
+            analyzer = BatchAnalyzer(max_workers=4, enable_incremental=False, cache_dir=tmpdir)
             assert analyzer.max_workers == 4
             assert analyzer.enable_incremental == False
             assert analyzer.cache_dir == Path(tmpdir)
@@ -65,8 +57,8 @@ class TestRefactoredBatchAnalyzer:
 
             assert result.success == True
             assert result.error_message is None
-            assert result.metrics['line_count'] == 5
-            assert result.metrics['file_name'] == 'test.cbl'
+            assert result.metrics["line_count"] == 5
+            assert result.metrics["file_name"] == "test.cbl"
             assert result.analysis_time_ms > 0
 
     def test_analyze_single_file_failure(self):
@@ -129,11 +121,7 @@ class TestRefactoredBatchAnalyzer:
             test_file = tmppath / "test.cbl"
             test_file.write_text("Line 1\n")
 
-            analyzer = BatchAnalyzer(
-                max_workers=1,
-                enable_incremental=True,
-                cache_dir=tmpdir
-            )
+            analyzer = BatchAnalyzer(max_workers=1, enable_incremental=True, cache_dir=tmpdir)
 
             # First analysis - should process file
             results1 = analyzer.analyze_files([str(test_file)], simple_analyzer)
@@ -158,11 +146,7 @@ class TestRefactoredBatchAnalyzer:
             test_file = tmppath / "test.cbl"
             test_file.write_text("Line 1\n")
 
-            analyzer = BatchAnalyzer(
-                max_workers=1,
-                enable_incremental=False,
-                cache_dir=tmpdir
-            )
+            analyzer = BatchAnalyzer(max_workers=1, enable_incremental=False, cache_dir=tmpdir)
 
             # First analysis
             results1 = analyzer.analyze_files([str(test_file)], simple_analyzer)
@@ -188,23 +172,18 @@ class TestRefactoredBatchAnalyzer:
             progress_updates = []
 
             def progress_callback(completed, total):
-                progress_updates.append({
-                    'completed': completed,
-                    'total': total
-                })
+                progress_updates.append({"completed": completed, "total": total})
 
             analyzer = BatchAnalyzer(max_workers=1, cache_dir=tmpdir)
             results = analyzer.analyze_files(
-                files,
-                simple_analyzer,
-                progress_callback=progress_callback
+                files, simple_analyzer, progress_callback=progress_callback
             )
 
             # Should have received progress updates
             assert len(progress_updates) == 5
-            assert progress_updates[0]['completed'] == 1
-            assert progress_updates[-1]['completed'] == 5
-            assert all(u['total'] == 5 for u in progress_updates)
+            assert progress_updates[0]["completed"] == 1
+            assert progress_updates[-1]["completed"] == 5
+            assert all(u["total"] == 5 for u in progress_updates)
 
     def test_empty_file_list(self):
         """Test analyzing empty file list"""
@@ -226,22 +205,19 @@ class TestRefactoredBatchAnalyzer:
             error_message=None,
             analysis_time_ms=123.45,
             file_hash="abc123",
-            metrics={'count': 42}
+            metrics={"count": 42},
         )
 
         result_dict = result.to_dict()
 
-        assert result_dict['file_path'] == "/path/to/file.cbl"
-        assert result_dict['success'] == True
-        assert result_dict['metrics']['count'] == 42
+        assert result_dict["file_path"] == "/path/to/file.cbl"
+        assert result_dict["success"] == True
+        assert result_dict["metrics"]["count"] == 42
 
     def test_batch_analysis_results_to_dict(self):
         """Test BatchAnalysisResults serialization"""
         file_result = FileAnalysisResult(
-            file_path="/test.cbl",
-            success=True,
-            analysis_time_ms=100.0,
-            metrics={'lines': 10}
+            file_path="/test.cbl", success=True, analysis_time_ms=100.0, metrics={"lines": 10}
         )
 
         batch_results = BatchAnalysisResults(
@@ -251,15 +227,15 @@ class TestRefactoredBatchAnalyzer:
             skipped=0,
             total_time_ms=150.0,
             avg_time_per_file_ms=150.0,
-            results=[file_result]
+            results=[file_result],
         )
 
         results_dict = batch_results.to_dict()
 
-        assert results_dict['total_files'] == 1
-        assert results_dict['successful'] == 1
-        assert len(results_dict['results']) == 1
-        assert results_dict['results'][0]['metrics']['lines'] == 10
+        assert results_dict["total_files"] == 1
+        assert results_dict["successful"] == 1
+        assert len(results_dict["results"]) == 1
+        assert results_dict["results"][0]["metrics"]["lines"] == 10
 
     def test_parallel_processing(self):
         """Test parallel processing with multiple workers"""
@@ -304,14 +280,16 @@ class TestBatchAnalyzerIntegration:
 
             # Create a simple COBOL file
             cobol_file = tmppath / "test.cbl"
-            cobol_file.write_text("""
+            cobol_file.write_text(
+                """
        IDENTIFICATION DIVISION.
        PROGRAM-ID. TEST.
        PROCEDURE DIVISION.
        CALCULATE-TOTAL.
            COMPUTE WS-TOTAL = WS-A + WS-B.
        STOP RUN.
-            """)
+            """
+            )
 
             # Define semantic analyzer function
             def semantic_analyzer(file_path: str) -> dict:
@@ -327,20 +305,14 @@ class TestBatchAnalyzerIntegration:
 
                 program = parser.parse_file(file_path)
 
-                results = {
-                    'procedures': [],
-                    'total_procedures': len(program.procedures)
-                }
+                results = {"procedures": [], "total_procedures": len(program.procedures)}
 
                 for proc in program.procedures:
                     intent = intent_extractor.extract_intent(proc.name)
                     execution = execution_analyzer.analyze_procedure(proc)
                     score = calculator.calculate(intent, execution)
 
-                    results['procedures'].append({
-                        'name': proc.name,
-                        'disharmony_score': score
-                    })
+                    results["procedures"].append({"name": proc.name, "disharmony_score": score})
 
                 return results
 
@@ -352,10 +324,12 @@ class TestBatchAnalyzerIntegration:
 
             # Check semantic analysis results
             file_result = results.results[0]
-            assert file_result.metrics['total_procedures'] == 1
-            assert file_result.metrics['procedures'][0]['name'] == 'CALCULATE-TOTAL'
-            assert file_result.metrics['procedures'][0]['disharmony_score'] < 0.5  # Should be harmonious or minor drift
+            assert file_result.metrics["total_procedures"] == 1
+            assert file_result.metrics["procedures"][0]["name"] == "CALCULATE-TOTAL"
+            assert (
+                file_result.metrics["procedures"][0]["disharmony_score"] < 0.5
+            )  # Should be harmonious or minor drift
 
 
-if __name__ == '__main__':
-    pytest.main([__file__, '-v'])
+if __name__ == "__main__":
+    pytest.main([__file__, "-v"])

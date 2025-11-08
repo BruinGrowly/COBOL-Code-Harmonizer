@@ -16,7 +16,7 @@ from cobol_harmonizer.reporter.console_reporter import ConsoleReporter
 
 
 @click.group()
-@click.version_option(version='0.1.0')
+@click.version_option(version="0.1.0")
 def cli():
     """
     COBOL Code Harmonizer - Semantic analysis for COBOL 💛⚓
@@ -28,17 +28,18 @@ def cli():
 
 
 @cli.command()
-@click.argument('file_path', type=click.Path(exists=True))
-@click.option('--threshold', '-t', type=float, default=0.5,
-              help='Disharmony threshold for reporting (default: 0.5)')
-@click.option('--show-all', '-a', is_flag=True,
-              help='Show all procedures, even harmonious ones')
-@click.option('--suggest-names', '-s', is_flag=True,
-              help='Suggest better procedure names')
-@click.option('--verbose', '-v', is_flag=True,
-              help='Show detailed analysis')
-def analyze(file_path: str, threshold: float, show_all: bool,
-            suggest_names: bool, verbose: bool):
+@click.argument("file_path", type=click.Path(exists=True))
+@click.option(
+    "--threshold",
+    "-t",
+    type=float,
+    default=0.5,
+    help="Disharmony threshold for reporting (default: 0.5)",
+)
+@click.option("--show-all", "-a", is_flag=True, help="Show all procedures, even harmonious ones")
+@click.option("--suggest-names", "-s", is_flag=True, help="Suggest better procedure names")
+@click.option("--verbose", "-v", is_flag=True, help="Show detailed analysis")
+def analyze(file_path: str, threshold: float, show_all: bool, suggest_names: bool, verbose: bool):
     """
     Analyze a COBOL source file for semantic disharmony.
 
@@ -80,29 +81,19 @@ def analyze(file_path: str, threshold: float, show_all: bool,
             execution = execution_analyzer.analyze_procedure(procedure)
 
             # Calculate disharmony
-            analysis = calculator.calculate_detailed_analysis(
-                procedure.name,
-                intent,
-                execution
-            )
+            analysis = calculator.calculate_detailed_analysis(procedure.name, intent, execution)
 
             # Add suggestions if requested
-            if suggest_names and not analysis['is_harmonious']:
-                suggestions = intent_extractor.suggest_better_names(
-                    execution,
-                    procedure.name
-                )
-                analysis['suggestions'] = suggestions
+            if suggest_names and not analysis["is_harmonious"]:
+                suggestions = intent_extractor.suggest_better_names(execution, procedure.name)
+                analysis["suggestions"] = suggestions
 
             results.append(analysis)
 
         # Report results
         reporter.print_separator()
         reporter.print_analysis_results(
-            results,
-            threshold=threshold,
-            show_all=show_all,
-            verbose=verbose
+            results, threshold=threshold, show_all=show_all, verbose=verbose
         )
 
         # Print summary
@@ -113,16 +104,21 @@ def analyze(file_path: str, threshold: float, show_all: bool,
         reporter.print_error(f"Error analyzing file: {str(e)}")
         if verbose:
             import traceback
+
             traceback.print_exc()
         raise click.Abort()
 
 
 @cli.command()
-@click.argument('file_path', type=click.Path(exists=True))
-@click.option('--output', '-o', type=click.Path(),
-              help='Output file path (default: stdout)')
-@click.option('--format', '-f', type=click.Choice(['json', 'text', 'markdown']),
-              default='text', help='Output format')
+@click.argument("file_path", type=click.Path(exists=True))
+@click.option("--output", "-o", type=click.Path(), help="Output file path (default: stdout)")
+@click.option(
+    "--format",
+    "-f",
+    type=click.Choice(["json", "text", "markdown"]),
+    default="text",
+    help="Output format",
+)
 def report(file_path: str, output: Optional[str], format: str):
     """
     Generate a detailed report for a COBOL source file.
@@ -150,25 +146,22 @@ def report(file_path: str, output: Optional[str], format: str):
         for procedure in program.procedures:
             intent = intent_extractor.extract_intent(procedure.name)
             execution = execution_analyzer.analyze_procedure(procedure)
-            analysis = calculator.calculate_detailed_analysis(
-                procedure.name,
-                intent,
-                execution
-            )
+            analysis = calculator.calculate_detailed_analysis(procedure.name, intent, execution)
             results.append(analysis)
 
         # Generate report based on format
-        if format == 'json':
+        if format == "json":
             import json
+
             report_data = {
-                'program_id': program.program_id,
-                'file_path': file_path,
-                'procedures_analyzed': len(results),
-                'results': results
+                "program_id": program.program_id,
+                "file_path": file_path,
+                "procedures_analyzed": len(results),
+                "results": results,
             }
             report_text = json.dumps(report_data, indent=2)
 
-        elif format == 'markdown':
+        elif format == "markdown":
             report_text = _generate_markdown_report(program, results)
 
         else:  # text
@@ -176,7 +169,7 @@ def report(file_path: str, output: Optional[str], format: str):
 
         # Output report
         if output:
-            with open(output, 'w') as f:
+            with open(output, "w") as f:
                 f.write(report_text)
             reporter.print_success(f"Report saved to {output}")
         else:
@@ -254,7 +247,7 @@ def _generate_text_report(program, results):
         lines.append(f"  Severity: {result['severity_level']}")
         lines.append(f"  Intent: {result['intent_coords']}")
         lines.append(f"  Execution: {result['execution_coords']}")
-        if result['requires_action']:
+        if result["requires_action"]:
             lines.append(f"  ⚠️  ACTION REQUIRED")
 
     lines.append("\n" + "=" * 70)
@@ -271,23 +264,25 @@ def _generate_markdown_report(program, results):
 
     for result in results:
         severity_emoji = {
-            'harmonious': '✓',
-            'minor_drift': '⚠️',
-            'concerning': '⚠️',
-            'significant': '🔴',
-            'critical': '💥'
+            "harmonious": "✓",
+            "minor_drift": "⚠️",
+            "concerning": "⚠️",
+            "significant": "🔴",
+            "critical": "💥",
         }
-        emoji = severity_emoji.get(result['severity_level'], '?')
+        emoji = severity_emoji.get(result["severity_level"], "?")
 
         lines.append(f"## {emoji} {result['procedure_name']}\n")
         lines.append(f"- **Disharmony Score:** {result['disharmony_score']}")
         lines.append(f"- **Severity:** {result['severity_level']}")
-        lines.append(f"- **Dominant Shift:** {result['dominant_shift']['from']} → {result['dominant_shift']['to']}")
+        lines.append(
+            f"- **Dominant Shift:** {result['dominant_shift']['from']} → {result['dominant_shift']['to']}"
+        )
         lines.append(f"\n{result['explanation']}\n")
         lines.append("---\n")
 
     return "\n".join(lines)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     cli()

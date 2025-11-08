@@ -78,9 +78,9 @@ class CallGraphBuilder:
             # Add callee (if not dynamic)
             if not call_site.is_dynamic:
                 # Determine full name for callee
-                if '.' in call_site.caller:
+                if "." in call_site.caller:
                     # Intra-program call - callee is in same program
-                    program_prefix = call_site.caller.split('.')[0]
+                    program_prefix = call_site.caller.split(".")[0]
                     callee_full = f"{program_prefix}.{call_site.callee}"
                 else:
                     # Inter-program call - callee is a program
@@ -105,9 +105,9 @@ class CallGraphBuilder:
             GraphNode object
         """
         # Determine node type
-        if '.' in node_name:
+        if "." in node_name:
             # Format: PROGRAM.PROCEDURE
-            parts = node_name.split('.')
+            parts = node_name.split(".")
             program_name = parts[0]
             procedure_name = parts[1]
 
@@ -138,7 +138,7 @@ class CallGraphBuilder:
             file_path=file_path,
             start_line=start_line,
             end_line=0,  # Would need source analysis to determine
-            metrics=NodeMetrics()
+            metrics=NodeMetrics(),
         )
 
     def _create_edges(self, graph: CallGraph, call_sites: List[CallSite]):
@@ -154,9 +154,9 @@ class CallGraphBuilder:
                 continue
 
             # Build full callee name
-            if '.' in call_site.caller:
+            if "." in call_site.caller:
                 # Intra-program call
-                program_prefix = call_site.caller.split('.')[0]
+                program_prefix = call_site.caller.split(".")[0]
                 callee_id = f"{program_prefix}.{call_site.callee}"
             else:
                 # Inter-program call
@@ -177,7 +177,7 @@ class CallGraphBuilder:
                 target=callee_id,
                 call_type=sites[0].call_type,  # Use first call type
                 call_count=len(sites),
-                line_numbers=[site.line_number for site in sites]
+                line_numbers=[site.line_number for site in sites],
             )
             graph.add_edge(edge)
 

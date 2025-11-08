@@ -19,6 +19,7 @@ from .models import AuditEntry, AuditAction, ComplianceConfig
 
 class AuditLevel(Enum):
     """Audit logging levels"""
+
     DEBUG = "debug"
     INFO = "info"
     WARNING = "warning"
@@ -37,27 +38,27 @@ class AuditEvent:
         self.result: str = "success"
         self.justification: Optional[str] = None
 
-    def with_file(self, file_path: str) -> 'AuditEvent':
+    def with_file(self, file_path: str) -> "AuditEvent":
         """Set file path"""
         self.file_path = file_path
         return self
 
-    def with_procedure(self, procedure_name: str) -> 'AuditEvent':
+    def with_procedure(self, procedure_name: str) -> "AuditEvent":
         """Set procedure name"""
         self.procedure_name = procedure_name
         return self
 
-    def with_details(self, **kwargs) -> 'AuditEvent':
+    def with_details(self, **kwargs) -> "AuditEvent":
         """Add details"""
         self.details.update(kwargs)
         return self
 
-    def with_result(self, result: str) -> 'AuditEvent':
+    def with_result(self, result: str) -> "AuditEvent":
         """Set result (success/failure/warning)"""
         self.result = result
         return self
 
-    def with_justification(self, justification: str) -> 'AuditEvent':
+    def with_justification(self, justification: str) -> "AuditEvent":
         """Add justification (required for critical actions)"""
         self.justification = justification
         return self
@@ -108,9 +109,9 @@ class AuditLogger:
         environment = None
         if self.config.track_environment:
             environment = {
-                'hostname': platform.node(),
-                'platform': platform.platform(),
-                'python_version': platform.python_version(),
+                "hostname": platform.node(),
+                "platform": platform.platform(),
+                "python_version": platform.python_version(),
             }
 
         # Create audit entry
@@ -143,10 +144,10 @@ class AuditLogger:
             return
 
         # Append to log file (JSONL format - one JSON object per line)
-        with open(self.current_log_file, 'a') as f:
+        with open(self.current_log_file, "a") as f:
             for entry in self._cache:
                 json_line = json.dumps(entry.to_dict())
-                f.write(json_line + '\n')
+                f.write(json_line + "\n")
 
         self._cache.clear()
 
@@ -157,7 +158,7 @@ class AuditLogger:
         action: Optional[AuditAction] = None,
         user: Optional[str] = None,
         file_path: Optional[str] = None,
-        limit: int = 1000
+        limit: int = 1000,
     ) -> List[AuditEntry]:
         """
         Query audit log.
@@ -185,7 +186,7 @@ class AuditLogger:
             if not log_file.exists():
                 continue
 
-            with open(log_file, 'r') as f:
+            with open(log_file, "r") as f:
                 for line in f:
                     if len(results) >= limit:
                         break
@@ -214,9 +215,7 @@ class AuditLogger:
         return results
 
     def _get_log_files_in_range(
-        self,
-        start_date: Optional[datetime],
-        end_date: Optional[datetime]
+        self, start_date: Optional[datetime], end_date: Optional[datetime]
     ) -> List[Path]:
         """Get log files within date range"""
         all_log_files = sorted(self.log_dir.glob("audit_*.jsonl"))
@@ -229,7 +228,7 @@ class AuditLogger:
         for log_file in all_log_files:
             # Extract YYYYMM from filename
             try:
-                name_parts = log_file.stem.split('_')
+                name_parts = log_file.stem.split("_")
                 if len(name_parts) != 2:
                     continue
 
@@ -254,15 +253,15 @@ class AuditLogger:
     def _dict_to_audit_entry(self, data: Dict) -> AuditEntry:
         """Convert dictionary to AuditEntry"""
         return AuditEntry(
-            timestamp=datetime.fromisoformat(data['timestamp']),
-            action=AuditAction(data['action']),
-            user=data.get('user'),
-            file_path=data.get('file_path'),
-            procedure_name=data.get('procedure_name'),
-            details=data.get('details', {}),
-            result=data['result'],
-            justification=data.get('justification'),
-            environment=data.get('environment'),
+            timestamp=datetime.fromisoformat(data["timestamp"]),
+            action=AuditAction(data["action"]),
+            user=data.get("user"),
+            file_path=data.get("file_path"),
+            procedure_name=data.get("procedure_name"),
+            details=data.get("details", {}),
+            result=data["result"],
+            justification=data.get("justification"),
+            environment=data.get("environment"),
         )
 
     def get_file_history(self, file_path: str, limit: int = 50) -> List[AuditEntry]:
@@ -306,7 +305,7 @@ class AuditLogger:
         for log_file in self.log_dir.glob("audit_*.jsonl"):
             try:
                 # Extract date from filename
-                name_parts = log_file.stem.split('_')
+                name_parts = log_file.stem.split("_")
                 if len(name_parts) != 2:
                     continue
 
@@ -340,7 +339,7 @@ class AuditLogger:
             return True  # Empty log is valid
 
         try:
-            with open(self.current_log_file, 'r') as f:
+            with open(self.current_log_file, "r") as f:
                 line_count = 0
                 for line in f:
                     # Try to parse each line

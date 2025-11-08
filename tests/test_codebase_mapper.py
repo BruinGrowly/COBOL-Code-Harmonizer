@@ -26,8 +26,8 @@ class TestCodebaseMapper:
                     "minor_drift": 2,
                     "concerning": 1,
                     "significant": 1,
-                    "critical": 1
-                }
+                    "critical": 1,
+                },
             },
             "file_results": [
                 {
@@ -41,9 +41,19 @@ class TestCodebaseMapper:
                             "severity_level": "critical",
                             "is_harmonious": False,
                             "requires_action": True,
-                            "intent_coords": {"love": 0.0, "justice": 0.0, "power": 0.0, "wisdom": 1.0},
-                            "execution_coords": {"love": 0.0, "justice": 0.0, "power": 1.0, "wisdom": 0.0},
-                            "dominant_shift": {"from": "Wisdom", "to": "Power"}
+                            "intent_coords": {
+                                "love": 0.0,
+                                "justice": 0.0,
+                                "power": 0.0,
+                                "wisdom": 1.0,
+                            },
+                            "execution_coords": {
+                                "love": 0.0,
+                                "justice": 0.0,
+                                "power": 1.0,
+                                "wisdom": 0.0,
+                            },
+                            "dominant_shift": {"from": "Wisdom", "to": "Power"},
                         },
                         {
                             "procedure_name": "PROC2",
@@ -51,11 +61,21 @@ class TestCodebaseMapper:
                             "severity_level": "harmonious",
                             "is_harmonious": True,
                             "requires_action": False,
-                            "intent_coords": {"love": 0.1, "justice": 0.2, "power": 0.1, "wisdom": 0.6},
-                            "execution_coords": {"love": 0.1, "justice": 0.2, "power": 0.1, "wisdom": 0.6},
-                            "dominant_shift": {"from": "Wisdom", "to": "Wisdom"}
-                        }
-                    ]
+                            "intent_coords": {
+                                "love": 0.1,
+                                "justice": 0.2,
+                                "power": 0.1,
+                                "wisdom": 0.6,
+                            },
+                            "execution_coords": {
+                                "love": 0.1,
+                                "justice": 0.2,
+                                "power": 0.1,
+                                "wisdom": 0.6,
+                            },
+                            "dominant_shift": {"from": "Wisdom", "to": "Wisdom"},
+                        },
+                    ],
                 },
                 {
                     "file_path": "file2.cbl",
@@ -68,13 +88,23 @@ class TestCodebaseMapper:
                             "severity_level": "significant",
                             "is_harmonious": False,
                             "requires_action": True,
-                            "intent_coords": {"love": 0.5, "justice": 0.1, "power": 0.3, "wisdom": 0.1},
-                            "execution_coords": {"love": 0.1, "justice": 0.7, "power": 0.1, "wisdom": 0.1},
-                            "dominant_shift": {"from": "Love", "to": "Justice"}
+                            "intent_coords": {
+                                "love": 0.5,
+                                "justice": 0.1,
+                                "power": 0.3,
+                                "wisdom": 0.1,
+                            },
+                            "execution_coords": {
+                                "love": 0.1,
+                                "justice": 0.7,
+                                "power": 0.1,
+                                "wisdom": 0.1,
+                            },
+                            "dominant_shift": {"from": "Love", "to": "Justice"},
                         }
-                    ]
-                }
-            ]
+                    ],
+                },
+            ],
         }
 
     def test_analyze_codebase(self):
@@ -124,12 +154,9 @@ class TestCodebaseMapper:
                 "harmonious_count": 9,
                 "disharmonious_count": 1,
                 "requires_action_count": 0,
-                "severity_breakdown": {
-                    "harmonious": 9,
-                    "minor_drift": 1
-                }
+                "severity_breakdown": {"harmonious": 9, "minor_drift": 1},
             },
-            "file_results": []
+            "file_results": [],
         }
 
         health = self.mapper._calculate_health_metrics(good_results)
@@ -143,12 +170,9 @@ class TestCodebaseMapper:
                 "harmonious_count": 2,
                 "disharmonious_count": 8,
                 "requires_action_count": 8,
-                "severity_breakdown": {
-                    "harmonious": 2,
-                    "critical": 8
-                }
+                "severity_breakdown": {"harmonious": 2, "critical": 8},
             },
-            "file_results": []
+            "file_results": [],
         }
 
         health = self.mapper._calculate_health_metrics(bad_results)
@@ -270,10 +294,7 @@ class TestCodebaseMapper:
 
     def test_empty_codebase(self):
         """Test analysis with empty codebase"""
-        empty_results = {
-            "statistics": {},
-            "file_results": []
-        }
+        empty_results = {"statistics": {}, "file_results": []}
 
         analysis = self.mapper.analyze_codebase(empty_results)
 

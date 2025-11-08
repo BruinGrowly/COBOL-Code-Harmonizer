@@ -26,7 +26,7 @@ class IntentExtractor:
             List of tokens
         """
         # Split by hyphens and underscores
-        tokens = re.split(r'[-_]', name)
+        tokens = re.split(r"[-_]", name)
         # Filter out empty tokens
         return [t.strip() for t in tokens if t.strip()]
 
@@ -112,9 +112,7 @@ class IntentExtractor:
         return self.verb_mapper.get_dominant_dimension(coords)
 
     def suggest_better_names(
-        self,
-        execution_coords: LJPWCoords,
-        original_name: str
+        self, execution_coords: LJPWCoords, original_name: str
     ) -> List[Tuple[str, float]]:
         """
         Suggest better procedure names based on actual execution semantics.
@@ -141,17 +139,17 @@ class IntentExtractor:
         suggestions = []
 
         dimension_verbs = {
-            'Love': ['LINK', 'CONNECT', 'MERGE', 'COMBINE', 'JOIN'],
-            'Justice': ['VALIDATE', 'VERIFY', 'CHECK', 'TEST', 'AUDIT'],
-            'Power': ['UPDATE', 'DELETE', 'CREATE', 'SET', 'INITIALIZE'],
-            'Wisdom': ['GET', 'FETCH', 'READ', 'CALCULATE', 'DISPLAY']
+            "Love": ["LINK", "CONNECT", "MERGE", "COMBINE", "JOIN"],
+            "Justice": ["VALIDATE", "VERIFY", "CHECK", "TEST", "AUDIT"],
+            "Power": ["UPDATE", "DELETE", "CREATE", "SET", "INITIALIZE"],
+            "Wisdom": ["GET", "FETCH", "READ", "CALCULATE", "DISPLAY"],
         }
 
-        verbs = dimension_verbs.get(dominant, ['PROCESS'])
+        verbs = dimension_verbs.get(dominant, ["PROCESS"])
 
         for verb in verbs:
             # Reconstruct name with better verb
-            domain_part = '-'.join(domain_terms) if domain_terms else 'RECORD'
+            domain_part = "-".join(domain_terms) if domain_terms else "RECORD"
             new_name = f"{verb}-{domain_part}"
 
             # Calculate match score (how well does this verb match execution?)
@@ -165,11 +163,7 @@ class IntentExtractor:
 
         return suggestions[:5]  # Top 5 suggestions
 
-    def _calculate_similarity(
-        self,
-        coords1: LJPWCoords,
-        coords2: LJPWCoords
-    ) -> float:
+    def _calculate_similarity(self, coords1: LJPWCoords, coords2: LJPWCoords) -> float:
         """
         Calculate similarity between two coordinate sets (0 to 1).
 
@@ -183,9 +177,7 @@ class IntentExtractor:
         import math
 
         # Euclidean distance
-        distance = math.sqrt(
-            sum((c1 - c2) ** 2 for c1, c2 in zip(coords1, coords2))
-        )
+        distance = math.sqrt(sum((c1 - c2) ** 2 for c1, c2 in zip(coords1, coords2)))
 
         # Convert distance to similarity (max distance is ~2.0 in normalized space)
         similarity = 1.0 - (distance / 2.0)

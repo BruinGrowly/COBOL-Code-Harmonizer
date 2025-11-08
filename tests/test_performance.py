@@ -24,6 +24,7 @@ from cobol_harmonizer.compliance import ComplianceTagger, ComplianceRiskAssessor
 # Check if pytest-benchmark is available
 try:
     import pytest_benchmark
+
     BENCHMARK_AVAILABLE = True
 except ImportError:
     BENCHMARK_AVAILABLE = False
@@ -31,7 +32,7 @@ except ImportError:
 # Skip all tests in this module if pytest-benchmark is not available
 pytestmark = pytest.mark.skipif(
     not BENCHMARK_AVAILABLE,
-    reason="pytest-benchmark not installed. Install with: pip install pytest-benchmark"
+    reason="pytest-benchmark not installed. Install with: pip install pytest-benchmark",
 )
 
 
@@ -266,9 +267,7 @@ class TestCompliancePerformance:
         """Benchmark compliance tagging"""
         tagger = ComplianceTagger()
         result = benchmark(
-            tagger.tag_procedure,
-            "PROCESS-PAYMENT-TRANSACTION",
-            verbs=["MOVE", "WRITE", "UPDATE"]
+            tagger.tag_procedure, "PROCESS-PAYMENT-TRANSACTION", verbs=["MOVE", "WRITE", "UPDATE"]
         )
         assert result is not None
 
@@ -284,7 +283,7 @@ class TestCompliancePerformance:
             disharmony_score=0.75,
             disharmony_level="concerning",
             verbs=["MOVE", "UPDATE", "WRITE"],
-            fan_in=5
+            fan_in=5,
         )
         assert result is not None
         assert result.risk_score >= 0
@@ -352,10 +351,7 @@ class TestRealWorldScenarios:
                 score = calculator.calculate(intent, execution)
 
                 if score > 0.5:  # Threshold check
-                    findings.append({
-                        'procedure': proc.name,
-                        'score': score
-                    })
+                    findings.append({"procedure": proc.name, "score": score})
 
             return findings
 

@@ -44,23 +44,21 @@ class CopybookResolver:
     #          COPY SQLCA
     #          COPY CUSTOMER REPLACING ==:TAG:== BY ==CUST==.
     COPY_PATTERN = re.compile(
-        r'^\s*COPY\s+([A-Z0-9\-_]+)'  # COPY followed by name
-        r'(?:\s+REPLACING\s+(.+?))?'   # Optional REPLACING clause
-        r'\s*\.',                      # Terminating period
-        re.IGNORECASE | re.MULTILINE
+        r"^\s*COPY\s+([A-Z0-9\-_]+)"  # COPY followed by name
+        r"(?:\s+REPLACING\s+(.+?))?"  # Optional REPLACING clause
+        r"\s*\.",  # Terminating period
+        re.IGNORECASE | re.MULTILINE,
     )
 
     # Pattern for REPLACING clause with pseudo-text (==text==)
     # Handles both: ==PREFIX== BY ==CUSTOMER== and ==PREFIX== BY CUSTOMER-
     REPLACING_PSEUDO_PATTERN = re.compile(
-        r'==(.+?)==\s+BY\s+(?:==(.+?)==|([A-Z0-9\-]+))',
-        re.IGNORECASE
+        r"==(.+?)==\s+BY\s+(?:==(.+?)==|([A-Z0-9\-]+))", re.IGNORECASE
     )
 
     # Pattern for LEADING/TRAILING REPLACING
     REPLACING_LEADING_TRAILING_PATTERN = re.compile(
-        r'(LEADING|TRAILING)\s+(==|"")(.+?)\2\s+BY\s+(==|"")(.+?)\4',
-        re.IGNORECASE
+        r'(LEADING|TRAILING)\s+(==|"")(.+?)\2\s+BY\s+(==|"")(.+?)\4', re.IGNORECASE
     )
 
     def __init__(self, config: CopybookConfig):
@@ -94,7 +92,7 @@ class CopybookResolver:
         start_time = time.time()
 
         # Read source file
-        with open(file_path, 'r', encoding='utf-8') as f:
+        with open(file_path, "r", encoding="utf-8") as f:
             source_content = f.read()
 
         # Resolve copybooks
@@ -110,9 +108,7 @@ class CopybookResolver:
 
         return resolved
 
-    def resolve_source(self,
-                      source_path: str,
-                      source_content: str) -> ResolvedSource:
+    def resolve_source(self, source_path: str, source_content: str) -> ResolvedSource:
         """
         Resolve copybooks in source content
 
@@ -133,7 +129,7 @@ class CopybookResolver:
                 resolved_content=source_content,
                 copybooks_used=[],
                 source_map=SourceMap(),
-                total_lines=source_content.count('\n') + 1,
+                total_lines=source_content.count("\n") + 1,
                 total_lines_from_copybooks=0,
             )
 
@@ -155,14 +151,12 @@ class CopybookResolver:
 
         # Inline copybooks
         resolved_content, source_map = self.inline_copybooks(
-            source_path,
-            source_content,
-            copy_statements
+            source_path, source_content, copy_statements
         )
 
         # Calculate statistics
-        total_lines = resolved_content.count('\n') + 1
-        original_lines = source_content.count('\n') + 1
+        total_lines = resolved_content.count("\n") + 1
+        original_lines = source_content.count("\n") + 1
         copybook_lines = total_lines - original_lines
 
         return ResolvedSource(
@@ -185,11 +179,11 @@ class CopybookResolver:
             List of CopyStatement objects
         """
         statements = []
-        lines = source.split('\n')
+        lines = source.split("\n")
 
         for line_num, line in enumerate(lines, 1):
             # Skip comments and blank lines
-            if len(line) < 7 or line[6] == '*':
+            if len(line) < 7 or line[6] == "*":
                 continue
 
             # Look for COPY statement
@@ -203,13 +197,15 @@ class CopybookResolver:
                 if replacing_text:
                     replacing_clauses = self._parse_replacing_clause(replacing_text)
 
-                statements.append(CopyStatement(
-                    copybook_name=copybook_name,
-                    line_number=line_num,
-                    column_start=match.start(),
-                    column_end=match.end(),
-                    replacing_clauses=replacing_clauses,
-                ))
+                statements.append(
+                    CopyStatement(
+                        copybook_name=copybook_name,
+                        line_number=line_num,
+                        column_start=match.start(),
+                        column_end=match.end(),
+                        replacing_clauses=replacing_clauses,
+                    )
+                )
 
                 logger.debug(f"Found COPY {copybook_name} at line {line_num}")
 
@@ -239,12 +235,14 @@ class CopybookResolver:
             original = match.group(3).strip()
             replacement = match.group(5).strip()
 
-            clauses.append(ReplacingClause(
-                original=original,
-                replacement=replacement,
-                is_leading=(mode == 'LEADING'),
-                is_trailing=(mode == 'TRAILING'),
-            ))
+            clauses.append(
+                ReplacingClause(
+                    original=original,
+                    replacement=replacement,
+                    is_leading=(mode == "LEADING"),
+                    is_trailing=(mode == "TRAILING"),
+                )
+            )
 
         # If no LEADING/TRAILING found, try standard pseudo-text
         if not clauses:
@@ -254,16 +252,16 @@ class CopybookResolver:
                 # Group 3: replacement without delimiters (TEXT-)
                 replacement = (match.group(2) or match.group(3)).strip()
 
-                clauses.append(ReplacingClause(
-                    original=original,
-                    replacement=replacement,
-                ))
+                clauses.append(
+                    ReplacingClause(
+                        original=original,
+                        replacement=replacement,
+                    )
+                )
 
         return clauses
 
-    def resolve_copybook(self,
-                        copy_stmt: CopyStatement,
-                        depth: int = 0) -> Copybook:
+    def resolve_copybook(self, copy_stmt: CopyStatement, depth: int = 0) -> Copybook:
         """
         Resolve a single copybook (recursive for nested copybooks)
 
@@ -301,10 +299,7 @@ class CopybookResolver:
         # Find copybook file
         file_path = self.finder.find(copy_stmt.copybook_name)
         if not file_path:
-            raise CopybookNotFoundError(
-                copy_stmt.copybook_name,
-                self.config.search_paths
-            )
+            raise CopybookNotFoundError(copy_stmt.copybook_name, self.config.search_paths)
 
         # Check cache
         cached = self.cache.get(copy_stmt.copybook_name, file_path)
@@ -316,7 +311,7 @@ class CopybookResolver:
 
         try:
             # Read copybook content
-            with open(file_path, 'r', encoding='utf-8') as f:
+            with open(file_path, "r", encoding="utf-8") as f:
                 content = f.read()
 
             # Apply REPLACING clauses
@@ -331,7 +326,9 @@ class CopybookResolver:
                 for nested_copy in nested_copies:
                     nested_copybook = self.resolve_copybook(nested_copy, depth + 1)
                     # Inline the nested copybook
-                    content = self._inline_single_copy(content, nested_copy, nested_copybook.content)
+                    content = self._inline_single_copy(
+                        content, nested_copy, nested_copybook.content
+                    )
 
             # Compute hash
             content_hash = hashlib.sha256(content.encode()).hexdigest()
@@ -355,9 +352,7 @@ class CopybookResolver:
             # Remove from resolution stack
             self._resolution_stack.discard(copy_stmt.copybook_name)
 
-    def _apply_replacing(self,
-                        content: str,
-                        replacing_clauses: List[ReplacingClause]) -> str:
+    def _apply_replacing(self, content: str, replacing_clauses: List[ReplacingClause]) -> str:
         """
         Apply REPLACING clauses to copybook content - Enhanced version
 
@@ -378,15 +373,15 @@ class CopybookResolver:
             if clause.is_leading:
                 # LEADING: Replace at start of words
                 # Match original at word boundary (start of line or after whitespace/punctuation)
-                pattern = r'(^|\s|[^A-Z0-9\-_])(' + re.escape(clause.original) + r')'
-                replacement = r'\1' + clause.replacement
+                pattern = r"(^|\s|[^A-Z0-9\-_])(" + re.escape(clause.original) + r")"
+                replacement = r"\1" + clause.replacement
                 content = re.sub(pattern, replacement, content, flags=re.MULTILINE)
 
             elif clause.is_trailing:
                 # TRAILING: Replace at end of words
                 # Match original at word boundary (end of line or before whitespace/punctuation)
-                pattern = r'(' + re.escape(clause.original) + r')($|\s|[^A-Z0-9\-_])'
-                replacement = clause.replacement + r'\2'
+                pattern = r"(" + re.escape(clause.original) + r")($|\s|[^A-Z0-9\-_])"
+                replacement = clause.replacement + r"\2"
                 content = re.sub(pattern, replacement, content, flags=re.MULTILINE)
 
             else:
@@ -395,13 +390,13 @@ class CopybookResolver:
                 # ==PREFIX== in copybook matches ==PREFIX== in REPLACING clause
 
                 # Try with pseudo-text delimiters first (==TEXT==)
-                pseudo_pattern = r'==' + re.escape(clause.original) + r'=='
+                pseudo_pattern = r"==" + re.escape(clause.original) + r"=="
                 if re.search(pseudo_pattern, content):
                     # Replace ==PREFIX== with REPLACEMENT (no delimiters in replacement)
                     content = re.sub(pseudo_pattern, clause.replacement, content)
                 else:
                     # Fallback: try without delimiters (word boundary)
-                    pattern = r'\b' + re.escape(clause.original) + r'\b'
+                    pattern = r"\b" + re.escape(clause.original) + r"\b"
                     try:
                         content = re.sub(pattern, clause.replacement, content)
                     except:
@@ -410,10 +405,9 @@ class CopybookResolver:
 
         return content
 
-    def inline_copybooks(self,
-                        source_path: str,
-                        source_content: str,
-                        copy_statements: List[CopyStatement]) -> tuple[str, SourceMap]:
+    def inline_copybooks(
+        self, source_path: str, source_content: str, copy_statements: List[CopyStatement]
+    ) -> tuple[str, SourceMap]:
         """
         Inline all copybooks into source
 
@@ -425,7 +419,7 @@ class CopybookResolver:
         Returns:
             Tuple of (resolved_content, source_map)
         """
-        lines = source_content.split('\n')
+        lines = source_content.split("\n")
         source_map = SourceMap()
         resolved_line_num = 1
 
@@ -447,14 +441,13 @@ class CopybookResolver:
 
                 # Add source mapping for comment
                 source_map.add_mapping(
-                    resolved_line_num,
-                    SourceLocation(source_path, line_num, False)
+                    resolved_line_num, SourceLocation(source_path, line_num, False)
                 )
                 resolved_line_num += 1
 
                 # Inline copybook content
                 if copy_stmt.content:
-                    copybook_lines = copy_stmt.content.split('\n')
+                    copybook_lines = copy_stmt.content.split("\n")
                     for cb_line_num, cb_line in enumerate(copybook_lines, 1):
                         resolved_lines.append(cb_line)
 
@@ -465,16 +458,15 @@ class CopybookResolver:
                                 copy_stmt.resolved_path or copy_stmt.copybook_name,
                                 cb_line_num,
                                 True,
-                                copy_stmt.copybook_name
-                            )
+                                copy_stmt.copybook_name,
+                            ),
                         )
                         resolved_line_num += 1
 
                 # Add end comment
                 resolved_lines.append(f"      *> END COPY {copy_stmt.copybook_name}")
                 source_map.add_mapping(
-                    resolved_line_num,
-                    SourceLocation(source_path, line_num, False)
+                    resolved_line_num, SourceLocation(source_path, line_num, False)
                 )
                 resolved_line_num += 1
 
@@ -484,17 +476,15 @@ class CopybookResolver:
 
                 # Add source mapping
                 source_map.add_mapping(
-                    resolved_line_num,
-                    SourceLocation(source_path, line_num, False)
+                    resolved_line_num, SourceLocation(source_path, line_num, False)
                 )
                 resolved_line_num += 1
 
-        return '\n'.join(resolved_lines), source_map
+        return "\n".join(resolved_lines), source_map
 
-    def _inline_single_copy(self,
-                           content: str,
-                           copy_stmt: CopyStatement,
-                           copybook_content: str) -> str:
+    def _inline_single_copy(
+        self, content: str, copy_stmt: CopyStatement, copybook_content: str
+    ) -> str:
         """
         Inline a single copybook (for nested copies)
 
@@ -506,7 +496,7 @@ class CopybookResolver:
         Returns:
             Content with COPY statement replaced
         """
-        lines = content.split('\n')
+        lines = content.split("\n")
 
         if 0 < copy_stmt.line_number <= len(lines):
             # Replace the COPY statement line
@@ -516,7 +506,7 @@ class CopybookResolver:
                 f"      *> END COPY {copy_stmt.copybook_name}"
             )
 
-        return '\n'.join(lines)
+        return "\n".join(lines)
 
     def get_stats(self) -> dict:
         """
@@ -526,14 +516,14 @@ class CopybookResolver:
             Dictionary with resolution statistics
         """
         return {
-            'finder': self.finder.get_search_summary(),
-            'cache': self.cache.get_stats(),
-            'config': {
-                'search_paths': len(self.config.search_paths),
-                'extensions': len(self.config.extensions),
-                'max_depth': self.config.max_depth,
-                'cache_enabled': self.config.enable_cache,
-            }
+            "finder": self.finder.get_search_summary(),
+            "cache": self.cache.get_stats(),
+            "config": {
+                "search_paths": len(self.config.search_paths),
+                "extensions": len(self.config.extensions),
+                "max_depth": self.config.max_depth,
+                "cache_enabled": self.config.enable_cache,
+            },
         }
 
     def __repr__(self) -> str:

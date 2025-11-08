@@ -6,10 +6,10 @@ A semantic analysis tool for COBOL codebases using the LJPW framework
 their implementations.
 """
 
-__version__ = '0.1.0'
-__author__ = 'COBOL Code Harmonizer Contributors'
-__license__ = 'MIT'
+__version__ = "0.1.0"
+__author__ = "COBOL Code Harmonizer Contributors"
+__license__ = "MIT"
 
 from cobol_harmonizer.semantic.disharmony import DisharmonyCalculator
 
-__all__ = ['DisharmonyCalculator']
+__all__ = ["DisharmonyCalculator"]

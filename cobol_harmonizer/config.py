@@ -26,8 +26,8 @@ class Config:
                 "minor_drift": {"max": 0.5, "action_required": False},
                 "concerning": {"max": 0.8, "action_required": True},
                 "significant": {"max": 1.2, "action_required": True},
-                "critical": {"max": 999.0, "action_required": True}
-            }
+                "critical": {"max": 999.0, "action_required": True},
+            },
         },
         "batch": {
             "max_workers": 4,
@@ -38,8 +38,8 @@ class Config:
                 "**/vendor/**",
                 "**/.git/**",
                 "**/build/**",
-                "**/dist/**"
-            ]
+                "**/dist/**",
+            ],
         },
         "reporting": {
             "default_format": "text",
@@ -47,19 +47,19 @@ class Config:
             "output_directory": "./harmonizer-reports",
             "include_suggestions": True,
             "show_trajectory": True,
-            "max_suggestions": 3
+            "max_suggestions": 3,
         },
         "filters": {
             "min_severity": None,
             "max_procedures": None,
             "exclude_procedures": [],
-            "include_only": []
+            "include_only": [],
         },
         "ljpw": {
             "anchor_point": [1.0, 1.0, 1.0, 1.0],
             "natural_equilibrium": [0.618, 0.414, 0.718, 0.693],
-            "normalization": "unit_vector"
-        }
+            "normalization": "unit_vector",
+        },
     }
 
     # Config file names to search for (in order of precedence)
@@ -71,7 +71,7 @@ class Config:
         ".harmonizerrc.yml",
         ".harmonizerrc.yaml",
         "harmonizer.yml",
-        "harmonizer.yaml"
+        "harmonizer.yaml",
     ]
 
     def __init__(self, config_dict: Optional[Dict] = None):
@@ -81,13 +81,10 @@ class Config:
         Args:
             config_dict: Optional configuration dictionary to use
         """
-        self.config = self._deep_merge(
-            copy.deepcopy(self.DEFAULT_CONFIG),
-            config_dict or {}
-        )
+        self.config = self._deep_merge(copy.deepcopy(self.DEFAULT_CONFIG), config_dict or {})
 
     @classmethod
-    def from_file(cls, config_path: str) -> 'Config':
+    def from_file(cls, config_path: str) -> "Config":
         """
         Load configuration from file.
 
@@ -103,9 +100,9 @@ class Config:
             raise FileNotFoundError(f"Configuration file not found: {config_path}")
 
         # Determine format from extension
-        if config_file.suffix in ['.json']:
+        if config_file.suffix in [".json"]:
             config_dict = cls._load_json(config_file)
-        elif config_file.suffix in ['.yml', '.yaml']:
+        elif config_file.suffix in [".yml", ".yaml"]:
             config_dict = cls._load_yaml(config_file)
         else:
             # Try JSON first, then YAML
@@ -117,7 +114,7 @@ class Config:
         return cls(config_dict)
 
     @classmethod
-    def discover(cls, start_path: Optional[str] = None) -> 'Config':
+    def discover(cls, start_path: Optional[str] = None) -> "Config":
         """
         Discover and load configuration file.
 
@@ -160,7 +157,7 @@ class Config:
     @staticmethod
     def _load_json(file_path: Path) -> Dict:
         """Load JSON configuration file"""
-        with open(file_path, 'r', encoding='utf-8') as f:
+        with open(file_path, "r", encoding="utf-8") as f:
             return json.load(f)
 
     @staticmethod
@@ -168,12 +165,11 @@ class Config:
         """Load YAML configuration file"""
         try:
             import yaml
-            with open(file_path, 'r', encoding='utf-8') as f:
+
+            with open(file_path, "r", encoding="utf-8") as f:
                 return yaml.safe_load(f) or {}
         except ImportError:
-            raise ImportError(
-                "YAML support requires PyYAML. Install with: pip install pyyaml"
-            )
+            raise ImportError("YAML support requires PyYAML. Install with: pip install pyyaml")
 
     @staticmethod
     def _deep_merge(base: Dict, override: Dict) -> Dict:
@@ -199,7 +195,7 @@ class Config:
         Returns:
             Configuration value
         """
-        keys = key_path.split('.')
+        keys = key_path.split(".")
         value = self.config
 
         for key in keys:
@@ -218,7 +214,7 @@ class Config:
             key_path: Dot-separated path (e.g., 'analysis.threshold')
             value: Value to set
         """
-        keys = key_path.split('.')
+        keys = key_path.split(".")
         config = self.config
 
         for key in keys[:-1]:
@@ -245,7 +241,7 @@ class Config:
         """Get configuration as JSON string"""
         return json.dumps(self.config, indent=indent)
 
-    def save(self, output_path: str, format: str = 'json'):
+    def save(self, output_path: str, format: str = "json"):
         """
         Save configuration to file.
 
@@ -256,18 +252,17 @@ class Config:
         output_file = Path(output_path)
         output_file.parent.mkdir(parents=True, exist_ok=True)
 
-        if format == 'json':
-            with open(output_file, 'w', encoding='utf-8') as f:
+        if format == "json":
+            with open(output_file, "w", encoding="utf-8") as f:
                 json.dump(self.config, f, indent=2)
-        elif format == 'yaml':
+        elif format == "yaml":
             try:
                 import yaml
-                with open(output_file, 'w', encoding='utf-8') as f:
+
+                with open(output_file, "w", encoding="utf-8") as f:
                     yaml.safe_dump(self.config, f, default_flow_style=False)
             except ImportError:
-                raise ImportError(
-                    "YAML support requires PyYAML. Install with: pip install pyyaml"
-                )
+                raise ImportError("YAML support requires PyYAML. Install with: pip install pyyaml")
         else:
             raise ValueError(f"Unsupported format: {format}")
 
@@ -281,7 +276,7 @@ class Config:
         errors = []
 
         # Validate threshold
-        threshold = self.get('analysis.threshold')
+        threshold = self.get("analysis.threshold")
         if threshold is not None:
             if not isinstance(threshold, (int, float)):
                 errors.append("analysis.threshold must be a number")
@@ -289,7 +284,7 @@ class Config:
                 errors.append("analysis.threshold must be non-negative")
 
         # Validate max_workers
-        max_workers = self.get('batch.max_workers')
+        max_workers = self.get("batch.max_workers")
         if max_workers is not None:
             if not isinstance(max_workers, int):
                 errors.append("batch.max_workers must be an integer")
@@ -297,13 +292,13 @@ class Config:
                 errors.append("batch.max_workers must be at least 1")
 
         # Validate file_patterns
-        file_patterns = self.get('batch.file_patterns')
+        file_patterns = self.get("batch.file_patterns")
         if file_patterns is not None:
             if not isinstance(file_patterns, list):
                 errors.append("batch.file_patterns must be a list")
 
         # Validate severity levels
-        severity_levels = self.get('analysis.severity_levels')
+        severity_levels = self.get("analysis.severity_levels")
         if severity_levels is not None:
             if not isinstance(severity_levels, dict):
                 errors.append("analysis.severity_levels must be a dictionary")
@@ -311,7 +306,7 @@ class Config:
                 for level, settings in severity_levels.items():
                     if not isinstance(settings, dict):
                         errors.append(f"analysis.severity_levels.{level} must be a dictionary")
-                    elif 'max' not in settings:
+                    elif "max" not in settings:
                         errors.append(f"analysis.severity_levels.{level} must have 'max' key")
 
         return errors
@@ -326,7 +321,7 @@ class Config:
         Returns:
             Threshold value or None
         """
-        return self.get(f'analysis.severity_levels.{severity}.max')
+        return self.get(f"analysis.severity_levels.{severity}.max")
 
     def should_take_action(self, severity: str) -> bool:
         """
@@ -338,7 +333,7 @@ class Config:
         Returns:
             True if action required
         """
-        return self.get(f'analysis.severity_levels.{severity}.action_required', False)
+        return self.get(f"analysis.severity_levels.{severity}.action_required", False)
 
 
 def create_default_config_file(output_path: str = ".harmonizerrc.json"):
@@ -349,14 +344,13 @@ def create_default_config_file(output_path: str = ".harmonizerrc.json"):
         output_path: Output file path
     """
     config = Config()
-    format_type = 'yaml' if output_path.endswith(('.yml', '.yaml')) else 'json'
+    format_type = "yaml" if output_path.endswith((".yml", ".yaml")) else "json"
     config.save(output_path, format=format_type)
     return output_path
 
 
 def get_config_with_overrides(
-    config_file: Optional[str] = None,
-    overrides: Optional[Dict] = None
+    config_file: Optional[str] = None, overrides: Optional[Dict] = None
 ) -> Config:
     """
     Get configuration with optional file and overrides.

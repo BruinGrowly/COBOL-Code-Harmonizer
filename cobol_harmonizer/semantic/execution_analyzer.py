@@ -75,12 +75,7 @@ class ExecutionAnalyzer:
         Returns:
             Dictionary with dimension counts
         """
-        distribution = {
-            'Love': 0,
-            'Justice': 0,
-            'Power': 0,
-            'Wisdom': 0
-        }
+        distribution = {"Love": 0, "Justice": 0, "Power": 0, "Wisdom": 0}
 
         for statement in procedure.statements:
             coords = self.verb_mapper.map_verb(statement.verb)
@@ -104,31 +99,31 @@ class ExecutionAnalyzer:
         verbs = [s.verb for s in procedure.statements]
 
         # Pattern 1: File I/O sequence
-        if 'OPEN' in verbs and 'READ' in verbs and 'CLOSE' in verbs:
+        if "OPEN" in verbs and "READ" in verbs and "CLOSE" in verbs:
             patterns.append("File I/O sequence (OPEN-READ-CLOSE)")
 
         # Pattern 2: Update pattern
-        if 'READ' in verbs and ('REWRITE' in verbs or 'DELETE' in verbs):
+        if "READ" in verbs and ("REWRITE" in verbs or "DELETE" in verbs):
             patterns.append("Update pattern (READ followed by modification)")
 
         # Pattern 3: Validation sequence
-        if verbs.count('IF') >= 2 and 'MOVE' in verbs:
+        if verbs.count("IF") >= 2 and "MOVE" in verbs:
             patterns.append("Validation sequence (multiple IF statements)")
 
         # Pattern 4: Calculation sequence
-        if 'COMPUTE' in verbs or 'ADD' in verbs or 'MULTIPLY' in verbs:
+        if "COMPUTE" in verbs or "ADD" in verbs or "MULTIPLY" in verbs:
             patterns.append("Calculation sequence")
 
         # Pattern 5: Database operation (SQL)
-        if any(v in verbs for v in ['SELECT', 'INSERT', 'UPDATE', 'DELETE']):
+        if any(v in verbs for v in ["SELECT", "INSERT", "UPDATE", "DELETE"]):
             patterns.append("Database operation (embedded SQL)")
 
         # Pattern 6: Procedure chain
-        if verbs.count('PERFORM') >= 3:
+        if verbs.count("PERFORM") >= 3:
             patterns.append("Procedure chain (multiple PERFORM statements)")
 
         # Pattern 7: Display/Report
-        if verbs.count('DISPLAY') >= 2:
+        if verbs.count("DISPLAY") >= 2:
             patterns.append("Display/Report generation")
 
         return patterns
@@ -147,7 +142,7 @@ class ExecutionAnalyzer:
 
         # Add complexity for each decision point
         for statement in procedure.statements:
-            if statement.verb in ['IF', 'EVALUATE', 'SEARCH', 'PERFORM']:
+            if statement.verb in ["IF", "EVALUATE", "SEARCH", "PERFORM"]:
                 complexity += 1
 
         return complexity
@@ -166,9 +161,18 @@ class ExecutionAnalyzer:
             True if procedure appears to be pure
         """
         modifying_verbs = {
-            'WRITE', 'REWRITE', 'DELETE', 'MOVE', 'SET',
-            'INITIALIZE', 'OPEN', 'CLOSE', 'CALL',
-            'INSERT', 'UPDATE', 'DELETE'  # SQL verbs
+            "WRITE",
+            "REWRITE",
+            "DELETE",
+            "MOVE",
+            "SET",
+            "INITIALIZE",
+            "OPEN",
+            "CLOSE",
+            "CALL",
+            "INSERT",
+            "UPDATE",
+            "DELETE",  # SQL verbs
         }
 
         verbs = {s.verb for s in procedure.statements}
@@ -193,19 +197,19 @@ class ExecutionAnalyzer:
         is_pure = self.is_pure_function(procedure)
 
         return {
-            'name': procedure.name,
-            'type': procedure.type,
-            'execution_coords': {
-                'love': round(coords[0], 3),
-                'justice': round(coords[1], 3),
-                'power': round(coords[2], 3),
-                'wisdom': round(coords[3], 3),
+            "name": procedure.name,
+            "type": procedure.type,
+            "execution_coords": {
+                "love": round(coords[0], 3),
+                "justice": round(coords[1], 3),
+                "power": round(coords[2], 3),
+                "wisdom": round(coords[3], 3),
             },
-            'dominant_dimension': self.verb_mapper.get_dominant_dimension(coords),
-            'statement_count': len(procedure.statements),
-            'verb_distribution': distribution,
-            'semantic_patterns': patterns,
-            'cyclomatic_complexity': complexity,
-            'is_pure': is_pure,
-            'performed_procedures': procedure.performed_procedures,
+            "dominant_dimension": self.verb_mapper.get_dominant_dimension(coords),
+            "statement_count": len(procedure.statements),
+            "verb_distribution": distribution,
+            "semantic_patterns": patterns,
+            "cyclomatic_complexity": complexity,
+            "is_pure": is_pure,
+            "performed_procedures": procedure.performed_procedures,
         }

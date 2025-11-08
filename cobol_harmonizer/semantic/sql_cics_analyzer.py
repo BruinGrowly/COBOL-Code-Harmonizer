@@ -21,6 +21,7 @@ LJPWCoords = Tuple[float, float, float, float]
 @dataclass
 class SQLStatement:
     """Represents an EXEC SQL statement"""
+
     operation: str  # SELECT, INSERT, UPDATE, DELETE, etc.
     tables: List[str]  # Table names
     is_update: bool  # True if modifies data
@@ -31,6 +32,7 @@ class SQLStatement:
 @dataclass
 class CICSCommand:
     """Represents an EXEC CICS command"""
+
     command: str  # READ, WRITE, SEND, RECEIVE, etc.
     resource_type: str  # FILE, QUEUE, TERMINAL, etc.
     is_update: bool  # True if modifies data
@@ -44,95 +46,84 @@ class SQLCICSAnalyzer:
     # SQL verb to LJPW coordinate mapping
     SQL_COORDINATES: Dict[str, LJPWCoords] = {
         # WISDOM-Dominant (Retrieval/Query)
-        'SELECT': (0.1, 0.2, 0.0, 0.7),
-        'FETCH': (0.1, 0.2, 0.0, 0.7),
-        'EXPLAIN': (0.0, 0.3, 0.0, 0.7),
-        'DESCRIBE': (0.0, 0.2, 0.0, 0.8),
-
+        "SELECT": (0.1, 0.2, 0.0, 0.7),
+        "FETCH": (0.1, 0.2, 0.0, 0.7),
+        "EXPLAIN": (0.0, 0.3, 0.0, 0.7),
+        "DESCRIBE": (0.0, 0.2, 0.0, 0.8),
         # POWER-Dominant (Modification)
-        'INSERT': (0.1, 0.2, 0.7, 0.0),
-        'UPDATE': (0.0, 0.2, 0.7, 0.1),
-        'DELETE': (0.0, 0.2, 0.8, 0.0),
-        'TRUNCATE': (0.0, 0.1, 0.9, 0.0),
-        'DROP': (0.0, 0.1, 0.9, 0.0),
-        'CREATE': (0.1, 0.2, 0.6, 0.1),
-        'ALTER': (0.0, 0.2, 0.7, 0.1),
-
+        "INSERT": (0.1, 0.2, 0.7, 0.0),
+        "UPDATE": (0.0, 0.2, 0.7, 0.1),
+        "DELETE": (0.0, 0.2, 0.8, 0.0),
+        "TRUNCATE": (0.0, 0.1, 0.9, 0.0),
+        "DROP": (0.0, 0.1, 0.9, 0.0),
+        "CREATE": (0.1, 0.2, 0.6, 0.1),
+        "ALTER": (0.0, 0.2, 0.7, 0.1),
         # JUSTICE-Dominant (Transactional Control)
-        'COMMIT': (0.1, 0.6, 0.3, 0.0),
-        'ROLLBACK': (0.0, 0.6, 0.4, 0.0),
-        'SAVEPOINT': (0.0, 0.5, 0.3, 0.2),
-
+        "COMMIT": (0.1, 0.6, 0.3, 0.0),
+        "ROLLBACK": (0.0, 0.6, 0.4, 0.0),
+        "SAVEPOINT": (0.0, 0.5, 0.3, 0.2),
         # LOVE-Dominant (Connection/Session)
-        'CONNECT': (0.7, 0.1, 0.1, 0.1),
-        'DISCONNECT': (0.6, 0.1, 0.2, 0.1),
-        'SET': (0.1, 0.2, 0.5, 0.2),
-
+        "CONNECT": (0.7, 0.1, 0.1, 0.1),
+        "DISCONNECT": (0.6, 0.1, 0.2, 0.1),
+        "SET": (0.1, 0.2, 0.5, 0.2),
         # BALANCED (Cursor Operations)
-        'DECLARE': (0.1, 0.3, 0.2, 0.4),
-        'OPEN': (0.1, 0.2, 0.4, 0.3),
-        'CLOSE': (0.1, 0.2, 0.4, 0.3),
-
+        "DECLARE": (0.1, 0.3, 0.2, 0.4),
+        "OPEN": (0.1, 0.2, 0.4, 0.3),
+        "CLOSE": (0.1, 0.2, 0.4, 0.3),
         # DB2-Specific
-        'CALL': (0.5, 0.1, 0.3, 0.1),  # Stored procedure
-        'PREPARE': (0.0, 0.3, 0.2, 0.5),
-        'EXECUTE': (0.1, 0.2, 0.5, 0.2),
-        'LOCK': (0.0, 0.5, 0.4, 0.1),
-        'UNLOCK': (0.0, 0.4, 0.5, 0.1),
+        "CALL": (0.5, 0.1, 0.3, 0.1),  # Stored procedure
+        "PREPARE": (0.0, 0.3, 0.2, 0.5),
+        "EXECUTE": (0.1, 0.2, 0.5, 0.2),
+        "LOCK": (0.0, 0.5, 0.4, 0.1),
+        "UNLOCK": (0.0, 0.4, 0.5, 0.1),
     }
 
     # CICS command to LJPW coordinate mapping
     CICS_COORDINATES: Dict[str, LJPWCoords] = {
         # WISDOM-Dominant (Read/Retrieve)
-        'READ': (0.1, 0.2, 0.0, 0.7),
-        'READNEXT': (0.1, 0.2, 0.0, 0.7),
-        'READPREV': (0.1, 0.2, 0.0, 0.7),
-        'RETRIEVE': (0.1, 0.2, 0.0, 0.7),
-        'INQUIRE': (0.0, 0.3, 0.0, 0.7),
-
+        "READ": (0.1, 0.2, 0.0, 0.7),
+        "READNEXT": (0.1, 0.2, 0.0, 0.7),
+        "READPREV": (0.1, 0.2, 0.0, 0.7),
+        "RETRIEVE": (0.1, 0.2, 0.0, 0.7),
+        "INQUIRE": (0.0, 0.3, 0.0, 0.7),
         # POWER-Dominant (Write/Modify)
-        'WRITE': (0.1, 0.1, 0.7, 0.1),
-        'REWRITE': (0.0, 0.2, 0.7, 0.1),
-        'DELETE': (0.0, 0.2, 0.8, 0.0),
-        'DELETEQ': (0.0, 0.2, 0.8, 0.0),
-        'WRITEQ': (0.1, 0.1, 0.7, 0.1),
-        'UPDATE': (0.0, 0.2, 0.7, 0.1),
-
+        "WRITE": (0.1, 0.1, 0.7, 0.1),
+        "REWRITE": (0.0, 0.2, 0.7, 0.1),
+        "DELETE": (0.0, 0.2, 0.8, 0.0),
+        "DELETEQ": (0.0, 0.2, 0.8, 0.0),
+        "WRITEQ": (0.1, 0.1, 0.7, 0.1),
+        "UPDATE": (0.0, 0.2, 0.7, 0.1),
         # LOVE-Dominant (Communication)
-        'SEND': (0.6, 0.1, 0.2, 0.1),
-        'RECEIVE': (0.5, 0.1, 0.1, 0.3),
-        'CONVERSE': (0.7, 0.1, 0.1, 0.1),
-        'LINK': (0.6, 0.1, 0.2, 0.1),
-        'XCTL': (0.5, 0.1, 0.3, 0.1),  # Transfer control
-        'START': (0.4, 0.1, 0.4, 0.1),
-        'RETURN': (0.3, 0.2, 0.3, 0.2),
-
+        "SEND": (0.6, 0.1, 0.2, 0.1),
+        "RECEIVE": (0.5, 0.1, 0.1, 0.3),
+        "CONVERSE": (0.7, 0.1, 0.1, 0.1),
+        "LINK": (0.6, 0.1, 0.2, 0.1),
+        "XCTL": (0.5, 0.1, 0.3, 0.1),  # Transfer control
+        "START": (0.4, 0.1, 0.4, 0.1),
+        "RETURN": (0.3, 0.2, 0.3, 0.2),
         # JUSTICE-Dominant (Transactional)
-        'SYNCPOINT': (0.1, 0.6, 0.3, 0.0),
-        'SYNCPOINT ROLLBACK': (0.0, 0.6, 0.4, 0.0),
-        'ENQ': (0.0, 0.6, 0.3, 0.1),  # Enqueue (lock)
-        'DEQ': (0.0, 0.5, 0.4, 0.1),  # Dequeue (unlock)
-        'HANDLE': (0.1, 0.5, 0.3, 0.1),
-
+        "SYNCPOINT": (0.1, 0.6, 0.3, 0.0),
+        "SYNCPOINT ROLLBACK": (0.0, 0.6, 0.4, 0.0),
+        "ENQ": (0.0, 0.6, 0.3, 0.1),  # Enqueue (lock)
+        "DEQ": (0.0, 0.5, 0.4, 0.1),  # Dequeue (unlock)
+        "HANDLE": (0.1, 0.5, 0.3, 0.1),
         # BALANCED (Session/Control)
-        'GETMAIN': (0.0, 0.1, 0.6, 0.3),  # Allocate storage
-        'FREEMAIN': (0.0, 0.1, 0.7, 0.2),  # Free storage
-        'DELAY': (0.0, 0.2, 0.5, 0.3),
-        'SUSPEND': (0.0, 0.2, 0.5, 0.3),
-        'WAIT': (0.0, 0.3, 0.4, 0.3),
-        'POST': (0.2, 0.3, 0.4, 0.1),
-
+        "GETMAIN": (0.0, 0.1, 0.6, 0.3),  # Allocate storage
+        "FREEMAIN": (0.0, 0.1, 0.7, 0.2),  # Free storage
+        "DELAY": (0.0, 0.2, 0.5, 0.3),
+        "SUSPEND": (0.0, 0.2, 0.5, 0.3),
+        "WAIT": (0.0, 0.3, 0.4, 0.3),
+        "POST": (0.2, 0.3, 0.4, 0.1),
         # Terminal I/O
-        'SEND MAP': (0.4, 0.1, 0.3, 0.2),
-        'RECEIVE MAP': (0.3, 0.1, 0.1, 0.5),
-        'SEND TEXT': (0.5, 0.1, 0.2, 0.2),
-        'RECEIVE TEXT': (0.4, 0.1, 0.1, 0.4),
-
+        "SEND MAP": (0.4, 0.1, 0.3, 0.2),
+        "RECEIVE MAP": (0.3, 0.1, 0.1, 0.5),
+        "SEND TEXT": (0.5, 0.1, 0.2, 0.2),
+        "RECEIVE TEXT": (0.4, 0.1, 0.1, 0.4),
         # Queue Operations
-        'READQ TS': (0.1, 0.2, 0.0, 0.7),  # Temporary storage
-        'WRITEQ TS': (0.1, 0.1, 0.7, 0.1),
-        'READQ TD': (0.1, 0.2, 0.0, 0.7),  # Transient data
-        'WRITEQ TD': (0.1, 0.1, 0.7, 0.1),
+        "READQ TS": (0.1, 0.2, 0.0, 0.7),  # Temporary storage
+        "WRITEQ TS": (0.1, 0.1, 0.7, 0.1),
+        "READQ TD": (0.1, 0.2, 0.0, 0.7),  # Transient data
+        "WRITEQ TD": (0.1, 0.1, 0.7, 0.1),
     }
 
     # Default coordinate for unknown operations
@@ -155,14 +146,14 @@ class SQLCICSAnalyzer:
 
         # Pattern to match EXEC SQL ... END-EXEC
         # Handles both single-line and multi-line statements
-        pattern = r'EXEC\s+SQL\s+(.*?)\s+END-EXEC'
+        pattern = r"EXEC\s+SQL\s+(.*?)\s+END-EXEC"
         matches = re.finditer(pattern, cobol_source, re.IGNORECASE | re.DOTALL)
 
         for match in matches:
             sql_text = match.group(1).strip()
 
             # Extract operation (first keyword)
-            operation_match = re.match(r'(\w+)', sql_text)
+            operation_match = re.match(r"(\w+)", sql_text)
             if not operation_match:
                 continue
 
@@ -172,18 +163,28 @@ class SQLCICSAnalyzer:
             tables = self._extract_table_names(sql_text)
 
             # Determine if it's an update operation
-            is_update = operation in {'INSERT', 'UPDATE', 'DELETE', 'TRUNCATE', 'DROP', 'ALTER', 'CREATE'}
+            is_update = operation in {
+                "INSERT",
+                "UPDATE",
+                "DELETE",
+                "TRUNCATE",
+                "DROP",
+                "ALTER",
+                "CREATE",
+            }
 
             # Determine if it's transactional
-            is_transactional = operation in {'COMMIT', 'ROLLBACK', 'SAVEPOINT'}
+            is_transactional = operation in {"COMMIT", "ROLLBACK", "SAVEPOINT"}
 
-            statements.append(SQLStatement(
-                operation=operation,
-                tables=tables,
-                is_update=is_update,
-                is_transactional=is_transactional,
-                full_text=sql_text
-            ))
+            statements.append(
+                SQLStatement(
+                    operation=operation,
+                    tables=tables,
+                    is_update=is_update,
+                    is_transactional=is_transactional,
+                    full_text=sql_text,
+                )
+            )
 
         return statements
 
@@ -200,7 +201,7 @@ class SQLCICSAnalyzer:
         commands = []
 
         # Pattern to match EXEC CICS ... END-EXEC
-        pattern = r'EXEC\s+CICS\s+(.*?)\s+END-EXEC'
+        pattern = r"EXEC\s+CICS\s+(.*?)\s+END-EXEC"
         matches = re.finditer(pattern, cobol_source, re.IGNORECASE | re.DOTALL)
 
         for match in matches:
@@ -213,20 +214,20 @@ class SQLCICSAnalyzer:
             resource_type = self._extract_resource_type(cics_text)
 
             # Determine if it's an update operation
-            is_update = command in {
-                'WRITE', 'REWRITE', 'DELETE', 'DELETEQ', 'WRITEQ', 'UPDATE'
-            }
+            is_update = command in {"WRITE", "REWRITE", "DELETE", "DELETEQ", "WRITEQ", "UPDATE"}
 
             # Determine if it's transactional
-            is_transactional = command in {'SYNCPOINT', 'SYNCPOINT ROLLBACK'}
+            is_transactional = command in {"SYNCPOINT", "SYNCPOINT ROLLBACK"}
 
-            commands.append(CICSCommand(
-                command=command,
-                resource_type=resource_type,
-                is_update=is_update,
-                is_transactional=is_transactional,
-                full_text=cics_text
-            ))
+            commands.append(
+                CICSCommand(
+                    command=command,
+                    resource_type=resource_type,
+                    is_update=is_update,
+                    is_transactional=is_transactional,
+                    full_text=cics_text,
+                )
+            )
 
         return commands
 
@@ -296,28 +297,28 @@ class SQLCICSAnalyzer:
 
     def has_sql(self, cobol_source: str) -> bool:
         """Check if COBOL source contains EXEC SQL statements"""
-        return bool(re.search(r'EXEC\s+SQL', cobol_source, re.IGNORECASE))
+        return bool(re.search(r"EXEC\s+SQL", cobol_source, re.IGNORECASE))
 
     def has_cics(self, cobol_source: str) -> bool:
         """Check if COBOL source contains EXEC CICS commands"""
-        return bool(re.search(r'EXEC\s+CICS', cobol_source, re.IGNORECASE))
+        return bool(re.search(r"EXEC\s+CICS", cobol_source, re.IGNORECASE))
 
     def _extract_table_names(self, sql_text: str) -> List[str]:
         """Extract table names from SQL statement (simplified)"""
         tables = []
 
         # Look for FROM clause
-        from_match = re.search(r'FROM\s+([\w.-]+)', sql_text, re.IGNORECASE)
+        from_match = re.search(r"FROM\s+([\w.-]+)", sql_text, re.IGNORECASE)
         if from_match:
             tables.append(from_match.group(1))
 
         # Look for INTO clause (INSERT)
-        into_match = re.search(r'INTO\s+([\w.-]+)', sql_text, re.IGNORECASE)
+        into_match = re.search(r"INTO\s+([\w.-]+)", sql_text, re.IGNORECASE)
         if into_match:
             tables.append(into_match.group(1))
 
         # Look for UPDATE clause
-        update_match = re.search(r'UPDATE\s+([\w.-]+)', sql_text, re.IGNORECASE)
+        update_match = re.search(r"UPDATE\s+([\w.-]+)", sql_text, re.IGNORECASE)
         if update_match:
             tables.append(update_match.group(1))
 
@@ -327,9 +328,15 @@ class SQLCICSAnalyzer:
         """Extract CICS command from command text"""
         # Handle multi-word commands
         multi_word_commands = [
-            'SYNCPOINT ROLLBACK', 'SEND MAP', 'RECEIVE MAP',
-            'SEND TEXT', 'RECEIVE TEXT', 'READQ TS', 'WRITEQ TS',
-            'READQ TD', 'WRITEQ TD'
+            "SYNCPOINT ROLLBACK",
+            "SEND MAP",
+            "RECEIVE MAP",
+            "SEND TEXT",
+            "RECEIVE TEXT",
+            "READQ TS",
+            "WRITEQ TS",
+            "READQ TD",
+            "WRITEQ TD",
         ]
 
         cics_upper = cics_text.upper()
@@ -338,31 +345,31 @@ class SQLCICSAnalyzer:
                 return cmd
 
         # Single-word command (first word)
-        match = re.match(r'(\w+)', cics_text)
+        match = re.match(r"(\w+)", cics_text)
         if match:
             return match.group(1).upper()
 
-        return 'UNKNOWN'
+        return "UNKNOWN"
 
     def _extract_resource_type(self, cics_text: str) -> str:
         """Extract resource type from CICS command"""
         # Look for FILE(), QUEUE(), TERMINAL(), etc.
-        if 'FILE(' in cics_text.upper():
-            return 'FILE'
-        elif 'QUEUE(' in cics_text.upper():
-            return 'QUEUE'
-        elif 'TERMINAL(' in cics_text.upper() or 'TERMID(' in cics_text.upper():
-            return 'TERMINAL'
-        elif 'PROGRAM(' in cics_text.upper():
-            return 'PROGRAM'
-        elif 'MAP(' in cics_text.upper():
-            return 'MAP'
-        elif ' TS' in cics_text.upper():
-            return 'TEMP_STORAGE'
-        elif ' TD' in cics_text.upper():
-            return 'TRANSIENT_DATA'
+        if "FILE(" in cics_text.upper():
+            return "FILE"
+        elif "QUEUE(" in cics_text.upper():
+            return "QUEUE"
+        elif "TERMINAL(" in cics_text.upper() or "TERMID(" in cics_text.upper():
+            return "TERMINAL"
+        elif "PROGRAM(" in cics_text.upper():
+            return "PROGRAM"
+        elif "MAP(" in cics_text.upper():
+            return "MAP"
+        elif " TS" in cics_text.upper():
+            return "TEMP_STORAGE"
+        elif " TD" in cics_text.upper():
+            return "TRANSIENT_DATA"
         else:
-            return 'UNKNOWN'
+            return "UNKNOWN"
 
     def _calculate_centroid(self, coords_list: List[LJPWCoords]) -> LJPWCoords:
         """
@@ -389,7 +396,7 @@ class SQLCICSAnalyzer:
         self,
         cobol_coords: LJPWCoords,
         sql_statements: List[SQLStatement],
-        cics_commands: List[CICSCommand]
+        cics_commands: List[CICSCommand],
     ) -> LJPWCoords:
         """
         Combine COBOL, SQL, and CICS semantics into aggregate coordinates.
@@ -449,10 +456,10 @@ class SQLCICSAnalyzer:
         if not sql_statements:
             return "No SQL operations"
 
-        selects = sum(1 for s in sql_statements if s.operation == 'SELECT')
-        inserts = sum(1 for s in sql_statements if s.operation == 'INSERT')
-        updates = sum(1 for s in sql_statements if s.operation == 'UPDATE')
-        deletes = sum(1 for s in sql_statements if s.operation == 'DELETE')
+        selects = sum(1 for s in sql_statements if s.operation == "SELECT")
+        inserts = sum(1 for s in sql_statements if s.operation == "INSERT")
+        updates = sum(1 for s in sql_statements if s.operation == "UPDATE")
+        deletes = sum(1 for s in sql_statements if s.operation == "DELETE")
 
         parts = []
         if selects:
@@ -479,10 +486,10 @@ class SQLCICSAnalyzer:
         if not cics_commands:
             return "No CICS operations"
 
-        reads = sum(1 for c in cics_commands if 'READ' in c.command)
-        writes = sum(1 for c in cics_commands if 'WRITE' in c.command)
-        sends = sum(1 for c in cics_commands if 'SEND' in c.command)
-        receives = sum(1 for c in cics_commands if 'RECEIVE' in c.command)
+        reads = sum(1 for c in cics_commands if "READ" in c.command)
+        writes = sum(1 for c in cics_commands if "WRITE" in c.command)
+        sends = sum(1 for c in cics_commands if "SEND" in c.command)
+        receives = sum(1 for c in cics_commands if "RECEIVE" in c.command)
 
         parts = []
         if reads:

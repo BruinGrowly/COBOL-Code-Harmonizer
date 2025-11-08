@@ -21,23 +21,21 @@ class TestJSONReporter:
                 "disharmony_score": 0.15,
                 "severity_level": "harmonious",
                 "is_harmonious": True,
-                "requires_action": False
+                "requires_action": False,
             },
             {
                 "procedure_name": "DELETE-CUSTOMER-DATA",
                 "disharmony_score": 1.12,
                 "severity_level": "critical",
                 "is_harmonious": False,
-                "requires_action": True
-            }
+                "requires_action": True,
+            },
         ]
 
     def test_generate_report(self):
         """Test basic report generation"""
         report_json = self.reporter.generate_report(
-            file_path="test.cbl",
-            program_id="TEST-PROG",
-            results=self.sample_results
+            file_path="test.cbl", program_id="TEST-PROG", results=self.sample_results
         )
 
         # Parse JSON
@@ -64,10 +62,7 @@ class TestJSONReporter:
     def test_generate_report_with_threshold(self):
         """Test report generation with threshold"""
         report_json = self.reporter.generate_report(
-            file_path="test.cbl",
-            program_id="TEST-PROG",
-            results=self.sample_results,
-            threshold=0.5
+            file_path="test.cbl", program_id="TEST-PROG", results=self.sample_results, threshold=0.5
         )
 
         report = json.loads(report_json)
@@ -82,7 +77,7 @@ class TestJSONReporter:
             file_path="test.cbl",
             program_id="TEST-PROG",
             results=self.sample_results,
-            metadata=metadata
+            metadata=metadata,
         )
 
         report = json.loads(report_json)
@@ -97,13 +92,11 @@ class TestJSONReporter:
             {"severity_level": "harmonious", "is_harmonious": True, "requires_action": False},
             {"severity_level": "harmonious", "is_harmonious": True, "requires_action": False},
             {"severity_level": "critical", "is_harmonious": False, "requires_action": True},
-            {"severity_level": "significant", "is_harmonious": False, "requires_action": True}
+            {"severity_level": "significant", "is_harmonious": False, "requires_action": True},
         ]
 
         report_json = self.reporter.generate_report(
-            file_path="test.cbl",
-            program_id="TEST-PROG",
-            results=results
+            file_path="test.cbl", program_id="TEST-PROG", results=results
         )
 
         report = json.loads(report_json)
@@ -120,17 +113,25 @@ class TestJSONReporter:
                 "file_path": "file1.cbl",
                 "program_id": "PROG1",
                 "results": [
-                    {"severity_level": "harmonious", "is_harmonious": True, "requires_action": False}
-                ]
+                    {
+                        "severity_level": "harmonious",
+                        "is_harmonious": True,
+                        "requires_action": False,
+                    }
+                ],
             },
             {
                 "file_path": "file2.cbl",
                 "program_id": "PROG2",
                 "results": [
                     {"severity_level": "critical", "is_harmonious": False, "requires_action": True},
-                    {"severity_level": "significant", "is_harmonious": False, "requires_action": True}
-                ]
-            }
+                    {
+                        "severity_level": "significant",
+                        "is_harmonious": False,
+                        "requires_action": True,
+                    },
+                ],
+            },
         ]
 
         report_json = self.reporter.generate_batch_report(file_results)
@@ -153,9 +154,7 @@ class TestJSONReporter:
             output_path = Path(tmpdir) / "report.json"
 
             report_json = self.reporter.generate_report(
-                file_path="test.cbl",
-                program_id="TEST-PROG",
-                results=self.sample_results
+                file_path="test.cbl", program_id="TEST-PROG", results=self.sample_results
             )
 
             self.reporter.save_report(report_json, str(output_path))
@@ -164,7 +163,7 @@ class TestJSONReporter:
             assert output_path.exists()
 
             # Verify content
-            with open(output_path, 'r') as f:
+            with open(output_path, "r") as f:
                 loaded_report = json.load(f)
 
             assert loaded_report["file"]["program_id"] == "TEST-PROG"
@@ -172,10 +171,18 @@ class TestJSONReporter:
     def test_format_for_ci(self):
         """Test CI/CD format"""
         results = [
-            {"disharmony_score": 0.2, "severity_level": "harmonious",
-             "procedure_name": "PROC1", "explanation": "Good"},
-            {"disharmony_score": 0.9, "severity_level": "critical",
-             "procedure_name": "PROC2", "explanation": "Bad"}
+            {
+                "disharmony_score": 0.2,
+                "severity_level": "harmonious",
+                "procedure_name": "PROC1",
+                "explanation": "Good",
+            },
+            {
+                "disharmony_score": 0.9,
+                "severity_level": "critical",
+                "procedure_name": "PROC2",
+                "explanation": "Bad",
+            },
         ]
 
         ci_format = self.reporter.format_for_ci(results, threshold=0.8)
@@ -198,8 +205,12 @@ class TestJSONReporter:
     def test_format_for_ci_passed(self):
         """Test CI/CD format with passing results"""
         results = [
-            {"disharmony_score": 0.2, "severity_level": "harmonious",
-             "procedure_name": "PROC1", "explanation": "Good"}
+            {
+                "disharmony_score": 0.2,
+                "severity_level": "harmonious",
+                "procedure_name": "PROC1",
+                "explanation": "Good",
+            }
         ]
 
         ci_format = self.reporter.format_for_ci(results, threshold=0.8)
@@ -211,9 +222,7 @@ class TestJSONReporter:
     def test_empty_results(self):
         """Test with empty results"""
         report_json = self.reporter.generate_report(
-            file_path="test.cbl",
-            program_id="TEST-PROG",
-            results=[]
+            file_path="test.cbl", program_id="TEST-PROG", results=[]
         )
 
         report = json.loads(report_json)

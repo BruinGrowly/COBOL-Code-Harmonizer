@@ -9,14 +9,16 @@ from enum import Enum
 
 class CallType(Enum):
     """Type of call relationship"""
-    PROGRAM_CALL = "CALL"           # Inter-program (CALL 'SUBPROG')
-    PROCEDURE_PERFORM = "PERFORM"   # Intra-program (PERFORM CALC-TOTAL)
+
+    PROGRAM_CALL = "CALL"  # Inter-program (CALL 'SUBPROG')
+    PROCEDURE_PERFORM = "PERFORM"  # Intra-program (PERFORM CALC-TOTAL)
     SECTION_PERFORM = "PERFORM-SECTION"  # Section call
-    DYNAMIC_CALL = "CALL-DYNAMIC"   # CALL using variable
+    DYNAMIC_CALL = "CALL-DYNAMIC"  # CALL using variable
 
 
 class NodeType(Enum):
     """Type of node in call graph"""
+
     PROGRAM = "program"
     PROCEDURE = "procedure"
     SECTION = "section"
@@ -30,6 +32,7 @@ class CallSite:
 
     Represents where a call occurs (caller → callee)
     """
+
     caller: str  # Name of caller (procedure or program)
     callee: str  # Name of callee (what's being called)
     call_type: CallType
@@ -49,9 +52,10 @@ class NodeMetrics:
 
     Used to assess complexity and risk
     """
-    fan_in: int = 0   # How many nodes call this one
+
+    fan_in: int = 0  # How many nodes call this one
     fan_out: int = 0  # How many nodes this one calls
-    depth: int = 0    # Distance from entry point
+    depth: int = 0  # Distance from entry point
     complexity: int = 0  # Cyclomatic complexity
     lines_of_code: int = 0
 
@@ -66,6 +70,7 @@ class GraphNode:
 
     Represents a program, procedure, or section
     """
+
     id: str  # Unique identifier
     name: str  # Display name
     node_type: NodeType
@@ -90,6 +95,7 @@ class GraphEdge:
     """
     Edge in call graph (represents a call relationship)
     """
+
     source: str  # Caller node ID
     target: str  # Callee node ID
     call_type: CallType
@@ -105,6 +111,7 @@ class CallGraph:
     """
     Complete call graph for a program or codebase
     """
+
     nodes: Dict[str, GraphNode] = field(default_factory=dict)
     edges: List[GraphEdge] = field(default_factory=list)
 
@@ -138,7 +145,9 @@ class CallGraph:
         return [edge.target for edge in self.edges if edge.source == node_id]
 
     def __str__(self) -> str:
-        return f"CallGraph(nodes={len(self.nodes)}, edges={len(self.edges)}, calls={self.total_calls})"
+        return (
+            f"CallGraph(nodes={len(self.nodes)}, edges={len(self.edges)}, calls={self.total_calls})"
+        )
 
 
 @dataclass
@@ -148,6 +157,7 @@ class ImpactAnalysis:
 
     Shows what would be affected if a node is modified
     """
+
     target_node: str
     target_name: str
 
@@ -177,6 +187,7 @@ class CallGraphStats:
     """
     Statistics about a call graph
     """
+
     total_nodes: int = 0
     total_edges: int = 0
     total_programs: int = 0

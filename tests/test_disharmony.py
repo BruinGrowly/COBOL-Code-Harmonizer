@@ -4,10 +4,7 @@ Tests for DisharmonyCalculator
 
 import pytest
 import math
-from cobol_harmonizer.semantic.disharmony import (
-    DisharmonyCalculator,
-    DisharmonyLevel
-)
+from cobol_harmonizer.semantic.disharmony import DisharmonyCalculator, DisharmonyLevel
 
 
 class TestDisharmonyCalculator:
@@ -75,10 +72,10 @@ class TestDisharmonyCalculator:
 
         trajectory = self.calculator.get_trajectory(intent, execution)
 
-        assert trajectory['love_delta'] == pytest.approx(-0.1)
-        assert trajectory['justice_delta'] == pytest.approx(0.2)
-        assert trajectory['power_delta'] == pytest.approx(0.2)
-        assert trajectory['wisdom_delta'] == pytest.approx(-0.3)
+        assert trajectory["love_delta"] == pytest.approx(-0.1)
+        assert trajectory["justice_delta"] == pytest.approx(0.2)
+        assert trajectory["power_delta"] == pytest.approx(0.2)
+        assert trajectory["wisdom_delta"] == pytest.approx(-0.3)
 
     def test_get_dominant_shift(self):
         """Test dominant shift identification"""
@@ -89,8 +86,8 @@ class TestDisharmonyCalculator:
 
         from_dim, to_dim = self.calculator.get_dominant_shift(intent, execution)
 
-        assert from_dim == 'Wisdom'
-        assert to_dim == 'Power'
+        assert from_dim == "Wisdom"
+        assert to_dim == "Power"
 
     def test_explain_harmonious(self):
         """Test explanation for harmonious code"""
@@ -100,7 +97,7 @@ class TestDisharmonyCalculator:
 
         explanation = self.calculator.explain_disharmony(intent, execution, score)
 
-        assert 'accurate' in explanation.lower() or 'aligned' in explanation.lower()
+        assert "accurate" in explanation.lower() or "aligned" in explanation.lower()
 
     def test_explain_critical(self):
         """Test explanation for critical disharmony"""
@@ -110,7 +107,7 @@ class TestDisharmonyCalculator:
 
         explanation = self.calculator.explain_disharmony(intent, execution, score)
 
-        assert 'critical' in explanation.lower() or 'severe' in explanation.lower()
+        assert "critical" in explanation.lower() or "severe" in explanation.lower()
 
     def test_calculate_detailed_analysis(self):
         """Test detailed analysis generation"""
@@ -118,29 +115,27 @@ class TestDisharmonyCalculator:
         execution = (0.0, 0.2, 0.7, 0.1)  # Power-dominant (DELETE)
 
         analysis = self.calculator.calculate_detailed_analysis(
-            'GET-CUSTOMER-RECORD',
-            intent,
-            execution
+            "GET-CUSTOMER-RECORD", intent, execution
         )
 
         # Check required fields
-        assert 'procedure_name' in analysis
-        assert 'disharmony_score' in analysis
-        assert 'severity_level' in analysis
-        assert 'intent_coords' in analysis
-        assert 'execution_coords' in analysis
-        assert 'trajectory' in analysis
-        assert 'dominant_shift' in analysis
-        assert 'explanation' in analysis
-        assert 'is_harmonious' in analysis
-        assert 'requires_action' in analysis
+        assert "procedure_name" in analysis
+        assert "disharmony_score" in analysis
+        assert "severity_level" in analysis
+        assert "intent_coords" in analysis
+        assert "execution_coords" in analysis
+        assert "trajectory" in analysis
+        assert "dominant_shift" in analysis
+        assert "explanation" in analysis
+        assert "is_harmonious" in analysis
+        assert "requires_action" in analysis
 
         # Check values
-        assert analysis['procedure_name'] == 'GET-CUSTOMER-RECORD'
-        assert analysis['disharmony_score'] > 0.5
-        assert analysis['is_harmonious'] == False
-        assert analysis['dominant_shift']['from'] == 'Wisdom'
-        assert analysis['dominant_shift']['to'] == 'Power'
+        assert analysis["procedure_name"] == "GET-CUSTOMER-RECORD"
+        assert analysis["disharmony_score"] > 0.5
+        assert analysis["is_harmonious"] == False
+        assert analysis["dominant_shift"]["from"] == "Wisdom"
+        assert analysis["dominant_shift"]["to"] == "Power"
 
     def test_real_world_scenario_harmonious(self):
         """Test real-world harmonious example"""
@@ -175,10 +170,10 @@ class TestDisharmonyCalculator:
         trajectory = self.calculator.get_trajectory(intent, execution)
 
         # Justice should decrease
-        assert trajectory['justice_delta'] < 0
+        assert trajectory["justice_delta"] < 0
 
         # Power should increase
-        assert trajectory['power_delta'] > 0
+        assert trajectory["power_delta"] > 0
 
     def test_requires_action_flag(self):
         """Test requires_action flag is set correctly"""
@@ -186,37 +181,25 @@ class TestDisharmonyCalculator:
         intent = (0.0, 0.0, 0.0, 1.0)
         execution = (0.0, 0.0, 1.0, 0.0)
 
-        analysis = self.calculator.calculate_detailed_analysis(
-            'TEST-PROC',
-            intent,
-            execution
-        )
+        analysis = self.calculator.calculate_detailed_analysis("TEST-PROC", intent, execution)
 
-        assert analysis['requires_action'] == True
+        assert analysis["requires_action"] == True
 
         # Harmonious code should not require action
         intent2 = (0.1, 0.1, 0.1, 0.7)
         execution2 = (0.1, 0.1, 0.1, 0.6)
 
-        analysis2 = self.calculator.calculate_detailed_analysis(
-            'TEST-PROC2',
-            intent2,
-            execution2
-        )
+        analysis2 = self.calculator.calculate_detailed_analysis("TEST-PROC2", intent2, execution2)
 
-        assert analysis2['requires_action'] == False
+        assert analysis2["requires_action"] == False
 
     def test_coordinates_rounding(self):
         """Test that coordinates are properly rounded in analysis"""
         intent = (0.123456, 0.234567, 0.345678, 0.456789)
         execution = (0.111111, 0.222222, 0.333333, 0.444444)
 
-        analysis = self.calculator.calculate_detailed_analysis(
-            'TEST',
-            intent,
-            execution
-        )
+        analysis = self.calculator.calculate_detailed_analysis("TEST", intent, execution)
 
         # Check rounding to 3 decimal places
-        assert isinstance(analysis['intent_coords']['love'], float)
-        assert len(str(analysis['intent_coords']['love']).split('.')[-1]) <= 3
+        assert isinstance(analysis["intent_coords"]["love"], float)
+        assert len(str(analysis["intent_coords"]["love"]).split(".")[-1]) <= 3

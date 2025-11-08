@@ -30,11 +30,11 @@ class TestCallExtractor:
 """
 
         program = extractor.parser.parse_source(source)
-        call_sites = extractor.extract_from_source(source, program.program_id, 'test.cbl')
+        call_sites = extractor.extract_from_source(source, program.program_id, "test.cbl")
 
         call_sites_calls = [cs for cs in call_sites if cs.call_type == CallType.PROGRAM_CALL]
         assert len(call_sites_calls) >= 1
-        assert call_sites_calls[0].callee == 'SUBPROG'
+        assert call_sites_calls[0].callee == "SUBPROG"
         assert not call_sites_calls[0].is_dynamic
 
     def test_extract_dynamic_call(self, extractor):
@@ -51,11 +51,11 @@ class TestCallExtractor:
 """
 
         program = extractor.parser.parse_source(source)
-        call_sites = extractor.extract_from_source(source, program.program_id, 'test.cbl')
+        call_sites = extractor.extract_from_source(source, program.program_id, "test.cbl")
 
         dynamic_calls = [cs for cs in call_sites if cs.call_type == CallType.DYNAMIC_CALL]
         assert len(dynamic_calls) >= 1
-        assert dynamic_calls[0].callee == 'WS-PROGRAM'
+        assert dynamic_calls[0].callee == "WS-PROGRAM"
         assert dynamic_calls[0].is_dynamic
 
     def test_extract_perform_paragraph(self, extractor):
@@ -71,11 +71,11 @@ class TestCallExtractor:
 """
 
         program = extractor.parser.parse_source(source)
-        call_sites = extractor.extract_from_source(source, program.program_id, 'test.cbl')
+        call_sites = extractor.extract_from_source(source, program.program_id, "test.cbl")
 
         performs = [cs for cs in call_sites if cs.call_type == CallType.PROCEDURE_PERFORM]
         assert len(performs) >= 1
-        assert performs[0].callee == 'SUB-PARA'
+        assert performs[0].callee == "SUB-PARA"
 
     def test_extract_perform_thru(self, extractor):
         """Test extracting PERFORM ... THRU statements"""
@@ -92,15 +92,15 @@ class TestCallExtractor:
 """
 
         program = extractor.parser.parse_source(source)
-        call_sites = extractor.extract_from_source(source, program.program_id, 'test.cbl')
+        call_sites = extractor.extract_from_source(source, program.program_id, "test.cbl")
 
         performs = [cs for cs in call_sites if cs.call_type == CallType.PROCEDURE_PERFORM]
 
         # Should have two: PARA-100 and PARA-999
         assert len(performs) >= 2
         callees = [cs.callee for cs in performs]
-        assert 'PARA-100' in callees
-        assert 'PARA-999' in callees
+        assert "PARA-100" in callees
+        assert "PARA-999" in callees
 
     def test_extract_multiple_calls(self, extractor):
         """Test extracting multiple CALL and PERFORM statements"""
@@ -120,7 +120,7 @@ class TestCallExtractor:
 """
 
         program = extractor.parser.parse_source(source)
-        call_sites = extractor.extract_from_source(source, program.program_id, 'test.cbl')
+        call_sites = extractor.extract_from_source(source, program.program_id, "test.cbl")
 
         assert len(call_sites) >= 4
 
@@ -149,7 +149,7 @@ class TestCallExtractor:
 """
 
         program = extractor.parser.parse_source(source)
-        call_sites = extractor.extract_from_source(source, program.program_id, 'test.cbl')
+        call_sites = extractor.extract_from_source(source, program.program_id, "test.cbl")
 
         # Should not extract inline PERFORMs
         # (or if it does, they should be filtered out)
@@ -178,11 +178,11 @@ class TestCallExtractor:
         # Should extract both sections and paragraphs
         # procedures.values() returns (name, is_section) tuples
         proc_names = set(name for name, is_section in procedures.values())
-        assert 'MAIN-SECTION' in proc_names
-        assert 'MAIN-PARA' in proc_names
-        assert 'SUB-PARA' in proc_names
-        assert 'OTHER-SECTION' in proc_names
-        assert 'OTHER-PARA' in proc_names
+        assert "MAIN-SECTION" in proc_names
+        assert "MAIN-PARA" in proc_names
+        assert "SUB-PARA" in proc_names
+        assert "OTHER-SECTION" in proc_names
+        assert "OTHER-PARA" in proc_names
 
     def test_find_containing_procedure(self, extractor):
         """Test finding which procedure contains a line"""
@@ -224,14 +224,14 @@ class TestCallExtractor:
 """
 
         program = extractor.parser.parse_source(source)
-        call_sites = extractor.extract_from_source(source, program.program_id, 'test.cbl')
+        call_sites = extractor.extract_from_source(source, program.program_id, "test.cbl")
 
         stats = extractor.get_statistics(call_sites)
 
-        assert stats['total_calls'] == len(call_sites)
-        assert stats['program_calls'] >= 2
-        assert stats['dynamic_calls'] >= 1
-        assert stats['perform_statements'] >= 2
+        assert stats["total_calls"] == len(call_sites)
+        assert stats["program_calls"] >= 2
+        assert stats["dynamic_calls"] >= 1
+        assert stats["perform_statements"] >= 2
 
     def test_line_numbers_accurate(self, extractor):
         """Test that line numbers are accurately captured"""
@@ -247,7 +247,7 @@ class TestCallExtractor:
 """
 
         program = extractor.parser.parse_source(source)
-        call_sites = extractor.extract_from_source(source, program.program_id, 'test.cbl')
+        call_sites = extractor.extract_from_source(source, program.program_id, "test.cbl")
 
         # Check that line numbers are set
         for cs in call_sites:
@@ -262,7 +262,7 @@ class TestCallExtractor:
 """
 
         program = extractor.parser.parse_source(source)
-        call_sites = extractor.extract_from_source(source, program.program_id, 'test.cbl')
+        call_sites = extractor.extract_from_source(source, program.program_id, "test.cbl")
 
         # Should have no calls
         # (may have some internal procedure tracking)
@@ -279,11 +279,11 @@ class TestCallExtractor:
 """
 
         program = extractor.parser.parse_source(source)
-        call_sites = extractor.extract_from_source(source, program.program_id, 'test.cbl')
+        call_sites = extractor.extract_from_source(source, program.program_id, "test.cbl")
 
         calls = [cs for cs in call_sites if cs.call_type == CallType.PROGRAM_CALL]
         callees = [cs.callee for cs in calls]
 
         # Should only have 'REAL', not 'COMMENTED'
-        assert 'REAL' in callees
-        assert 'COMMENTED' not in callees
+        assert "REAL" in callees
+        assert "COMMENTED" not in callees
