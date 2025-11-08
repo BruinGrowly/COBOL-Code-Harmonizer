@@ -5,6 +5,9 @@ Tests enterprise-scale performance to ensure the tool can handle
 large codebases efficiently.
 
 Run with: pytest tests/test_performance.py --benchmark-only
+
+NOTE: These tests require pytest-benchmark. If not installed, they will be skipped.
+Install with: pip install pytest-benchmark
 """
 
 import pytest
@@ -17,6 +20,19 @@ from cobol_harmonizer.semantic.intent_extractor import IntentExtractor
 from cobol_harmonizer.semantic.execution_analyzer import ExecutionAnalyzer
 from cobol_harmonizer.semantic.disharmony import DisharmonyCalculator
 from cobol_harmonizer.compliance import ComplianceTagger, ComplianceRiskAssessor
+
+# Check if pytest-benchmark is available
+try:
+    import pytest_benchmark
+    BENCHMARK_AVAILABLE = True
+except ImportError:
+    BENCHMARK_AVAILABLE = False
+
+# Skip all tests in this module if pytest-benchmark is not available
+pytestmark = pytest.mark.skipif(
+    not BENCHMARK_AVAILABLE,
+    reason="pytest-benchmark not installed. Install with: pip install pytest-benchmark"
+)
 
 
 # Sample COBOL programs of varying sizes
