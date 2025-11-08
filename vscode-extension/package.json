@@ -1,0 +1,101 @@
+{
+  "name": "cobol-harmonizer",
+  "displayName": "COBOL Code Harmonizer",
+  "description": "Real-time semantic analysis for COBOL code - detect naming/implementation mismatches",
+  "version": "0.1.0",
+  "publisher": "cobol-harmonizer",
+  "engines": {
+    "vscode": "^1.60.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Linters"
+  ],
+  "keywords": [
+    "COBOL",
+    "mainframe",
+    "IBM",
+    "static analysis",
+    "semantic analysis"
+  ],
+  "activationEvents": [
+    "onLanguage:cobol",
+    "onCommand:cobolHarmonizer.analyzeFile",
+    "onCommand:cobolHarmonizer.analyzeWorkspace"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "cobolHarmonizer.analyzeFile",
+        "title": "COBOL Harmonizer: Analyze Current File"
+      },
+      {
+        "command": "cobolHarmonizer.analyzeWorkspace",
+        "title": "COBOL Harmonizer: Analyze Workspace"
+      },
+      {
+        "command": "cobolHarmonizer.clearDiagnostics",
+        "title": "COBOL Harmonizer: Clear Diagnostics"
+      }
+    ],
+    "configuration": {
+      "title": "COBOL Harmonizer",
+      "properties": {
+        "cobolHarmonizer.pythonPath": {
+          "type": "string",
+          "default": "python3",
+          "description": "Path to Python interpreter"
+        },
+        "cobolHarmonizer.harmonizerPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to cobol_harmonizer.py (leave empty to auto-detect)"
+        },
+        "cobolHarmonizer.disharmonyThreshold": {
+          "type": "number",
+          "default": 0.5,
+          "description": "Minimum disharmony score to report (0.0-1.5)"
+        },
+        "cobolHarmonizer.analyzeOnSave": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically analyze COBOL files on save"
+        },
+        "cobolHarmonizer.copybookPaths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "Additional copybook search paths"
+        }
+      }
+    },
+    "menus": {
+      "editor/context": [
+        {
+          "when": "resourceLangId == cobol",
+          "command": "cobolHarmonizer.analyzeFile",
+          "group": "navigation"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "test": "node ./test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/node": "^16.x",
+    "@types/vscode": "^1.60.0",
+    "eslint": "^8.0.0"
+  },
+  "dependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BruinGrowly/COBOL-Code-Harmonizer.git"
+  },
+  "license": "MIT",
+  "icon": "images/icon.png"
+}

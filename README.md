@@ -71,6 +71,35 @@ python -m cobol_harmonizer.cli analyze examples/disharmonious_example.cbl
 
 ---
 
+## VS Code Extension (NEW! v0.1.0) 🚀
+
+**Real-time semantic analysis directly in your editor!**
+
+The COBOL Harmonizer VS Code extension brings semantic analysis into your development workflow with:
+
+- ✅ **Real-time Analysis** - Analyze on file save
+- ✅ **Inline Diagnostics** - See disharmony warnings directly in your code
+- ✅ **Color-coded Severity** - Error (≥1.2), Warning (0.8-1.2), Info (0.5-0.8)
+- ✅ **Workspace Analysis** - Analyze entire COBOL codebase with one command
+- ✅ **IBM z/OS Ready** - Works with USS environments
+- ✅ **Copybook Support** - Configurable copybook paths
+
+### Quick Install
+
+```bash
+cd vscode-extension
+npm install -g vsce
+vsce package
+code --install-extension cobol-harmonizer-0.1.0.vsix
+```
+
+**Documentation:**
+- [Extension README](vscode-extension/README.md) - Features and usage
+- [Installation Guide](vscode-extension/INSTALL.md) - Complete setup instructions
+- [Testing Guide](vscode-extension/TESTING.md) - Quality assurance
+
+---
+
 ## Enterprise Features (v0.4.0 - Phase 4A) 🚀
 
 ### Copybook Resolution
@@ -565,12 +594,19 @@ GET-TRANSACTION-HISTORY.
 - [ ] Data flow analysis
 - [ ] Free-format COBOL support
 
-#### Phase 5 (v1.0.0) - Production Ready
-- [ ] VS Code extension
+#### Phase 5 (v0.6.0) - IDE Integration ✅ IN PROGRESS
+- [x] **VS Code extension MVP** (v0.1.0 released!)
+- [ ] Language Server Protocol (LSP) implementation
+- [ ] Real-time as-you-type analysis
+- [ ] Quick fixes and code actions
+- [ ] IntelliJ IDEA plugin
+
+#### Phase 6 (v1.0.0) - Production Ready
 - [ ] Web dashboard
 - [ ] Git integration with pre-commit hooks
 - [ ] Comprehensive API documentation
 - [ ] Performance optimizations for massive codebases
+- [ ] Enterprise SSO integration
 
 ---
 
@@ -586,6 +622,10 @@ cobol-harmonizer/
 │   │   ├── intent_extractor.py # Extract intent from procedure names
 │   │   ├── execution_analyzer.py # Analyze procedure bodies
 │   │   └── disharmony.py       # Calculate semantic distance & severity
+│   ├── compliance/             # Compliance & audit (v0.5.0)
+│   │   ├── audit_logger.py     # Tamper-evident audit trail
+│   │   ├── compliance_tagger.py # SOX/PCI/GDPR/HIPAA tagging
+│   │   └── risk_assessor.py    # Risk scoring (0-100)
 │   ├── reporter/               # Output generation
 │   │   ├── console_reporter.py # Rich terminal output
 │   │   ├── json_reporter.py    # JSON export
@@ -597,27 +637,41 @@ cobol-harmonizer/
 │   ├── baseline.py             # Baseline comparison & regression tracking
 │   ├── codebase_mapper.py      # Legacy codebase health mapping
 │   └── utils/                  # Utilities
+├── vscode-extension/           # VS Code extension (v0.1.0)
+│   ├── package.json            # Extension manifest
+│   ├── extension.js            # Main extension code
+│   ├── README.md              # Extension documentation
+│   ├── INSTALL.md             # Installation guide
+│   └── TESTING.md             # Testing procedures
+├── jcl/                        # IBM mainframe JCL templates
+│   ├── HARMONIZ.jcl           # Batch analysis JCL
+│   ├── SOXAUDIT.jcl           # SOX compliance audit
+│   ├── NIGHTLY.jcl            # Scheduled scans
+│   └── harmonizer_wrapper.sh  # Shell wrapper
 ├── tests/                      # Test suite (pytest)
 │   ├── test_verb_mapper.py
 │   ├── test_disharmony.py
 │   ├── test_json_reporter.py
 │   ├── test_batch_analyzer.py
-│   ├── test_config.py
-│   ├── test_baseline.py
-│   └── test_codebase_mapper.py
+│   ├── test_performance.py    # Performance benchmarks
+│   └── test_compliance.py     # Compliance feature tests
 ├── examples/                   # Example COBOL programs
 │   ├── harmonious_example.cbl  # Well-aligned procedures
 │   └── disharmonious_example.cbl # Semantic bugs demonstration
 ├── docs/                       # Comprehensive documentation
-│   ├── ARCHITECTURE.md         # System design & implementation
+│   ├── ARCHITECTURE.md         # System architecture diagrams
+│   ├── IBM_QUICK_START.md      # 5-minute IBM guide
+│   ├── IBM_MAINFRAME_INTEGRATION.md # z/OS USS integration
+│   ├── IBM_PROOF_OF_VALUE.md   # ROI and proof of value
+│   ├── COMPLIANCE_FEATURES.md  # Compliance documentation
 │   ├── COBOL_SEMANTICS.md      # Complete COBOL-LJPW mapping
 │   ├── PHILOSOPHY.md           # LJPW framework philosophy
 │   ├── MATHEMATICAL_FOUNDATION.md # Mathematical proofs
-│   ├── PRACTICAL_GUIDE.md      # Real-world usage patterns
-│   └── ...                     # More documentation
+│   └── PRACTICAL_GUIDE.md      # Real-world usage patterns
 ├── requirements.txt            # Python dependencies
 ├── setup.py                    # Package setup
 ├── demo.py                     # Interactive demonstration
+├── demo_compliance.py          # Compliance features demo
 ├── simple_test.py              # Quick smoke test
 └── README.md                   # This file
 ```

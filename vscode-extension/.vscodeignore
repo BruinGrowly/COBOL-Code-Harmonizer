@@ -1,0 +1,22 @@
+# Exclude from extension package
+
+# Development files
+.vscode/**
+.vscode-test/**
+test/**
+.gitignore
+.eslintrc.json
+
+# Documentation (keep README.md and CHANGELOG.md)
+*.md
+!README.md
+!CHANGELOG.md
+
+# Build artifacts
+*.vsix
+node_modules/**
+.DS_Store
+
+# Source control
+.git/**
+.github/**
