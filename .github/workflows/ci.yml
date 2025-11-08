@@ -43,14 +43,15 @@ jobs:
 
     - name: Run tests
       run: |
-        pytest tests/ -v --tb=short --cov=cobol_harmonizer --cov-report=xml --cov-report=term
+        pytest tests/ -v --tb=short
 
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v4
-      if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.11'
-      with:
-        file: ./coverage.xml
-        fail_ci_if_error: false
+    # Coverage reporting disabled for now - can be enabled with pytest-cov
+    # - name: Upload coverage to Codecov
+    #   uses: codecov/codecov-action@v4
+    #   if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.11'
+    #   with:
+    #     file: ./coverage.xml
+    #     fail_ci_if_error: false
 
   lint:
     name: Code Quality
