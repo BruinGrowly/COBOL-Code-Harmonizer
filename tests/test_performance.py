@@ -267,7 +267,9 @@ class TestCompliancePerformance:
         """Benchmark compliance tagging"""
         tagger = ComplianceTagger()
         result = benchmark(
-            tagger.tag_procedure, "PROCESS-PAYMENT-TRANSACTION", verbs=["MOVE", "WRITE", "UPDATE"]
+            tagger.tag_procedure,
+            "PROCESS-PAYMENT-TRANSACTION",
+            verbs=["MOVE", "WRITE", "UPDATE"],
         )
         assert result is not None
 

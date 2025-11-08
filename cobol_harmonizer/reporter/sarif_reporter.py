@@ -167,7 +167,9 @@ class SARIFReporter:
             {
                 "id": "COBOL-HARMONIZER-SIGNIFICANT",
                 "name": "SignificantDisharmony",
-                "shortDescription": {"text": "Significant semantic disharmony detected"},
+                "shortDescription": {
+                    "text": "Significant semantic disharmony detected"
+                },
                 "fullDescription": {
                     "text": "The procedure name significantly contradicts its implementation. This indicates a serious semantic issue that should be addressed."
                 },
@@ -177,7 +179,10 @@ class SARIFReporter:
                     "text": "Significant disharmony (score 0.8-1.2) indicates substantial contradiction between the procedure name and its behavior. This requires refactoring.",
                     "markdown": "**Significant Semantic Disharmony**\n\nThe procedure name and implementation are substantially misaligned. Consider:\n- Renaming the procedure to match its actual behavior\n- Refactoring the procedure to match its name\n- Splitting the procedure into multiple well-named procedures",
                 },
-                "properties": {"tags": ["semantic", "maintainability"], "precision": "high"},
+                "properties": {
+                    "tags": ["semantic", "maintainability"],
+                    "precision": "high",
+                },
             },
             {
                 "id": "COBOL-HARMONIZER-CONCERNING",
@@ -192,7 +197,10 @@ class SARIFReporter:
                     "text": "Concerning disharmony (score 0.5-0.8) indicates noticeable semantic drift. Review and consider refactoring.",
                     "markdown": "**Concerning Semantic Disharmony**\n\nThe procedure shows noticeable semantic drift between name and implementation. While not critical, this should be reviewed for potential refactoring.",
                 },
-                "properties": {"tags": ["semantic", "maintainability"], "precision": "medium"},
+                "properties": {
+                    "tags": ["semantic", "maintainability"],
+                    "precision": "medium",
+                },
             },
             {
                 "id": "COBOL-HARMONIZER-MINOR",
@@ -207,17 +215,24 @@ class SARIFReporter:
                     "text": "Minor drift (score 0.3-0.5) indicates slight semantic misalignment. This is often acceptable but worth reviewing for clarity.",
                     "markdown": "**Minor Semantic Drift**\n\nThe procedure shows slight semantic drift. This is often acceptable for complex procedures that perform multiple operations, but consider if the name could be more accurate.",
                 },
-                "properties": {"tags": ["semantic", "maintainability"], "precision": "medium"},
+                "properties": {
+                    "tags": ["semantic", "maintainability"],
+                    "precision": "medium",
+                },
             },
         ]
 
-    def _convert_results_to_sarif(self, file_path: str, results: List[Dict]) -> List[Dict]:
+    def _convert_results_to_sarif(
+        self, file_path: str, results: List[Dict]
+    ) -> List[Dict]:
         """Convert analysis results to SARIF result format"""
         sarif_results = []
 
         for result in results:
             # Skip harmonious results unless they're edge cases
-            if result.get("is_harmonious", True) and not result.get("requires_action", False):
+            if result.get("is_harmonious", True) and not result.get(
+                "requires_action", False
+            ):
                 continue
 
             # Determine rule ID based on severity
@@ -233,10 +248,14 @@ class SARIFReporter:
                 "locations": [
                     {
                         "physicalLocation": {
-                            "artifactLocation": {"uri": self._normalize_path(file_path)},
+                            "artifactLocation": {
+                                "uri": self._normalize_path(file_path)
+                            },
                             "region": {
                                 "startLine": result.get("line_number", 1),
-                                "snippet": {"text": result.get("procedure_name", "unknown")},
+                                "snippet": {
+                                    "text": result.get("procedure_name", "unknown")
+                                },
                             },
                         }
                     }
@@ -287,7 +306,9 @@ class SARIFReporter:
         fixes = []
         for i, suggestion in enumerate(suggestions[:3]):  # Limit to 3 suggestions
             fix = {
-                "description": {"text": f"Rename to '{suggestion}' to match actual behavior"},
+                "description": {
+                    "text": f"Rename to '{suggestion}' to match actual behavior"
+                },
                 "artifactChanges": [
                     {
                         "artifactLocation": {
@@ -311,7 +332,12 @@ class SARIFReporter:
 
     def _build_artifacts(self, file_path: str) -> List[Dict]:
         """Build SARIF artifact entries"""
-        return [{"location": {"uri": self._normalize_path(file_path)}, "sourceLanguage": "COBOL"}]
+        return [
+            {
+                "location": {"uri": self._normalize_path(file_path)},
+                "sourceLanguage": "COBOL",
+            }
+        ]
 
     def _normalize_path(self, file_path: str) -> str:
         """Normalize file path for SARIF"""

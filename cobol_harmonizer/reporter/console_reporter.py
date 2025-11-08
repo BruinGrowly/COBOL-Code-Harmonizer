@@ -69,7 +69,9 @@ class ConsoleReporter:
             results = [r for r in results if r["disharmony_score"] >= threshold]
 
         if not results:
-            self.print_success(f"All procedures are harmonious (disharmony < {threshold})! 🎉")
+            self.print_success(
+                f"All procedures are harmonious (disharmony < {threshold})! 🎉"
+            )
             return
 
         # Sort by disharmony score (descending)
@@ -225,7 +227,9 @@ class ConsoleReporter:
         """
         trajectory = result["trajectory"]
 
-        table = Table(title=f"Semantic Trajectory: {result['procedure_name']}", box=box.ROUNDED)
+        table = Table(
+            title=f"Semantic Trajectory: {result['procedure_name']}", box=box.ROUNDED
+        )
 
         table.add_column("Dimension", style="cyan")
         table.add_column("Intent", justify="right", style="blue")
@@ -268,10 +272,15 @@ class ConsoleReporter:
             bar_length = int(percentage / 2)  # Scale to fit
             bar = "█" * bar_length
 
-            color = {"Love": "yellow", "Justice": "blue", "Power": "red", "Wisdom": "green"}.get(
-                dimension, "white"
-            )
+            color = {
+                "Love": "yellow",
+                "Justice": "blue",
+                "Power": "red",
+                "Wisdom": "green",
+            }.get(dimension, "white")
 
-            table.add_row(dimension, str(count), f"[{color}]{bar}[/{color}] {percentage:.0f}%")
+            table.add_row(
+                dimension, str(count), f"[{color}]{bar}[/{color}] {percentage:.0f}%"
+            )
 
         self.console.print(table)

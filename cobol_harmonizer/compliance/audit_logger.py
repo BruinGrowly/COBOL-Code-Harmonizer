@@ -135,7 +135,10 @@ class AuditLogger:
             self._flush_cache()
 
         # Immediate flush for critical actions
-        if event.action in [AuditAction.COMPLIANCE_TAG_REMOVED, AuditAction.BASELINE_SAVE]:
+        if event.action in [
+            AuditAction.COMPLIANCE_TAG_REMOVED,
+            AuditAction.BASELINE_SAVE,
+        ]:
             self._flush_cache()
 
     def _flush_cache(self) -> None:
@@ -238,7 +241,9 @@ class AuditLogger:
                 file_date = datetime(year, month, 1)
 
                 # Check if file is in range
-                if start_date and file_date < datetime(start_date.year, start_date.month, 1):
+                if start_date and file_date < datetime(
+                    start_date.year, start_date.month, 1
+                ):
                     continue
                 if end_date and file_date > datetime(end_date.year, end_date.month, 1):
                     continue

@@ -60,7 +60,9 @@ class NodeMetrics:
     lines_of_code: int = 0
 
     def __str__(self) -> str:
-        return f"Metrics(fan_in={self.fan_in}, fan_out={self.fan_out}, depth={self.depth})"
+        return (
+            f"Metrics(fan_in={self.fan_in}, fan_out={self.fan_out}, depth={self.depth})"
+        )
 
 
 @dataclass
@@ -145,9 +147,7 @@ class CallGraph:
         return [edge.target for edge in self.edges if edge.source == node_id]
 
     def __str__(self) -> str:
-        return (
-            f"CallGraph(nodes={len(self.nodes)}, edges={len(self.edges)}, calls={self.total_calls})"
-        )
+        return f"CallGraph(nodes={len(self.nodes)}, edges={len(self.edges)}, calls={self.total_calls})"
 
 
 @dataclass

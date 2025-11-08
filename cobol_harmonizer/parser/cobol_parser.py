@@ -162,7 +162,11 @@ class COBOLParser:
             line_upper = line.upper()
             if ">>SOURCE" in line_upper and "FREE" in line_upper:
                 return COBOLFormat.FREE
-            if "$SET" in line_upper and "SOURCEFORMAT" in line_upper and "FREE" in line_upper:
+            if (
+                "$SET" in line_upper
+                and "SOURCEFORMAT" in line_upper
+                and "FREE" in line_upper
+            ):
                 return COBOLFormat.FREE
 
         # Check for free-format indicators
@@ -171,7 +175,10 @@ class COBOLParser:
             # and doesn't respect column positioning
             if len(line) > 0 and not line[0].isdigit():
                 # Check if it looks like free format
-                if any(keyword in line.upper() for keyword in ["IDENTIFICATION", "PROGRAM-ID"]):
+                if any(
+                    keyword in line.upper()
+                    for keyword in ["IDENTIFICATION", "PROGRAM-ID"]
+                ):
                     if not line.startswith(" " * 7):  # Not in area A/B
                         return COBOLFormat.FREE
 
@@ -199,7 +206,8 @@ class COBOLParser:
 
         # COBOL-2002 indicators
         if any(
-            kw in source_upper for kw in ["CLASS-ID", "METHOD-ID", "INVOKE", "OBJECT REFERENCE"]
+            kw in source_upper
+            for kw in ["CLASS-ID", "METHOD-ID", "INVOKE", "OBJECT REFERENCE"]
         ):
             return COBOLStandard.COBOL_2002
 
@@ -207,7 +215,10 @@ class COBOLParser:
             return COBOLStandard.COBOL_2002
 
         # COBOL-85 indicators
-        if any(kw in source_upper for kw in ["END-IF", "END-PERFORM", "END-READ", "EVALUATE"]):
+        if any(
+            kw in source_upper
+            for kw in ["END-IF", "END-PERFORM", "END-READ", "EVALUATE"]
+        ):
             return COBOLStandard.COBOL_85
 
         # COBOL-74 (no scope terminators, no EVALUATE)
@@ -373,7 +384,9 @@ class COBOLParser:
             return (name, "SECTION")
 
         # Check for PARAGRAPH (ends with period, no SECTION keyword)
-        if line_upper.endswith(".") and not any(kw in line_upper for kw in ["DIVISION", "SECTION"]):
+        if line_upper.endswith(".") and not any(
+            kw in line_upper for kw in ["DIVISION", "SECTION"]
+        ):
             # Check if it's a paragraph (not a statement)
             # Paragraphs typically start at beginning of line or after whitespace
             # and contain hyphenated names
@@ -455,7 +468,9 @@ class COBOLParser:
             # Extract verb and create statement
             verb = self.extract_verb(line)
             if verb:
-                statement = COBOLStatement(verb=verb, line_number=idx + 1, full_text=line)
+                statement = COBOLStatement(
+                    verb=verb, line_number=idx + 1, full_text=line
+                )
                 procedure.statements.append(statement)
 
                 # Track PERFORM targets

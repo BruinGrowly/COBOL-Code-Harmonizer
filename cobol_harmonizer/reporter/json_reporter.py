@@ -94,7 +94,9 @@ class JSONReporter:
 
             # Aggregate severity counts
             for severity, count in summary["severity_breakdown"].items():
-                all_severity_counts[severity] = all_severity_counts.get(severity, 0) + count
+                all_severity_counts[severity] = (
+                    all_severity_counts.get(severity, 0) + count
+                )
 
         # Build batch report
         report = {
@@ -130,7 +132,9 @@ class JSONReporter:
         with open(output_file, "w", encoding="utf-8") as f:
             f.write(report_json)
 
-    def _calculate_summary(self, results: List[Dict], threshold: Optional[float]) -> Dict:
+    def _calculate_summary(
+        self, results: List[Dict], threshold: Optional[float]
+    ) -> Dict:
         """Calculate summary statistics from results"""
 
         total = len(results)
@@ -147,7 +151,9 @@ class JSONReporter:
         # Calculate above threshold if provided
         above_threshold = 0
         if threshold is not None:
-            above_threshold = sum(1 for r in results if r.get("disharmony_score", 0) >= threshold)
+            above_threshold = sum(
+                1 for r in results if r.get("disharmony_score", 0) >= threshold
+            )
 
         return {
             "total": total,
@@ -171,7 +177,9 @@ class JSONReporter:
         Returns:
             CI-friendly dictionary
         """
-        critical_issues = [r for r in results if r.get("disharmony_score", 0) >= threshold]
+        critical_issues = [
+            r for r in results if r.get("disharmony_score", 0) >= threshold
+        ]
 
         passed = len(critical_issues) == 0
 

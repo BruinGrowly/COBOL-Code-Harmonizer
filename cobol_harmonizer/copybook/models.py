@@ -55,7 +55,9 @@ class ReplacingClause:
     is_trailing: bool = False  # TRAILING replacement (match at end)
 
     def __str__(self) -> str:
-        prefix = "LEADING " if self.is_leading else "TRAILING " if self.is_trailing else ""
+        prefix = (
+            "LEADING " if self.is_leading else "TRAILING " if self.is_trailing else ""
+        )
         return f"REPLACING {prefix}{self.original} BY {self.replacement}"
 
 

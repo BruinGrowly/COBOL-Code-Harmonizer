@@ -6,7 +6,11 @@ import pytest
 import json
 import tempfile
 from pathlib import Path
-from cobol_harmonizer.baseline import Baseline, BaselineManager, format_comparison_summary
+from cobol_harmonizer.baseline import (
+    Baseline,
+    BaselineManager,
+    format_comparison_summary,
+)
 
 
 class TestBaseline:
@@ -15,7 +19,11 @@ class TestBaseline:
     def setup_method(self):
         """Set up test fixtures"""
         self.sample_batch_results = {
-            "statistics": {"total_procedures": 5, "harmonious_count": 3, "disharmonious_count": 2},
+            "statistics": {
+                "total_procedures": 5,
+                "harmonious_count": 3,
+                "disharmonious_count": 2,
+            },
             "file_results": [
                 {
                     "file_path": "file1.cbl",
@@ -279,7 +287,9 @@ class TestBaselineManager:
                 ]
             }
 
-            path = manager.save_baseline(batch_results, name="test", description="Test baseline")
+            path = manager.save_baseline(
+                batch_results, name="test", description="Test baseline"
+            )
 
             assert Path(path).exists()
 

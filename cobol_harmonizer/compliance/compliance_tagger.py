@@ -87,7 +87,13 @@ class ComplianceTagger:
                 name="Financial Reporting Procedures",
                 description="Procedures that generate financial reports",
                 severity="critical",
-                applies_to=["*REPORT*", "*FINANCIAL*", "*BALANCE*", "*STATEMENT*", "*GL*"],
+                applies_to=[
+                    "*REPORT*",
+                    "*FINANCIAL*",
+                    "*BALANCE*",
+                    "*STATEMENT*",
+                    "*GL*",
+                ],
             ),
             ComplianceRule(
                 rule_id="SOX-002",
@@ -202,7 +208,9 @@ class ComplianceTagger:
         ):
             tags.add(ComplianceTag.SOX_FINANCIAL_REPORTING)
 
-        if any(kw in name_upper for kw in ["TRANSACTION", "DEBIT", "CREDIT", "TRANSFER"]):
+        if any(
+            kw in name_upper for kw in ["TRANSACTION", "DEBIT", "CREDIT", "TRANSFER"]
+        ):
             tags.add(ComplianceTag.FINANCIAL_TRANSACTION)
 
         # Payment patterns
@@ -224,7 +232,9 @@ class ComplianceTagger:
             tags.add(ComplianceTag.SOX_AUDIT_TRAIL)
 
         # Data protection patterns
-        if any(kw in name_upper for kw in ["CUSTOMER", "PERSONAL", "PROFILE", "CONTACT"]):
+        if any(
+            kw in name_upper for kw in ["CUSTOMER", "PERSONAL", "PROFILE", "CONTACT"]
+        ):
             tags.add(ComplianceTag.CUSTOMER_DATA)
             tags.add(ComplianceTag.GDPR_PERSONAL_DATA)
 
@@ -258,7 +268,9 @@ class ComplianceTagger:
             tags.add(ComplianceTag.DATA_MODIFICATION)
 
         # Audit trail operations
-        if any(v in verbs_upper for v in ["DISPLAY", "WRITE"]) and "AUDIT" in " ".join(verbs_upper):
+        if any(v in verbs_upper for v in ["DISPLAY", "WRITE"]) and "AUDIT" in " ".join(
+            verbs_upper
+        ):
             tags.add(ComplianceTag.AUDIT_LOGGING)
 
         return tags
@@ -276,7 +288,9 @@ class ComplianceTagger:
                 tags.add(ComplianceTag.GDPR_PERSONAL_DATA)
 
             # Financial files
-            if any(kw in file_upper for kw in ["TRANSACTION", "LEDGER", "GL", "BALANCE"]):
+            if any(
+                kw in file_upper for kw in ["TRANSACTION", "LEDGER", "GL", "BALANCE"]
+            ):
                 tags.add(ComplianceTag.FINANCIAL_TRANSACTION)
                 tags.add(ComplianceTag.SOX_FINANCIAL_REPORTING)
 
@@ -356,7 +370,9 @@ class ComplianceTagger:
 
         return applicable
 
-    def save_tags(self, file_path: str, tags_by_procedure: Dict[str, Set[ComplianceTag]]) -> None:
+    def save_tags(
+        self, file_path: str, tags_by_procedure: Dict[str, Set[ComplianceTag]]
+    ) -> None:
         """
         Save compliance tags to a file.
 
@@ -367,7 +383,8 @@ class ComplianceTagger:
         data = {
             "generated_at": str(Path(file_path).stat().st_mtime),
             "procedures": {
-                proc: [tag.value for tag in tags] for proc, tags in tags_by_procedure.items()
+                proc: [tag.value for tag in tags]
+                for proc, tags in tags_by_procedure.items()
             },
         }
 

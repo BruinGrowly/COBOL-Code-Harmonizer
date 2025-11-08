@@ -117,13 +117,17 @@ class CopybookFinder:
             # Try all prefix + extension combinations
             for prefix in self.config.prefixes:
                 for extension in self.config.extensions:
-                    candidate = self._build_candidate_path(path, prefix, name, extension)
+                    candidate = self._build_candidate_path(
+                        path, prefix, name, extension
+                    )
 
                     if candidate.exists() and candidate.is_file():
                         return str(candidate.resolve())
 
                     # Try case-insensitive match
-                    case_insensitive = self._try_case_insensitive(path, prefix, name, extension)
+                    case_insensitive = self._try_case_insensitive(
+                        path, prefix, name, extension
+                    )
                     if case_insensitive:
                         return str(case_insensitive.resolve())
 

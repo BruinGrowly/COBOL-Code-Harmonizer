@@ -62,7 +62,10 @@ class TestJSONReporter:
     def test_generate_report_with_threshold(self):
         """Test report generation with threshold"""
         report_json = self.reporter.generate_report(
-            file_path="test.cbl", program_id="TEST-PROG", results=self.sample_results, threshold=0.5
+            file_path="test.cbl",
+            program_id="TEST-PROG",
+            results=self.sample_results,
+            threshold=0.5,
         )
 
         report = json.loads(report_json)
@@ -89,10 +92,26 @@ class TestJSONReporter:
     def test_severity_breakdown(self):
         """Test severity breakdown calculation"""
         results = [
-            {"severity_level": "harmonious", "is_harmonious": True, "requires_action": False},
-            {"severity_level": "harmonious", "is_harmonious": True, "requires_action": False},
-            {"severity_level": "critical", "is_harmonious": False, "requires_action": True},
-            {"severity_level": "significant", "is_harmonious": False, "requires_action": True},
+            {
+                "severity_level": "harmonious",
+                "is_harmonious": True,
+                "requires_action": False,
+            },
+            {
+                "severity_level": "harmonious",
+                "is_harmonious": True,
+                "requires_action": False,
+            },
+            {
+                "severity_level": "critical",
+                "is_harmonious": False,
+                "requires_action": True,
+            },
+            {
+                "severity_level": "significant",
+                "is_harmonious": False,
+                "requires_action": True,
+            },
         ]
 
         report_json = self.reporter.generate_report(
@@ -124,7 +143,11 @@ class TestJSONReporter:
                 "file_path": "file2.cbl",
                 "program_id": "PROG2",
                 "results": [
-                    {"severity_level": "critical", "is_harmonious": False, "requires_action": True},
+                    {
+                        "severity_level": "critical",
+                        "is_harmonious": False,
+                        "requires_action": True,
+                    },
                     {
                         "severity_level": "significant",
                         "is_harmonious": False,
@@ -154,7 +177,9 @@ class TestJSONReporter:
             output_path = Path(tmpdir) / "report.json"
 
             report_json = self.reporter.generate_report(
-                file_path="test.cbl", program_id="TEST-PROG", results=self.sample_results
+                file_path="test.cbl",
+                program_id="TEST-PROG",
+                results=self.sample_results,
             )
 
             self.reporter.save_report(report_json, str(output_path))

@@ -143,7 +143,9 @@ class CodebaseMapper:
             results = file_result.get("results", [])
 
             if results:
-                avg_score = statistics.mean(r.get("disharmony_score", 0) for r in results)
+                avg_score = statistics.mean(
+                    r.get("disharmony_score", 0) for r in results
+                )
                 max_score = max(r.get("disharmony_score", 0) for r in results)
                 critical_count = sum(
                     1 for r in results if r.get("severity_level", "") == "critical"
@@ -191,13 +193,17 @@ class CodebaseMapper:
                         dimension_drifts[from_dim] += 1
 
         # Sort patterns by frequency
-        sorted_patterns = sorted(shift_patterns.items(), key=lambda x: x[1], reverse=True)
+        sorted_patterns = sorted(
+            shift_patterns.items(), key=lambda x: x[1], reverse=True
+        )
 
         return {
             "common_shifts": sorted_patterns[:10],
             "dimension_drifts": dimension_drifts,
             "most_unstable_dimension": (
-                max(dimension_drifts.items(), key=lambda x: x[1])[0] if dimension_drifts else None
+                max(dimension_drifts.items(), key=lambda x: x[1])[0]
+                if dimension_drifts
+                else None
             ),
         }
 
@@ -291,7 +297,9 @@ class CodebaseMapper:
 
             # Calculate file metrics
             avg_score = (
-                statistics.mean(r.get("disharmony_score", 0) for r in results) if results else 0
+                statistics.mean(r.get("disharmony_score", 0) for r in results)
+                if results
+                else 0
             )
 
             harmonious_count = sum(1 for r in results if r.get("is_harmonious", True))
@@ -362,10 +370,12 @@ class CodebaseMapper:
         # Calculate averages
         if total_procedures > 0:
             intent_avg = {
-                dim: round(total / total_procedures, 3) for dim, total in intent_totals.items()
+                dim: round(total / total_procedures, 3)
+                for dim, total in intent_totals.items()
             }
             execution_avg = {
-                dim: round(total / total_procedures, 3) for dim, total in execution_totals.items()
+                dim: round(total / total_procedures, 3)
+                for dim, total in execution_totals.items()
             }
         else:
             intent_avg = {dim: 0 for dim in intent_totals}

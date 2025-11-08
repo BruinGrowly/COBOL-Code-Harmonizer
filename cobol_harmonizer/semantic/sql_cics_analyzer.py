@@ -214,7 +214,14 @@ class SQLCICSAnalyzer:
             resource_type = self._extract_resource_type(cics_text)
 
             # Determine if it's an update operation
-            is_update = command in {"WRITE", "REWRITE", "DELETE", "DELETEQ", "WRITEQ", "UPDATE"}
+            is_update = command in {
+                "WRITE",
+                "REWRITE",
+                "DELETE",
+                "DELETEQ",
+                "WRITEQ",
+                "UPDATE",
+            }
 
             # Determine if it's transactional
             is_transactional = command in {"SYNCPOINT", "SYNCPOINT ROLLBACK"}

@@ -6,7 +6,11 @@ import pytest
 import json
 import tempfile
 from pathlib import Path
-from cobol_harmonizer.config import Config, create_default_config_file, get_config_with_overrides
+from cobol_harmonizer.config import (
+    Config,
+    create_default_config_file,
+    get_config_with_overrides,
+)
 
 
 class TestConfig:
@@ -223,8 +227,12 @@ class TestConfig:
             tmppath = Path(tmpdir)
 
             # Create multiple config files
-            (tmppath / ".harmonizerrc").write_text(json.dumps({"analysis": {"threshold": 0.1}}))
-            (tmppath / "harmonizer.json").write_text(json.dumps({"analysis": {"threshold": 0.2}}))
+            (tmppath / ".harmonizerrc").write_text(
+                json.dumps({"analysis": {"threshold": 0.1}})
+            )
+            (tmppath / "harmonizer.json").write_text(
+                json.dumps({"analysis": {"threshold": 0.2}})
+            )
 
             # Should prefer .harmonizerrc (higher priority)
             config = Config.discover(str(tmppath))

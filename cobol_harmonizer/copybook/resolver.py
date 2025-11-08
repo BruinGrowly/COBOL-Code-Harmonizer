@@ -147,7 +147,9 @@ class CopybookResolver:
                 else:
                     logger.warning(str(e))
                     # Leave COPY statement as-is
-                    copy_stmt.content = f"      *> COPYBOOK NOT FOUND: {copy_stmt.copybook_name}\n"
+                    copy_stmt.content = (
+                        f"      *> COPYBOOK NOT FOUND: {copy_stmt.copybook_name}\n"
+                    )
 
         # Inline copybooks
         resolved_content, source_map = self.inline_copybooks(
@@ -299,7 +301,9 @@ class CopybookResolver:
         # Find copybook file
         file_path = self.finder.find(copy_stmt.copybook_name)
         if not file_path:
-            raise CopybookNotFoundError(copy_stmt.copybook_name, self.config.search_paths)
+            raise CopybookNotFoundError(
+                copy_stmt.copybook_name, self.config.search_paths
+            )
 
         # Check cache
         cached = self.cache.get(copy_stmt.copybook_name, file_path)
@@ -352,7 +356,9 @@ class CopybookResolver:
             # Remove from resolution stack
             self._resolution_stack.discard(copy_stmt.copybook_name)
 
-    def _apply_replacing(self, content: str, replacing_clauses: List[ReplacingClause]) -> str:
+    def _apply_replacing(
+        self, content: str, replacing_clauses: List[ReplacingClause]
+    ) -> str:
         """
         Apply REPLACING clauses to copybook content - Enhanced version
 
@@ -406,7 +412,10 @@ class CopybookResolver:
         return content
 
     def inline_copybooks(
-        self, source_path: str, source_content: str, copy_statements: List[CopyStatement]
+        self,
+        source_path: str,
+        source_content: str,
+        copy_statements: List[CopyStatement],
     ) -> tuple[str, SourceMap]:
         """
         Inline all copybooks into source

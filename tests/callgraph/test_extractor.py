@@ -30,9 +30,13 @@ class TestCallExtractor:
 """
 
         program = extractor.parser.parse_source(source)
-        call_sites = extractor.extract_from_source(source, program.program_id, "test.cbl")
+        call_sites = extractor.extract_from_source(
+            source, program.program_id, "test.cbl"
+        )
 
-        call_sites_calls = [cs for cs in call_sites if cs.call_type == CallType.PROGRAM_CALL]
+        call_sites_calls = [
+            cs for cs in call_sites if cs.call_type == CallType.PROGRAM_CALL
+        ]
         assert len(call_sites_calls) >= 1
         assert call_sites_calls[0].callee == "SUBPROG"
         assert not call_sites_calls[0].is_dynamic
@@ -51,9 +55,13 @@ class TestCallExtractor:
 """
 
         program = extractor.parser.parse_source(source)
-        call_sites = extractor.extract_from_source(source, program.program_id, "test.cbl")
+        call_sites = extractor.extract_from_source(
+            source, program.program_id, "test.cbl"
+        )
 
-        dynamic_calls = [cs for cs in call_sites if cs.call_type == CallType.DYNAMIC_CALL]
+        dynamic_calls = [
+            cs for cs in call_sites if cs.call_type == CallType.DYNAMIC_CALL
+        ]
         assert len(dynamic_calls) >= 1
         assert dynamic_calls[0].callee == "WS-PROGRAM"
         assert dynamic_calls[0].is_dynamic
@@ -71,9 +79,13 @@ class TestCallExtractor:
 """
 
         program = extractor.parser.parse_source(source)
-        call_sites = extractor.extract_from_source(source, program.program_id, "test.cbl")
+        call_sites = extractor.extract_from_source(
+            source, program.program_id, "test.cbl"
+        )
 
-        performs = [cs for cs in call_sites if cs.call_type == CallType.PROCEDURE_PERFORM]
+        performs = [
+            cs for cs in call_sites if cs.call_type == CallType.PROCEDURE_PERFORM
+        ]
         assert len(performs) >= 1
         assert performs[0].callee == "SUB-PARA"
 
@@ -92,9 +104,13 @@ class TestCallExtractor:
 """
 
         program = extractor.parser.parse_source(source)
-        call_sites = extractor.extract_from_source(source, program.program_id, "test.cbl")
+        call_sites = extractor.extract_from_source(
+            source, program.program_id, "test.cbl"
+        )
 
-        performs = [cs for cs in call_sites if cs.call_type == CallType.PROCEDURE_PERFORM]
+        performs = [
+            cs for cs in call_sites if cs.call_type == CallType.PROCEDURE_PERFORM
+        ]
 
         # Should have two: PARA-100 and PARA-999
         assert len(performs) >= 2
@@ -120,12 +136,16 @@ class TestCallExtractor:
 """
 
         program = extractor.parser.parse_source(source)
-        call_sites = extractor.extract_from_source(source, program.program_id, "test.cbl")
+        call_sites = extractor.extract_from_source(
+            source, program.program_id, "test.cbl"
+        )
 
         assert len(call_sites) >= 4
 
         calls = [cs for cs in call_sites if cs.call_type == CallType.PROGRAM_CALL]
-        performs = [cs for cs in call_sites if cs.call_type == CallType.PROCEDURE_PERFORM]
+        performs = [
+            cs for cs in call_sites if cs.call_type == CallType.PROCEDURE_PERFORM
+        ]
 
         assert len(calls) >= 2
         assert len(performs) >= 2
@@ -149,11 +169,15 @@ class TestCallExtractor:
 """
 
         program = extractor.parser.parse_source(source)
-        call_sites = extractor.extract_from_source(source, program.program_id, "test.cbl")
+        call_sites = extractor.extract_from_source(
+            source, program.program_id, "test.cbl"
+        )
 
         # Should not extract inline PERFORMs
         # (or if it does, they should be filtered out)
-        performs = [cs for cs in call_sites if cs.call_type == CallType.PROCEDURE_PERFORM]
+        performs = [
+            cs for cs in call_sites if cs.call_type == CallType.PROCEDURE_PERFORM
+        ]
 
         # Should have no performs to actual paragraphs
         # (unless 'VARYING' or 'TIMES' are treated as paragraph names, which they shouldn't be)
@@ -224,7 +248,9 @@ class TestCallExtractor:
 """
 
         program = extractor.parser.parse_source(source)
-        call_sites = extractor.extract_from_source(source, program.program_id, "test.cbl")
+        call_sites = extractor.extract_from_source(
+            source, program.program_id, "test.cbl"
+        )
 
         stats = extractor.get_statistics(call_sites)
 
@@ -247,7 +273,9 @@ class TestCallExtractor:
 """
 
         program = extractor.parser.parse_source(source)
-        call_sites = extractor.extract_from_source(source, program.program_id, "test.cbl")
+        call_sites = extractor.extract_from_source(
+            source, program.program_id, "test.cbl"
+        )
 
         # Check that line numbers are set
         for cs in call_sites:
@@ -262,7 +290,9 @@ class TestCallExtractor:
 """
 
         program = extractor.parser.parse_source(source)
-        call_sites = extractor.extract_from_source(source, program.program_id, "test.cbl")
+        call_sites = extractor.extract_from_source(
+            source, program.program_id, "test.cbl"
+        )
 
         # Should have no calls
         # (may have some internal procedure tracking)
@@ -279,7 +309,9 @@ class TestCallExtractor:
 """
 
         program = extractor.parser.parse_source(source)
-        call_sites = extractor.extract_from_source(source, program.program_id, "test.cbl")
+        call_sites = extractor.extract_from_source(
+            source, program.program_id, "test.cbl"
+        )
 
         calls = [cs for cs in call_sites if cs.call_type == CallType.PROGRAM_CALL]
         callees = [cs.callee for cs in calls]

@@ -56,7 +56,9 @@ class CallGraphAnalyzer:
         if not target_node:
             raise ValueError(f"Node not found: {target_node_id}")
 
-        analysis = ImpactAnalysis(target_node=target_node_id, target_name=target_node.name)
+        analysis = ImpactAnalysis(
+            target_node=target_node_id, target_name=target_node.name
+        )
 
         # Find directly affected nodes (direct callers)
         analysis.directly_affected = self.graph.get_callers(target_node_id)
@@ -117,7 +119,9 @@ class CallGraphAnalyzer:
 
         return list(transitive)
 
-    def _calculate_risk_score(self, target_node: GraphNode, analysis: ImpactAnalysis) -> float:
+    def _calculate_risk_score(
+        self, target_node: GraphNode, analysis: ImpactAnalysis
+    ) -> float:
         """
         Calculate risk score (0-100)
 
@@ -182,7 +186,9 @@ class CallGraphAnalyzer:
         else:
             return "CRITICAL"
 
-    def _generate_warnings(self, target_node: GraphNode, analysis: ImpactAnalysis) -> List[str]:
+    def _generate_warnings(
+        self, target_node: GraphNode, analysis: ImpactAnalysis
+    ) -> List[str]:
         """Generate warnings about the change"""
         warnings = []
 
@@ -200,7 +206,9 @@ class CallGraphAnalyzer:
 
         # Entry point warning
         if target_node.id in self.graph.entry_points:
-            warnings.append("⚠️  This is an entry point - external callers may be affected")
+            warnings.append(
+                "⚠️  This is an entry point - external callers may be affected"
+            )
 
         # Circular dependency warning
         if self._has_circular_dependency(target_node.id):
@@ -216,11 +224,17 @@ class CallGraphAnalyzer:
 
         # High-risk recommendations
         if analysis.risk_level in ["HIGH", "CRITICAL"]:
-            recommendations.append("✓ Add comprehensive unit tests before making changes")
-            recommendations.append("✓ Consider breaking this into smaller, testable components")
+            recommendations.append(
+                "✓ Add comprehensive unit tests before making changes"
+            )
+            recommendations.append(
+                "✓ Consider breaking this into smaller, testable components"
+            )
 
             if analysis.total_impact > 10:
-                recommendations.append("✓ Perform incremental refactoring instead of large changes")
+                recommendations.append(
+                    "✓ Perform incremental refactoring instead of large changes"
+                )
 
         # Medium-risk recommendations
         if analysis.risk_level in ["MEDIUM", "HIGH", "CRITICAL"]:
