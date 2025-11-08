@@ -75,10 +75,10 @@ class TestDisharmonyCalculator:
 
         trajectory = self.calculator.get_trajectory(intent, execution)
 
-        assert trajectory['love_delta'] == -0.1
-        assert trajectory['justice_delta'] == 0.2
-        assert trajectory['power_delta'] == 0.2
-        assert trajectory['wisdom_delta'] == -0.3
+        assert trajectory['love_delta'] == pytest.approx(-0.1)
+        assert trajectory['justice_delta'] == pytest.approx(0.2)
+        assert trajectory['power_delta'] == pytest.approx(0.2)
+        assert trajectory['wisdom_delta'] == pytest.approx(-0.3)
 
     def test_get_dominant_shift(self):
         """Test dominant shift identification"""
