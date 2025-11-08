@@ -4,6 +4,10 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![IBM Z Verified](https://img.shields.io/badge/IBM_Z-Verified-blue?logo=ibm)](ibm/ZOS_QUICKSTART.md)
+[![z/OS USS Ready](https://img.shields.io/badge/z/OS-USS_Ready-green?logo=ibm)](docs/IBM_MAINFRAME_INTEGRATION.md)
+[![SARIF for ADDI](https://img.shields.io/badge/ADDI-SARIF_Compatible-purple?logo=ibm)](ibm/ADDI_PLUGIN.md)
+[![Works with Wazi](https://img.shields.io/badge/IBM_Wazi-Compatible-darkblue?logo=visualstudiocode)](ibm/WAZI_DEMO.md)
 
 > *"Does your COBOL procedure DO what its name SAYS it does?"*
 
@@ -97,6 +101,86 @@ code --install-extension cobol-harmonizer-0.1.0.vsix
 - [Extension README](vscode-extension/README.md) - Features and usage
 - [Installation Guide](vscode-extension/INSTALL.md) - Complete setup instructions
 - [Testing Guide](vscode-extension/TESTING.md) - Quality assurance
+
+---
+
+## IBM Enterprise Ready 🔵
+
+**Deploy to IBM z/OS USS in 5 minutes.** Fully integrated with IBM toolchain.
+
+### Quick Deploy to z/OS
+
+```bash
+# 1. Upload z/OS bundle to USS
+ftp your.zos.host
+> bin
+> put cobol-harmonizer-zos-*.tar.gz
+
+# 2. Extract and install
+gunzip cobol-harmonizer-zos-*.tar.gz
+tar -xf cobol-harmonizer-zos-*.tar
+cd cobol-harmonizer-zos-*
+./install_zos.sh
+
+# 3. Analyze COBOL
+python3 -m cobol_harmonizer.cli.commands analyze MYPROG.cbl --verbose
+```
+
+📚 **Complete Guides:**
+- **[5-Minute z/OS Quick Start](ibm/ZOS_QUICKSTART.md)** - Get running on USS now
+- **[IBM ADDI Integration](ibm/ADDI_PLUGIN.md)** - Plug into ADDI in minutes
+- **[IBM Wazi Demo Script](ibm/WAZI_DEMO.md)** - Live demo for sales
+- **[Full Mainframe Integration](docs/IBM_MAINFRAME_INTEGRATION.md)** - Complete deployment guide
+
+### IBM Tool Integrations
+
+| Tool | Status | Quick Link |
+|------|--------|------------|
+| **IBM z/OS USS** | ✅ Production Ready | [Quick Start](ibm/ZOS_QUICKSTART.md) |
+| **IBM ADDI** | ✅ Plugin Available | [ADDI Guide](ibm/ADDI_PLUGIN.md) |
+| **IBM Wazi Developer** | ✅ VS Code Compatible | [Wazi Demo](ibm/WAZI_DEMO.md) |
+| **IBM Debug for z/OS** | ✅ SARIF Import | [Integration Docs](docs/IBM_MAINFRAME_INTEGRATION.md) |
+| **SonarQube for z/OS** | ✅ SARIF Compatible | Output: `--format sarif` |
+
+### JCL Templates Included
+
+```jcl
+// Submit directly to z/OS
+//HARMONIZ JOB (ACCT),'COBOL ANALYSIS'
+//ANALYZE  EXEC PGM=BPXBATCH
+//STDOUT   DD SYSOUT=*
+//STDERR   DD SYSOUT=*
+//STDPARM  DD *
+SH /u/harmonizer/jcl/harmonizer_wrapper.sh \
+   /u/prod/cobol/MYPROG.cbl
+/*
+```
+
+📦 **Pre-built JCL**: `jcl/HARMONIZ.jcl`, `jcl/NIGHTLY.jcl`, `jcl/SOXAUDIT.jcl`
+
+### Container Support
+
+```bash
+# Build z/OS-compatible container
+docker build -f Dockerfile.zos -t cobol-harmonizer:zos .
+
+# Run analysis
+docker run --rm \
+  -v /u/prod/cobol:/input:ro \
+  -v /u/reports:/output \
+  cobol-harmonizer:zos analyze /input/MYPROG.cbl
+```
+
+### Release Automation
+
+Every GitHub release includes:
+- ✅ z/OS USS deployment bundle (`.tar.gz`)
+- ✅ ZIP format for IBM shops
+- ✅ SHA-256 checksums
+- ✅ Install script (`install_zos.sh`)
+- ✅ Quick start guide
+
+Download latest: **[Releases](https://github.com/BruinGrowly/COBOL-Code-Harmonizer/releases)**
 
 ---
 
