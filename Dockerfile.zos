@@ -1,0 +1,71 @@
+# Dockerfile for z/OS Container Extensions
+# IBM Z-optimized build for COBOL Code Harmonizer
+
+FROM registry.access.redhat.com/ubi8/python-39:latest
+
+LABEL maintainer="COBOL Code Harmonizer Contributors"
+LABEL description="Semantic analysis tool for COBOL using the LJPW framework - IBM z/OS ready"
+LABEL version="0.1.0"
+LABEL vendor="COBOL Code Harmonizer"
+LABEL com.ibm.z.verified="true"
+LABEL com.ibm.zos.compatible="USS"
+
+# Set environment variables for z/OS USS compatibility
+ENV _BPXK_AUTOCVT=ON \
+    _CEE_RUNOPTS="FILETAG(AUTOCVT,AUTOTAG) POSIX(ON)" \
+    _TAG_REDIR_ERR=txt \
+    _TAG_REDIR_IN=txt \
+    _TAG_REDIR_OUT=txt \
+    PYTHONIOENCODING=utf-8 \
+    LC_ALL=en_US.UTF-8
+
+# Create application directory
+WORKDIR /opt/cobol-harmonizer
+
+# Copy requirements and install dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application code
+COPY cobol_harmonizer/ ./cobol_harmonizer/
+COPY jcl/ ./jcl/
+COPY examples/ ./examples/
+COPY setup.py .
+COPY README.md .
+
+# Install the application
+RUN pip install --no-cache-dir -e .
+
+# Make JCL wrapper executable
+RUN chmod +x jcl/harmonizer_wrapper.sh
+
+# Create output directory
+RUN mkdir -p /output
+
+# Set up volume mount points
+VOLUME ["/input", "/output", "/copybooks"]
+
+# Default command runs analysis on /input and outputs to /output
+ENTRYPOINT ["python", "-m", "cobol_harmonizer.cli.commands"]
+CMD ["analyze", "--help"]
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD python -m cobol_harmonizer.cli.commands --version || exit 1
+
+# Expose no ports (command-line tool)
+EXPOSE 0
+
+# Build instructions:
+#   docker build -f Dockerfile.zos -t cobol-harmonizer:zos .
+#
+# Run on z/OS USS:
+#   docker run --rm -v /path/to/cobol:/input:ro \
+#              -v /path/to/output:/output \
+#              -v /path/to/copybooks:/copybooks:ro \
+#              cobol-harmonizer:zos analyze /input/MYPROG.cbl --verbose
+#
+# Batch mode with JCL:
+#   docker run --rm -v /path/to/jcl:/jcl:ro \
+#              -v /path/to/output:/output \
+#              cobol-harmonizer:zos /bin/bash -c "/opt/cobol-harmonizer/jcl/harmonizer_wrapper.sh"

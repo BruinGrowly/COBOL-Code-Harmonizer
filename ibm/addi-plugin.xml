@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- IBM Application Discovery and Delivery Intelligence (ADDI) Plugin Manifest -->
+<plugin xmlns="http://www.ibm.com/addi/plugin/1.0"
+        id="com.cobol.harmonizer"
+        name="COBOL Code Harmonizer"
+        version="0.1.0"
+        provider="COBOL Code Harmonizer Contributors">
+
+  <runtime>
+    <library name="cobol_harmonizer" type="python">
+      <export name="*"/>
+    </library>
+  </runtime>
+
+  <extension point="com.ibm.addi.analyzer">
+    <analyzer
+      id="com.cobol.harmonizer.semantic"
+      name="COBOL Semantic Harmony Analyzer"
+      class="cobol_harmonizer.cli.commands.cli"
+      file-extensions="cbl,cob,cobol">
+
+      <description>
+        Detects semantic disharmony in COBOL programs using the LJPW framework.
+        Identifies when procedure names contradict their implementations.
+      </description>
+
+      <input-formats>
+        <format>COBOL</format>
+        <format>COBOL85</format>
+        <format>COBOL2002</format>
+      </input-formats>
+
+      <output-formats>
+        <format type="sarif" version="2.1.0"/>
+        <format type="json" version="1.0"/>
+      </output-formats>
+
+      <severity-levels>
+        <level id="critical" threshold="1.0"/>
+        <level id="significant" threshold="0.7"/>
+        <level id="concerning" threshold="0.5"/>
+        <level id="minor" threshold="0.3"/>
+      </severity-levels>
+    </analyzer>
+  </extension>
+
+  <extension point="com.ibm.addi.report">
+    <report-generator
+      id="com.cobol.harmonizer.sarif"
+      name="SARIF Report Generator"
+      output-format="sarif">
+
+      <command>python -m cobol_harmonizer.cli.commands report {input} --format sarif --output {output}</command>
+    </report-generator>
+  </extension>
+
+  <dependencies>
+    <dependency id="python" version="3.9+"/>
+    <dependency id="com.ibm.zos.uss" version="2.4+"/>
+  </dependencies>
+
+  <configuration>
+    <parameter name="threshold" type="float" default="0.5" min="0.0" max="1.0">
+      <description>Disharmony score threshold for reporting issues</description>
+    </parameter>
+
+    <parameter name="enable_suggestions" type="boolean" default="true">
+      <description>Enable procedure name suggestions</description>
+    </parameter>
+
+    <parameter name="copybook_paths" type="string" default="">
+      <description>Comma-separated copybook search paths</description>
+    </parameter>
+  </configuration>
+</plugin>
